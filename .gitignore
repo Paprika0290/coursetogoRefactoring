@@ -169,3 +169,23 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,windows,intellij+all,java
+
+
+
+
+
+
+# IntelliJ IDEA IDE 설정 파일 (이클립스 사용자는 .classpath, .project 등 추가)
+.idea/
+
+# 빌드된 파일, 클래스 파일, 로그 등
+bin/
+out/
+logs/
+
+# 개발 환경 설정 파일
+application.properties
+
+# 테스트 코드 및 테스트 관련 파일
+src/test/
+
