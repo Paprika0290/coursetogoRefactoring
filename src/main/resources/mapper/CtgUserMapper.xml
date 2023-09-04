@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.coursetogo.mapper.user.CtgUserMapper">
+   
+    <!-- 네이버 회원 정보가 맵핑된 CtgUser객체를 받아와 회원 가입 진행하는 메서드 -->
+    <insert id="insertCtgUser" parameterType="CtgUserDTO">
+        INSERT INTO ctg_user (user_id, naver_id, user_name, user_nickname, user_email, user_birthyear, user_admin, user_photo, user_introduce, user_signdate)
+        VALUES (ctg_user_seq.nextval, #{naverId}, #{userName}, #{userNickname}, #{userEmail}, #{userBirthYear}, #{userAdmin}, #{userPhoto}, #{userIntroduce}, sysdate)
+	</insert>
+ 	
+ 	<!-- 네이버 회원 정보가 맵핑된 CtgUser객체에서 받아온 naverId, userName 이용하여 기존에 존재하는 회원인지 확인하는 메서드 -->
+     <select id = "getCtgUserByNaverIdAndName" resultType = "CtgUserDTO">
+		SELECT user_id AS userId,
+			   naver_id AS naverId,
+			   user_name AS userName,
+			   user_nickname AS userNickname,
+			   user_email AS userEmail,
+			   user_birthyear AS userBirthYear,
+			   user_admin AS userAdmin,
+			   user_photo AS userPhoto,
+			   user_introduce AS userIntroduce
+		FROM ctg_user
+		WHERE SUBSTR(naver_id, 1, 10) = #{naverIdFront}
+  		  AND SUBSTR(naver_id, -10) = #{naverIdRear}	
+ 	</select>
+ 	
+ 	<!-- userId를 받아 회원DTO를 가져오는 메서드 -->
+     <select id = "getCtgUserByUserId" resultType = "CtgUserDTO">
+		SELECT user_id AS userId,
+			   naver_id AS naverId,
+			   user_name AS userName,
+			   user_nickname AS userNickname,
+			   user_email AS userEmail,
+			   user_birthyear AS userBirthYear,
+			   user_admin AS userAdmin,
+			   user_photo AS userPhoto,
+			   user_introduce AS userIntroduce
+		FROM ctg_user
+		WHERE user_id = #{userId}	
+ 	</select>
+ 	
+ 	<!-- 수정된 userDTO를 변수로 받아 업데이트하는 메서드 -->
+    <update id="updateCtgUser" parameterType="CtgUserDTO">
+		UPDATE ctg_user
+		SET user_nickname = #{userNickname},
+            user_introduce = #{userIntroduce},
+            user_photo = #{userPhoto}
+		WHERE user_id = #{userId}
+	</update>
+ 	
+     <!-- 회원 탈퇴(user_name, user_signdate 외에 모두 null 설정 및 unsigndate 값 저장) -->
+     <update id="unsignCtgUserByUserId" parameterType="CtgUserDTO">
+        UPDATE ctg_user
+        SET naver_id = null,
+            user_name = null,
+            user_email = null,
+            user_birthyear = null,
+            user_admin = null,
+            user_photo = null,
+            user_introduce = null,
+            user_unsigndate = SYSDATE
+        WHERE user_id = #{userId}
+     </update>
+ 	
+ 	<!-- 닉네임 중복 검증 -->
+     <select id="nicknameCheck" resultType = "_int">
+     	SELECT COUNT(*) FROM ctg_user WHERE user_nickname = #{userNickname}
+     </select>
+     
+     <!-- 나의 코스 개수 -->
+     <select id="getMyCourseCount" resultType = "_int">
+     	SELECT COUNT(*) FROM course WHERE user_id = #{userId}
+     </select>
+     
+     <!-- 찜한 코스 개수 -->
+     <select id="getMyBookmarkCount" resultType = "_int">
+     	SELECT COUNT(*) FROM user_bookmark_course WHERE user_id = #{userId}
+     </select>
+     
+     <!-- 나의 리뷰 개수 -->
+     <select id="getMyReviewCount" resultType = "_int">
+     	SELECT COUNT(*) FROM course_review WHERE user_id = #{userId}
+     </select>
+
+   
+</mapper>
