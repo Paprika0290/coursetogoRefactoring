@@ -79,29 +79,6 @@ public class CtgUserController {
 		
 		return result;
 	}
-	
-	// 회원 탈퇴를 진행하는 메서드---------------------------------------------------------------------------------------
-	// 성공하면 : true / 실패하면 : false
-	@RequestMapping(value = "/myPageInformModify", method = RequestMethod.PUT)
-	public String unsignCtgUserByUserId(@RequestParam int userId,
-										   HttpSession session) {
-		String view = "error";
-		boolean result = false;
-		
-		try {
-			result = service.unsignCtgUserByUserId(userId);
-			
-			if(result) {
-				session.invalidate();
-				view = "redirect:/home";
-				return view;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return view;
-		}
-		return view;
-	}
 
 	// 닉네임 중복 검증
 	public int nicknameCheck(String userNickname) {

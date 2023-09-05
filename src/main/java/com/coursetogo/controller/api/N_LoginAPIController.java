@@ -72,7 +72,7 @@ public class N_LoginAPIController {
 	public String getAccessToken(@RequestParam("code") String code,
 							    @RequestParam("state") String state,
 							    HttpSession session, Model model) {
-		log.info("login �õ�");
+		log.info("login 시도");
 		String redirectURI = "";
 		
 		try {
@@ -97,7 +97,6 @@ public class N_LoginAPIController {
 		    HttpURLConnection con = (HttpURLConnection)url.openConnection();
 		    con.setRequestMethod("GET");
 		    int responseCode = con.getResponseCode();
-		    log.info("접근 토큰 응답 코드 = "+ responseCode); // <- 응답받은 접근 토큰의 응답 확인 / [200:성공] 
 		
 		    BufferedReader br;           
 		    	if(responseCode==200) {
@@ -112,7 +111,6 @@ public class N_LoginAPIController {
 			  res.append(inputLine);
 			}
 			log.info("접근 토근 응답 json 확인 :" + res); // <- 응답받은 접근 '토큰 내용' 확인
-			log.info("여기까지 접근 토큰 요청 과정");
 		            
 		    br.close();
 			 
@@ -127,21 +125,25 @@ public class N_LoginAPIController {
 
 		// 맵핑한 user객체정보로 DB접속, 기존 등록된 회원인지 확인
 		CtgUserDTO searchUser = userController.getCtgUserByNaverIdAndName(user.getNaverId().substring(0, 10),
-															   		   user.getNaverId().substring(user.getNaverId().length() -10),
-																	   user.getUserName());
+																   		  user.getNaverId().substring(user.getNaverId().length() -10),
+																		  user.getUserName());
 		
 		// 등록된 회원이 아니면
 		if (searchUser == null) {			
 			session.setAttribute("newUser", user);
+			log.info("비회원 접근");
 			return "home";
 		}else {		
 		// 등록된 회원이라면	
-			CtgUserDTO userForSession = new CtgUserDTO(searchUser.getUserId(), searchUser.getUserName(),
-													   searchUser.getUserNickname(), searchUser.getUserEmail(),
-													   searchUser.getUserPhoto(), searchUser.getUserIntroduce());
+			CtgUserDTO userForSession = CtgUserDTO.builder().userId(searchUser.getUserId())
+															.userNickname(searchUser.getUserNickname())
+															.userEmail(searchUser.getUserEmail())
+															.userPhoto(searchUser.getUserPhoto())
+															.userIntroduce(searchUser.getUserIntroduce())
+															.build();
 			session.setMaxInactiveInterval(3600);
 			session.setAttribute("user", userForSession);	
-			
+			log.info("회원 접근");
 		return "home";
 	}
 	

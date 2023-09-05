@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.mapper.user.CtgUserMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class CtgUserService {
 	
 	@Autowired
@@ -50,8 +53,9 @@ public class CtgUserService {
 		
 		if(res !=0) {
 			result = true;
+			log.info("유저 정보 업데이트 성공");
 		} else {
-			System.out.println("수정 실패");
+			log.warn("유저 정보 업데이트 실패");
 			throw new Exception("개인 정보 수정 실패");
 		}
 				
@@ -67,10 +71,10 @@ public class CtgUserService {
 		int res = mapper.unsignCtgUserByUserId(userId);
 		
 		if(res != 0) {
-			System.out.println("유저 삭제 완료");
+			log.info("유저 탈퇴 처리 완료");
 			result = true;
 		} else {
-			throw new Exception("유저 삭제 실패");
+			log.warn("유저 탈퇴 처리 실패");
 		}
 
 		return result;
