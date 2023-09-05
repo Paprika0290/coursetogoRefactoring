@@ -6,30 +6,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Course To Go</title>
+    <title>CourseToGo</title>
     
-    <% CtgUserDTO user = (CtgUserDTO)session.getAttribute("newUser");
-       if (user != null) {
-    %>
+	<c:if test="${not empty sessionScope.newUser}">
 	    <script>
-        var sessionValue = "<%= session.getAttribute("newUser") %>";
-		console.log("세션 값은" + sessionValue);
-		
-        if (sessionValue != null) {
-            var result = confirm("가입되지 않은 사용자입니다. 회원가입을 진행하시겠습니까?");
-            
-            if(result) {
-            	window.location.href= "user/sign_up";
-            	<% session.setAttribute("newUser", user); %>
-            }else {
-            	
-            }               
-        } else {         	
-        }
-	<%
-       }
-	%>
+	        var sessionValue = "${sessionScope.newUser}";
+	        
+	        alert("가입되지 않은 사용자입니다. 회원가입 페이지로 이동합니다.");
+	        window.location.href = "user/sign_up";
 	    </script>
+	</c:if>
+
+
 
     <style>	
 		.mainContent {

@@ -7,8 +7,9 @@
     <meta charset="UTF-8">
 	<style>
 		.menu div {
-		    font-family: 'Noto Sans KR';
+			font-family: 'TheJamsil5Bold', sans-serif;
 		}
+		
 		
 		.navigationBar {
 		  position: fixed;
@@ -38,69 +39,63 @@
 		.menuItem a {
 		  text-decoration: none;
 		  color: #000000;
-		  font-weight: bold;
 		}
 		
 		.menuItem a:hover {
 		  text-decoration: underline;
 		}
 		
-		/* 드롭다운 버튼 컨테이너 스타일 */
 		.dropdown {
 		  position: relative;
 		  display: inline-block;
 		}
 		
-		/* 드롭다운 버튼 스타일 */
 		.dropbtn {
-		  background: none; /* 배경 제거 */
+		  background: none;
 		  border: none;
 		  cursor: pointer;
 		}
 		
-		/* 이미지 크기 및 스타일 조정 */
 		.dropbtn img {
-		  width: 30px; /* 이미지 너비 조정 */
-		  height: 30px; /* 이미지 높이 조정 */
-		  /* 원하는 스타일 추가 */
+		  width: 30px;
+		  height: 30px; 
 		}
 		
-		/* 드롭다운 내용 (기본적으로 숨겨져 있음) */
 		.dropdown-content {
 		  display: none;
 		  position: absolute;
 		  background-color: #f1f1f1;
 		  min-width: 100px;
+		  width: 120px;
 		  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 		  z-index: 1;
 		}
 		
-		/* 드롭다운 내용의 링크 스타일 */
-		.dropdown-content a {
-		  padding: 12px 16px;
+		.dropdown-content a, .dropdown-content span, .dropdown-content input {
+		  padding: 15px 20px;
 		  text-decoration: none;
 		  display: block;
 		  color: #333;
+		  font-size: 0.85rem;
+		  font-family: 'TheJamsil3Regular', sans-serif;
 		}
 		
-		/* 드롭다운 내용의 링크에 호버 스타일 추가 */
 		.dropdown-content a:hover {
 		  background-color: #ddd;
 		}
 		
-		/* 드롭다운 내용이 보일 때 */
 		.dropdown:hover .dropdown-content {
 		  display: block;
 		}
 		
-		/* 드롭다운 버튼에 호버 스타일 추가 */
 		.dropdown:hover .dropbtn {
-		  background-color: #2980b9;
+		  background-color: #EBEBEB;
 		}
 		
 		
 	</style>
 	
+	<link rel="stylesheet" type="text/css" href="/css/fonts.css">	
 </head>
 <body>
 	<!-- navigation bar -->
@@ -119,15 +114,17 @@
 				</c:if>
   		    	<c:if test="${not empty sessionScope.user.userId}">
    					<div class="dropdown">
-	  		    		<button class="dropbtn">
-						  	<img src="${sessionScope.user.userPhoto}" alt = "프로필 사진">
-						  	<span class = "userName">${sessionScope.user.userNickname} 님</span> 
+	  		    		<button class="dropbtn" style= "display: flex; align-items: center;">
+						  	<img src="${sessionScope.user.userPhoto}" alt = "프로필 사진">&nbsp;&nbsp;&nbsp;
+						  	<span style= "font-family: 'TheJamsil5Bold', sans-serif;">${sessionScope.user.userNickname} 님</span> 
 						</button>
 						  
 					  <div class="dropdown-content">
-					    <a href="#">뱃지 시스템</a>
-					    <a href="#">개인정보 수정</a>
-					    <a href="#">로그아웃</a>
+					    <span>랄랄랄라</span>
+					    <input type="button" class="edit-profile-btn" value="회원정보 수정" onclick="location.href='/user/updateUserInfo'"
+					    	   style= "border: 0px solid; padding-left: 20px; cursor: pointer;">
+					    <input type="button" class="logout-btn" value="로그아웃" onclick="location.href='/logout'"
+					    	   style= "border: 0px solid; padding-left: 35px; cursor: pointer;">
 					  </div>
 				  	</div>	  		    	
 	    		</c:if>
@@ -137,6 +134,6 @@
 		
 
     </nav>
-    
+
 </body>
 </html>
