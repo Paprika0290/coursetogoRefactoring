@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.coursetogo.mapper.course.CourseMapper">
+
+	<select id="getCourseInformByUserId" parameterType="_int" resultType="CourseInformDTO">
+	  SELECT
+	    c.course_id AS courseId,
+	    u.user_nickname AS userNickName,
+	    c.course_name AS courseName,
+	    c.course_avg_score AS courseAvgScore,
+	    c.course_number AS courseNumber,
+	    c.course_content AS courseContent,
+	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
+	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
+	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
+	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+	    CASE
+	      WHEN user_bookmark_course.BOOKMARK_ID IS NULL THEN 0
+	      ELSE 1
+	    END AS isBookMarked
+	  FROM
+	    Course c
+	    JOIN Course_place ON c.course_id = Course_place.course_id
+	    JOIN place ON Course_place.place_id = place.place_id
+	    JOIN area_place ON place.place_id = area_place.place_id
+	    JOIN category_place ON place.place_id = category_place.place_id
+	    JOIN area ON area_place.area_id = area.area_id
+	    JOIN category ON category_place.category_id = category.category_id
+	    JOIN ctg_user u ON c.user_id = u.user_id
+	    LEFT JOIN user_bookmark_course ON c.course_id = user_bookmark_course.COURSE_ID AND user_bookmark_course.USER_ID = #{userId}
+	  WHERE
+	    c.user_id = #{userId}
+	  GROUP BY
+	    c.course_id,
+	    u.user_nickname,
+	    c.course_name,
+	    c.course_content,
+	    c.course_avg_score,
+	    c.course_number,
+	    user_bookmark_course.BOOKMARK_ID
+	</select>
+	
+	
+	<select id="getCourseWithPageRequest" parameterType="PageRequestDTO" resultType="CourseInformDTO">
+	  SELECT
+	    Course.course_id AS courseId,
+	    Course.user_nickname AS userNickName,
+	    Course.course_name AS courseName,
+	    Course.course_avg_score AS courseAvgScore,
+	    Course.course_number AS courseNumber,
+	    Course.course_content AS courseContent,
+	    Course.courseIdList AS courseIdList,
+	    Course.courseList AS courseList,
+	    Course.areaNameList AS areaNameList,
+	    Course.categoryNameList AS categoryNameList,
+	    Course.isBookMarked AS isBookMarked
+	  FROM (
+	    SELECT
+	      c.course_id AS course_id,
+	      u.user_nickname AS user_nickname,
+	      c.user_id AS user_id,
+	      c.course_name,
+	      c.course_avg_score,
+	      c.course_number,
+	      c.course_content,
+	      LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
+	      LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
+	      LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
+	      LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+	      CASE
+	        WHEN user_bookmark_course.COURSE_ID IS NULL THEN 0
+	        ELSE 1
+	      END AS isBookMarked,
+	      user_bookmark_course.COURSE_ID AS bookmarkedCourseId,
+	      ROW_NUMBER() OVER (ORDER BY c.course_id) AS rn
+	    FROM
+	      Course c
+	      JOIN Course_place ON c.course_id = Course_place.course_id
+	      JOIN place ON Course_place.place_id = place.place_id
+	      JOIN area_place ON place.place_id = area_place.place_id
+	      JOIN category_place ON place.place_id = category_place.place_id
+	      JOIN area ON area_place.area_id = area.area_id
+	      JOIN category ON category_place.category_id = category.category_id
+	      JOIN ctg_user u ON c.user_id = u.user_id
+	      LEFT JOIN user_bookmark_course ON c.course_id = user_bookmark_course.COURSE_ID
+	        AND (user_bookmark_course.user_id = #{userId} OR #{userId} IS NULL)
+	        
+	    <trim prefix="WHERE" prefixOverrides="AND |OR">
+	      <if test="keyword != null and keyword != ''">
+	        AND (c.course_content LIKE '%'||#{keyword}||'%'
+	        OR place.place_name LIKE '%'||#{keyword}||'%'
+	        OR area.area_name LIKE '%'||#{keyword}||'%'
+	        OR category.category_name LIKE '%'||#{keyword}||'%')
+	      </if>
+	    </trim>
+	    GROUP BY
+	      c.course_id,
+	      u.user_nickname,
+	      c.user_id,
+	      c.course_name,
+	      c.course_content,
+	      c.course_avg_score,
+	      c.course_number,
+	      user_bookmark_course.COURSE_ID
+	  ) Course
+	  WHERE
+	    <![CDATA[ rn <= #{pageNum} * #{amount} AND rn > (#{pageNum} - 1) * #{amount} ]]>
+	</select>
+	
+	 <select id="getTotalCount" parameterType="PageRequestDTO" resultType="java.lang.Integer">
+		  SELECT COUNT(DISTINCT c.course_id) AS totalCount
+		  FROM Course c
+		   JOIN Course_place ON c.course_id = Course_place.course_id
+		      JOIN place ON Course_place.place_id = place.place_id
+		      JOIN area_place ON place.place_id = area_place.place_id
+		      JOIN category_place ON place.place_id = category_place.place_id
+		      JOIN area ON area_place.area_id = area.area_id
+		      JOIN category ON category_place.category_id = category.category_id
+		      
+		  <trim prefix="WHERE" prefixOverrides="AND |OR">
+		    <if test="keyword != null and keyword !=''">
+		    AND (c.course_content LIKE '%'||#{keyword}||'%'
+		        OR place.place_name LIKE '%'||#{keyword}||'%'
+		        OR area.area_name LIKE '%'||#{keyword}||'%'
+		        OR category.category_name LIKE '%'||#{keyword}||'%')
+		    </if>
+		  </trim>
+		</select>
+	
+ 		<select id="getCourseInformByCourseId" parameterType="_int" resultType="CourseInformDTO">
+		  SELECT
+		    c.course_id AS courseId,
+		    u.user_nickname AS userNickName,
+		    c.course_name AS courseName,
+		    c.course_avg_score AS courseAvgScore,
+		    c.course_number AS courseNumber,
+		    c.course_content AS courseContent,
+		    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
+		    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
+		    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
+		    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+		    CASE
+		      WHEN user_bookmark_course.BOOKMARK_ID IS NULL THEN 0
+		      ELSE 1
+		    END AS isBookMarked
+		  FROM
+		    Course c
+		    JOIN Course_place ON c.course_id = Course_place.course_id
+		    JOIN place ON Course_place.place_id = place.place_id
+		    JOIN area_place ON place.place_id = area_place.place_id
+		    JOIN category_place ON place.place_id = category_place.place_id
+		    JOIN area ON area_place.area_id = area.area_id
+		    JOIN category ON category_place.category_id = category.category_id
+		    JOIN ctg_user u ON c.user_id = u.user_id
+		    LEFT JOIN user_bookmark_course ON c.course_id = user_bookmark_course.COURSE_ID
+		     AND c.user_id = user_bookmark_course.user_id
+		  WHERE
+		    c.course_id = #{courseId}
+		  GROUP BY
+		    c.course_id,
+		    u.user_nickname,
+		    c.course_name,
+		    c.course_content,
+		    c.course_avg_score,
+		    c.course_number,
+		    user_bookmark_course.BOOKMARK_ID
+		</select>
+		
+	 	<select id="getCourseById" parameterType="_int" resultType="CourseDTO"> 	
+		 	SELECT
+			  course_id AS courseId,
+			  user_id AS userId,
+			  course_name AS courseName,
+			  course_content AS courseContent,
+			  course_avg_score AS courseAvgScore,
+			  course_number AS courseNumber
+			  
+			FROM
+			  COURSE 
+			WHERE
+			course_id = #{courseId}		 	
+	 	</select>
+		
+		
+ </mapper>
