@@ -17,6 +17,7 @@
 		    padding:1rem 0;
 		    margin:1rem 0;
 		    transform: translateY(150px);
+		    z-index: 50;
 		}
 		
 		.withoutSidebar {

@@ -50,8 +50,9 @@
 
 </head>
 <body>
-
-	<jsp:include page="components/navigation.jsp" />
+	<header>
+		<jsp:include page="components/navigation.jsp" />	
+	</header>
 	
 	<div class = "mainContent">	
 		<div class = "textContents" style = "border: 1px solid #E5E5E5; padding: 20px;">

@@ -29,7 +29,9 @@
 
 </head>
 <body>
-	<jsp:include page="components/navigation.jsp" />
+	<header>
+		<jsp:include page="components/navigation.jsp" />	
+	</header>
 	
 	<div class= "mainContent" >
 		<form action= "/user/sign_up_done" id= "signUpForm" method = "POST" >
