@@ -66,7 +66,9 @@
 	
 </head>
 <body>
-	<jsp:include page="components/navigation.jsp" />
+	<header>
+		<jsp:include page="components/navigation.jsp" />	
+	</header>
 	
 	<div class= "mainContent" >
 

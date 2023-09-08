@@ -46,14 +46,13 @@
 
 </head>
 <body>
-
-	<jsp:include page="components/navigation.jsp" />
+	<header>
+		<jsp:include page="components/navigation.jsp" />	
+	</header>
 	
 	<div class = "mainContent">	
 			<div id="mapArea" class="map" style="width:100%; height:90vh;">
-				지도...
-				지도...
-				지도...
+
 			</div>		
 	</div>
 	
@@ -75,7 +74,7 @@
 						font-weight: 300;
 						padding: 10px;
 						margin-bottom: 50px;
-						color: #3C3C3C"
+						color: #3C3C3C;"
 				 class= "fontTheJamsil">
 				1. 좌측 상단 검색창을 통해 장소를<br>검색해주세요.<br>
 				(예시 : 지역명 - 홍대 / 업종명 - 음식점)<br><br>
@@ -84,11 +83,12 @@
 				3. 선택한 장소를 확인 후, 코스의 이름과 코스에 대한 설명을 작성해주세요.<br><br>
 				4. 작성이 끝나면 코스 만들기 버튼을 클릭,<br>자신만의 코스를 만들어주세요.<br><br>
 				<br>
-				<span style= "color: #FF962B;">코스 만들기 기능은 로그인 후<br>사용 가능합니다.</span>
+				<span style= "color: #FF962B;">코스 만들기 기능은 로그인 후<br>사용 가능합니다.</span><br><br>
 			</div>
 		
-		
-		<form id = "courseInfo" method= "POST" accept-charset= "UTF-8">
+		<!-- 코스 정보 입력 form start -->
+		<form id = "courseInfo" method= "POST" accept-charset= "UTF-8"
+			  action = "/course/courseMake">
 			<span style= "font-family: 'TheJamsil5Bold', sans-serif; text-align: center;">코스 상세</span><br><br>
 			<input id= "courseName" name= "courseName" class= "courseMakeInputBox" type= "text"
 				   value= "코스 이름" style= "text-align: center;" onfocus="clearInputValue(this)"><br>
@@ -107,17 +107,21 @@
 			    <button class="courseMakeButton" disabled > 로그인 후 사용가능합니다</button>
 			</c:if>
 			
-		</form>	
+			<input type= "hidden" name= "userId" value= "${sessionScope.user.userId}">
+			<input type= "hidden" name= "courseNumber" value= "">
+		</form>
+		<!-- 코스 정보 입력 form end -->	
 	</div>
 	
-	<!-- 지도 출력 -->
+	
+	
 	<script>
+	<!-- 지도 출력 -->
 		var mapDiv = document.getElementById('mapArea');
 		var map = new naver.maps.Map(mapDiv);
-	</script>
 
-	<!-- 코스 제작 입력폼 비우기 -->	
-	<script>
+		
+	<!-- 코스 제작 입력폼 클릭시 내용 비우기 -->	
 		function clearInputValue(input) {
 		  if (input.value === input.defaultValue) {
 		    input.value = '';
@@ -130,6 +134,31 @@
 		    textarea.value = '';
 		  }
 		}
+	
+	<!-- 모달 창 -->
+	    function unsignUser() {
+	    	var userId = parseInt('<%= pageContext.getAttribute("userId") %>');
+	
+	        var form = document.createElement('form');
+	        form.method = 'POST';
+	        form.action = '/user/unsign';
+	
+	        var input = document.createElement('input');
+	        input.type = 'hidden';
+	        input.name = '_method';
+	        input.value = 'PUT';
+	        form.appendChild(input);
+	
+	        input = document.createElement('input');
+	        input.type = 'hidden';
+	        input.name = 'userId';
+	        input.value = userId;
+	        form.appendChild(input);
+	
+	        document.body.appendChild(form);
+	        form.submit();
+		}
+    
 	</script>
 
    	<footer>

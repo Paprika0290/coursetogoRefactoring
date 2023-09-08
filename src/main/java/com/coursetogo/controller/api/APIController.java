@@ -1,6 +1,8 @@
 package com.coursetogo.controller.api;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -14,10 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.coursetogo.controller.user.CtgUserController;
+import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
+import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.user.CtgUserService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
+@Slf4j
 public class APIController {
 	
 	@Autowired
@@ -25,6 +32,9 @@ public class APIController {
 	
 	@Autowired
 	private CtgUserService userService;
+	
+	@Autowired
+	private CourseService courseService;
 	
 	
 	// 닉네임 중복 확인 (userInfoUpdate.jsp / userSignup.jsp)
@@ -44,6 +54,28 @@ public class APIController {
 			}
 			return res;
 		}		
+	}
+	
+	// courseInformDTO의 userNickname으로 userPhoto 조회 -> axios로 사용할 예정이었으나 사용하지 못하게 됨. 일단 잔류 
+	@GetMapping("/user/userPhoto")
+	public String getUserPhoto(@RequestParam("courseId") int courseId) {
+
+		CourseDTO course = null;
+		CtgUserDTO user = null;
+		
+		try {
+			course = courseService.getCourseById(courseId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			user = userService.getCtgUserByUserId(course.getUserId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.println(user.getUserPhoto());
+		return user.getUserPhoto();
 	}
 	
 	// 회원탈퇴 진행
@@ -101,6 +133,7 @@ public class APIController {
 		return "userSignupDone";
 	}
 	
+	// 유저 정보 수정
 	@PostMapping("/user/update")
 	public String updateUser(@ModelAttribute CtgUserDTO user
 							 ,HttpSession session) {
@@ -131,5 +164,6 @@ public class APIController {
 		
 		return "redirect:/";
 	}
+	
 
 }

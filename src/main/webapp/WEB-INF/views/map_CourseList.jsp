@@ -44,8 +44,9 @@
 </head>
 
 <body>
-
-	<jsp:include page="components/navigation.jsp" />
+	<header>
+		<jsp:include page="components/navigation.jsp" />	
+	</header>
 	
 	<div class = "mainContent">	
 		<div id="courseContainer" style= "width: 85%; max-height: 100vh;">
@@ -68,7 +69,7 @@
 			    	 		</c:forEach>
 						<p style= "position: flex; flex-direction: row; justify-content: center;">
 							&nbsp;&nbsp;&nbsp;
-							${courseInformDTO.userNickname} 님의 < <a href="/course/detail?${query}" style= "text-decoration: none;"><span style="color: #FF962B;">${courseInformDTO.courseName}</span></a> > 코스
+							${courseInformDTO.userNickname} 님의 < <a href="/course/courseDetail?${query}" style= "text-decoration: none;"><span style="color: #FF962B;">${courseInformDTO.courseName}</span></a> > 코스
 						</p>
 					</div>	
 					
