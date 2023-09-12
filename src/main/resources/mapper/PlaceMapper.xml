@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.coursetogo.mapper.map.PlaceMapper">
+ 	 	
+ 	<select id="getAllPlaces" resultType="PlaceDTO">
+ 		SELECT * FROM PLACE
+ 	</select>
+ 
+ 	<select id="getPlaceByPlaceId" parameterType="PlaceDTO">
+ 		SELECT p.place_id as placeId, p.place_name as placeName, p.latitude, p.longitude, p.address, p.place_avg_score as placeAvgScore FROM PLACE p WHERE PLACE_ID = #{placeId}
+ 	</select>
+
+ 	<select id="searchPlaces" parameterType="String" resultType="PlaceDTO">
+ 		SELECT * FROM place WHERE PLACE_NAME = #{placeName}
+ 	</select>
+ 	
+ 	<select id="searchPlacesByPlaceName" parameterType="String" resultType="PlaceDTO">
+ 		SELECT place_id as placeId, place_name as placeName, latitude, longitude, address, place_avg_score as placeAvgScore FROM place
+ 		ORDER BY place_id ASC
+ 	</select>
+ 	
+ 	<select id="searchPlacesByArea" parameterType="String" resultType="PlaceDTO">
+ 		SELECT p.place_id as placeId, p.place_name as placeName, p.latitude, p.longitude, p.address, p.place_avg_score as placeAvgScore
+		FROM place p
+		JOIN area_place ap ON p.place_id = ap.place_id
+		JOIN area a ON ap.area_id = a.area_id
+		WHERE a.area_name = #{areaName}
+		ORDER BY p.place_id ASC
+ 	</select>
+ 	
+ 	<select id="searchPlacesByCategory" parameterType="String" resultType="PlaceDTO">
+ 		SELECT p.place_id as placeId, p.place_name as placeName, p.latitude, p.longitude, p.address, p.place_avg_score as placeAvgScore
+		FROM place p
+		JOIN category_place cp ON p.place_id = cp.place_id
+		JOIN category c ON cp.category_id = c.category_id
+		WHERE c.category_name = #{categoryName}
+		ORDER BY p.place_id ASC
+ 	</select>
+ 
+	<select id="searchPlacesByAreaOrCategory" parameterType="java.util.Map" resultType="PlaceDTO">
+		SELECT p.place_id AS placeId, p.place_name AS placeName, p.latitude, p.longitude, p.address, p.place_avg_score AS placeAvgScore
+		FROM place p
+		INNER JOIN area_place ap ON p.place_id = ap.place_id
+		INNER JOIN area a ON (a.area_name = #{areaName} OR #{areaName} IS NULL) AND ap.area_id = a.area_id
+		INNER JOIN category_place cp ON p.place_id = cp.place_id
+		INNER JOIN category c ON (c.category_name = #{categoryName} OR #{categoryName} IS NULL) AND cp.category_id = c.category_id
+		WHERE (a.area_name = #{areaName} OR (#{areaName} IS NULL OR #{areaName} = '')) OR (c.category_name = #{categoryName} OR (#{categoryName} IS NULL OR #{categoryName} = ''))
+		ORDER BY p.place_avg_score DESC
+	</select>
+ 	
+ 	
+ 	
+ </mapper>

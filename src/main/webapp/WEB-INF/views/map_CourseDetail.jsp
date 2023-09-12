@@ -12,8 +12,8 @@
 <html>
 <head>
  <title>CourseToGo / 코스 상세</title>
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
- 
+ <link rel="stylesheet" type="text/css" href="/css/starScore.css">
+ 	
  <meta charset="UTF-8">
  <meta http-equiv="X-UA-Compatible" content="IE=edge">
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
@@ -52,40 +52,22 @@
 			font-family: 'TheJamsil5Bold', sans-serif;
 			padding: 10px;
 		}
-		
-        .stars::before {
-		  content: "★";
+
+		.courseDetailButton:hover {
+			background-color: #F0B27A;
+			border-radius: 5px;
+			border: 0px solid;
+			font-family: 'TheJamsil5Bold', sans-serif;
+			padding: 10px;
+			cursor: pointer;
 		}
 		
-		.stars[data-score="1"]::before {
-		  content: "★";
-		  color:#ffd400;
-   		  font-size:20px;
+		.placeButton:hover {
+			background-color: #5D6D7E;
+			padding: 3px;
 		}
 		
-		.stars[data-score="2"]::before {
-		  content: "★★";
-		  color:#ffd400;
-   		  font-size:20px;	  
-		}
-		
-		.stars[data-score="3"]::before {
-		  content: "★★★";
-		  color:#ffd400;
-   		  font-size:20px;
-  		}
-		
-		.stars[data-score="4"]::before {
-		  content: "★★★★";
-		  color:#ffd400;
-   		  font-size:20px;
-		}
-		
-		.stars[data-score="5"]::before {
-		  content: "★★★★★";
-		  color:#ffd400;
-   		  font-size:20px;
-		}
+
 	</style>
 
 </head>
@@ -108,13 +90,18 @@
 				</p>
 				
 				<c:forEach items="${fn:split(courseInform.courseList, ',')}" var="place" varStatus= "placeSt">
-                       <div class="item" style = "padding:10px 10px;
-                       							  margin-bottom: 10px;
-	                       						  background-color: #7FB3D5;
-	                       						  border-radius:5px;
-	                       						  color: white;
-	                       						  font-family: 'TheJamsil3Regular', sans-serif;
-	                       						  font-size: 11pt;">${place}</div>                       						     						                         						  
+                       <div class="place" style = "padding:10px 10px;
+		                       							 margin-bottom: 10px;
+			                       						 background-color: #7FB3D5;
+			                       						 border-radius:5px;
+			                       						 color: white;
+			                       						 font-family: 'TheJamsil3Regular', sans-serif;
+			                       						 font-size: 11pt;">
+					  		<a class = "placeButton" href="https://map.naver.com/p/search/${place}" style= "text-decoration: none; color: inherit;" target="_blank">
+					  			${place}
+				  			</a>
+					   </div>
+					                         						     						                         						  
 	                   <c:if test="${placeSt.index lt courseInform.courseNumber-1}">
 	                   	 	<img src="/images/courseArrow.png" style= "width: 15px; margin-bottom: 5px;">
 	                   </c:if>
@@ -130,37 +117,116 @@
                	   </div>
                  </div>
              
-             
-             	<button class="courseDetailButton" type="button" id= "showCourseReviews"
+				
+				<!-- 버튼 영역 -->
+             	<button class="courseDetailButton" type="button" id= "showCourseReviewList"
              			style= "margin-top: 50px; margin-bottom: 20px; padding-left: 15px; padding-right: 15px; color: #FFFFFF;">
              		작성된 리뷰 보기
              	</button>
-             	
+
 			 	<c:if test="${not empty sessionScope.user.userId}">
-				 	<br>
-				    <button class="courseDetailButton" type="button" style= "padding-left: 20px; padding-right: 20px; color: #FFFFFF">리뷰 작성하기</button>
+				    <button class="courseDetailButton" type="button" id= "showReviewWrite"
+				    		style= "padding-left: 20px; padding-right: 20px; color: #FFFFFF">리뷰 작성하기</button>
 				</c:if>
 				
 				<c:if test="${empty sessionScope.user.userId}">
 				    <button class="courseDetailButton" disabled style= "margin-top: 5px;"> 로그인 후 리뷰 작성하기</button>
-				</c:if> 		                              
-			</div>
-			
-			
-			
-			
+				</c:if>              	
+				<!-- 버튼 영역 -->
+				             	
+		                              
+			</div>	
 			
 			
 			<input type= "hidden" id= "thisCourseId" value="${courseInform.courseId}">
 			<input type= "hidden" id= "thisCourseReviewList">
 						
-
-			<div id="reviewContent" class="informArea" style= "right: 200px; overflow: auto; width: 300px; display: none;">
+						
+			<!-- 토글 영역  start -->
+			<div id="reviewListPage" class="informArea" style= "right: 200px; overflow: auto; width: 300px; display: none;">
 				<div id= "userReviewList" >
-		 			
-
 		 		</div>			
 			</div>
+			
+			<div id="reviewWritePage" class="informArea" style= "right: 200px; overflow: auto; width: 300px; display: none;">
+				<div id= "reviewWrite" style= "margin-top: 30px;">
+				<br><br>
+					<div style= "margin-bottom: 40px;">
+						<b style = "background-color: #F4F4F4;
+	               	   				padding: 20px 110px;
+	               	   				font-size: 15pt;">리뷰 작성</b>
+					</div>
+	
+					<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif;">
+						 &nbsp; ▶ 각 장소에 별점을 매겨주세요.
+					</div>	
+					
+					<div style = "margin-top: 11px;">
+						<form action= "/review/reviewWrite" method= "POST" id = "insertReview">
+						
+							<c:forEach items= "${fn:split(courseInform.courseList, ',')}" var="place" varStatus= "placeSt">
+			                      <div class="place" style = "padding: 4.5px 10px;
+					                       							 margin-bottom: 32px;
+						                       						 background-color: #B8CCD9;
+						                       						 color: white;
+						                       						 font-family: 'TheJamsil3Regular', sans-serif;
+						                       						 font-size: 11pt;">
+           						<div class="starsscore${placeSt.index + 1}" style = "display: flex; justify-content: center; align-items: center;">	
+						      	  	<input type="radio" id="stars${placeSt.index + 1}5" name = "placeScore${placeSt.index + 1}" value="5" />
+			  			            <label for ="stars${placeSt.index + 1}5" title = "5" >★</label>
+									<input type="radio" id="stars${placeSt.index + 1}4" name = "placeScore${placeSt.index + 1}" value="4" />
+				        		    <label for ="stars${placeSt.index + 1}4" title = "4" >★</label>						
+									<input type="radio" id="stars${placeSt.index + 1}3" name = "placeScore${placeSt.index + 1}" value="3" />
+				        		    <label for ="stars${placeSt.index + 1}3" title = "3">★</label>								
+									<input type="radio" id="stars${placeSt.index + 1}2" name = "placeScore${placeSt.index + 1}" value="2" />
+				        		    <label for ="stars${placeSt.index + 1}2" title = "2" >★</label>								
+									<input type="radio" id="stars${placeSt.index + 1}1" name = "placeScore${placeSt.index + 1}" value="1" />
+				        		    <label for ="stars${placeSt.index + 1}1" title = "1" >★</label>		
+				        		    
+				        		    <c:forEach items= "${fn:split(courseInform.courseIdList, ',')}" var= "placeId" varStatus= "placeIdSt">
+				        		    	<c:if test= "${placeSt.index eq placeIdSt.index}">
+				        		    		<input type="hidden" name="place${placeSt.index + 1}" id="place${placeSt.index + 1}" value = "${placeId}">	
+				        		    	</c:if>
+				        		    </c:forEach>
+									
+				      	  		</div>
+						           	          						       						 
+						          </div>
+							
+							</c:forEach>
+							
+							<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif; margin-top:10px;">
+								 &nbsp; ▶ 코스에 대한 리뷰를 남겨주세요.
+							</div>	
+				    	    
+				    	    <div class="courseStarsscore" style = "display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+									<input type="radio" id="courseStars5" name="courseScore" value="5" />
+						            <label for ="courseStars5" title = "5">★</label>
+						            <input type="radio" id="courseStars4" name="courseScore" value="4"/>
+						            <label for ="courseStars4" title = "4" >★</label>
+						            <input type="radio" id="courseStars3" name="courseScore" value="3" />
+						            <label for ="courseStars3" title = "3" >★</label>
+						            <input type="radio" id="courseStars2" name="courseScore" value="2" />
+						            <label for ="courseStars2" title = "2" >★</label>
+						            <input type="radio" id="courseStars1" name="courseScore" value="1" />
+						            <label for ="courseStars1" title = "1" >★</label>
+				           	</div>	
+							
+							<input type="hidden" name="courseId" value= "${courseInform.courseId}">
+							<input type="hidden" name="userId" value= "${sessionScope.user.userId}">
+							<textarea rows="13" cols= "30" name= "content"
+									  style= "padding: 10px; background-color: #F4F4F4; margin: 10px 20px;
+									  		  border: 0px solid" maxlength="400"></textarea>	
+									  		  
+							<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 등록</button> 		  		  					
+						
+						</form>
+						
+					</div>
+		 		</div>			
+			</div>		
+			<!-- 토글 영역 end -->
+			
 			
 	</div>
 	
@@ -173,30 +239,34 @@
 		var mapDiv = document.getElementById('mapArea');
 		var map = new naver.maps.Map(mapDiv);
 		
-	<!-- 리뷰 보기 버튼 클릭시 리뷰리스트 출력 -->
-		var isVisible = false;
-	
-		document.getElementById('showCourseReviews').addEventListener('click', function() {
+	<!-- 리뷰 보기 버튼 클릭시 리뷰리스트 출력 + 리뷰 작성 버튼 클릭시 지도 페이지가 리뷰 작성 페이지로 변화 -->
+		var isListVisible = false;
+		var isWriteVisible = false;
+		var reviewArea = document.getElementById("reviewListPage");
+		var reviewWriteArea = document.getElementById("reviewWritePage");
+		
+		document.getElementById('showCourseReviewList').addEventListener('click', function() {
 			var courseIdForAPI= document.getElementById("thisCourseId").value; 
-			var reviewArea = document.getElementById("reviewContent");
+
+	    	if(reviewWriteArea.style.display ==='block' ) {
+	    		reviewWriteArea.style.display = 'none';
+	    		isWriteVisible = false;
+	    	}
 			
-			if(isVisible) {
+			if(isListVisible) {
 				reviewArea.style.display = 'none'; // 숨기기
 		    } else {
 		    	reviewArea.style.display = 'block'; // 보이기
 		    }
 			
-			isVisible = !isVisible;
+			isListVisible = !isListVisible;
 			
 			axios.get('/course/courseDetail/reviewList', {params: {courseId: courseIdForAPI}})
 			.then(function(response) {
 				
-				console.log(response.data);
-				
 				var reviewContainer = document.getElementById('userReviewList');
 				
 				reviewContainer.innerHTML = '';
-				
 				response.data.forEach(function(review) {
 					  var div = document.createElement('div');
 					  div.style.backgroundColor = '#F6F6F6';
@@ -210,13 +280,28 @@
 					  				  
 					  reviewContainer.appendChild(div);
 					});
-				
 			})
 			.catch(function(error) {
-				
 			});
 			
 		});
+		
+		document.getElementById('showReviewWrite').addEventListener('click', function() {
+	    	if(reviewArea.style.display ==='block' ) {
+	    		reviewArea.style.display = 'none';	
+	    		isListVisible = false;
+	    	}
+	    	
+			if(isWriteVisible) {
+				reviewWriteArea.style.display = 'none'; // 숨기기
+		    } else {
+		    	reviewWriteArea.style.display = 'block'; // 보이기
+		    }
+			isWriteVisible = !isWriteVisible;
+		});
+		
+
+
 		
 	</script>
 </body>

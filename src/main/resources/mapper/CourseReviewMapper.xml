@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.coursetogo.mapper.review.CourseReviewMapper">
+
+ 	<!-- 코스리뷰 Id로 코스리뷰 검색 -->
+ 	<select id="getCourseReviewByReviewId" parameterType="_int" resultType="CourseReviewDTO">
+         SELECT course_review_id AS courseReviewId,
+                user_id AS userId,
+                course_id AS courseId,
+                course_score AS courseScore,
+                content AS content,
+                review_date AS reviewDate
+		FROM course_review
+ 		WHERE course_review_id = #{courseReviewId}
+ 	</select>
+ 	
+ 	<!-- 코스Id로 코스리뷰 검색 -->
+ 	<select id="getCourseReviewByCourseId" parameterType="_int" resultType="CourseReviewDTO">
+ 		SELECT course_score as courseScore, content, course_review_id as courseReviewId
+ 		FROM course_review
+ 		WHERE course_id = #{courseId}
+ 	</select>
+ 	
+	<!-- userId로 CourseReview 객체 리스트 반환 -->
+ 	<select id="getCourseReviewByUserId" parameterType="_int" resultType="CourseReviewDTO">
+ 		SELECT course_review_id AS courseReviewId,
+ 			   user_id AS userId,
+ 			   course_id AS courseId,
+ 			   course_score AS courseScore,
+ 			   content AS content,
+ 			   review_date AS reviewDate
+ 		FROM course_review
+ 		WHERE user_id = #{userId}
+ 	</select>	
+ 	
+ 	<!-- userId + courseId로 코스리뷰 검색 -->
+    <select id="getCourseReviewByUserIdAndCourseId" parameterType="_int" resultType="CourseReviewDTO">
+         SELECT course_review_id AS courseReviewId,
+                user_id AS userId,
+                course_id AS courseId,
+                course_score AS courseScore,
+                content AS content,
+                review_date AS reviewDate
+         FROM course_review
+         WHERE user_id = #{userId}
+           AND course_id = #{courseId}
+     </select>         
+ 	
+    <!-- 코스리뷰 등록 -->
+ 	<insert id="insertCourseReview" parameterType="CourseReviewDTO">
+ 		INSERT INTO course_review (course_review_id, course_id, user_id,content,review_date,course_score) 
+ 		VALUES (course_review_id_seq.nextval, #{courseId}, #{userId}, #{content}, sysdate, #{courseScore})
+ 	</insert>
+ 	
+ 	<!-- 코스리뷰 수정 -->
+ 	<update id="updateCourseReview" parameterType="CourseReviewDTO">
+ 		UPDATE course_review
+ 		SET content = #{content}, 
+ 			course_score = #{courseScore}, 
+ 			review_date = sysdate
+ 		WHERE course_review_id = #{courseReviewId}
+ 	</update>
+ 	
+ 	<!-- 코스리뷰 삭제 -->
+ 	<delete id="deleteCourseReviewByReviewId" parameterType="_int">
+ 		DELETE FROM course_review
+ 		WHERE course_review_id = #{courseReviewId}
+ 	</delete>
+
+	<!-- 코스리뷰왕 -->
+	<select id="getReviewTop3" resultType="java.lang.Integer">
+    <![CDATA[
+	    SELECT countList.user_id
+	    FROM (
+	          SELECT user_id, COUNT(user_id) AS countReview
+	          FROM course_review
+	          GROUP BY user_id
+	          HAVING COUNT(user_id) > 1
+	          ORDER BY COUNT(user_id) DESC
+	    	  ) countList
+	    WHERE ROWNUM <= 3
+	 ]]>
+	</select>
+
+ </mapper>

@@ -1,0 +1,86 @@
+div[class^=starsscore]{
+ text-align:center;
+ display:flex;
+ direction: rtl;
+ font-size:25px;
+ padding:0 .2em;
+}
+
+div[class^=starsscore] input{
+display:none;
+}
+
+div[class^=starsscore] label {
+  color:#A6A6A6;
+  cursor:pointer;
+}
+
+div[class^=starsscore] :checked ~ label{
+  color:#ffd400;
+}
+
+div[class^=starsscore] label:hover,
+div[class^=starsscore] label:hover ~ label {
+  color:#ffd700;
+}
+
+div[class^=courseStarsscore]{
+ text-align:center;
+ display:flex;
+ direction: rtl;
+ font-size:25px;
+ padding:0 .2em;
+}
+
+div[class^=courseStarsscore] input{
+display:none;
+}
+
+div[class^=courseStarsscore] label {
+  color:#A6A6A6;
+  cursor:pointer;
+}
+
+div[class^=courseStarsscore] :checked ~ label{
+  color:#ffd400;
+}
+
+div[class^=courseStarsscore] label:hover,
+div[class^=courseStarsscore] label:hover ~ label {
+  color:#ffd700;
+}
+
+       .stars::before {
+		  content: "★";
+  		  color:#A6A6A6;
+		}
+		
+		.stars[data-score="1"]::before {
+		  content: "★";
+		  color:#ffd400;
+   		  font-size:20px;
+		}
+		
+		.stars[data-score="2"]::before {
+		  content: "★★";
+		  color:#ffd400;
+   		  font-size:20px;	  
+		}
+		
+		.stars[data-score="3"]::before {
+		  content: "★★★";
+		  color:#ffd400;
+   		  font-size:20px;
+  		}
+		
+		.stars[data-score="4"]::before {
+		  content: "★★★★";
+		  color:#ffd400;
+   		  font-size:20px;
+		}
+		
+		.stars[data-score="5"]::before {
+		  content: "★★★★★";
+		  color:#ffd400;
+   		  font-size:20px;
+		}

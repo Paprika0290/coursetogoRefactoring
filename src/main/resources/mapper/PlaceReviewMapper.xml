@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.coursetogo.mapper.review.PlaceReviewMapper">
+
+	<!-- 장소리뷰 Id로 장소리뷰 검색 -->
+     <select id="getPlaceReviewByReviewId" resultType="PlaceReviewDTO">
+        SELECT place_review_id AS placeReviewId,
+               user_id AS userId,
+               place_id AS placeId,
+               place_score AS placeScore,
+               review_date AS reviewDate
+ 		FROM place_review
+ 		WHERE place_review_id = #{placeReviewId}
+ 	</select>
+ 	
+     <!-- UserId + PlaceId로 장소리뷰 검색하기 -->
+     <select id="getPlaceReviewByUserIdAndPlaceId" parameterType="_int" resultType="PlaceReviewDTO">
+         SELECT place_review_id AS placeReviewId,
+                user_id AS userId,
+                place_id AS placeId,
+                place_score AS placeScore,
+                review_date AS reviewDate
+         FROM place_review
+         WHERE user_id = #{userId}
+           AND place_id = #{placeId}  
+     </select>
+ 	
+    <!-- 장소리뷰 등록 -->
+ 	<insert id="insertPlaceReview" parameterType="PlaceReviewDTO">
+ 		INSERT INTO place_review (place_review_id, place_id, user_id, review_date,place_score) 
+ 		VALUES (place_review_id_seq.nextval, #{placeId}, #{userId}, sysdate, #{placeScore} )
+
+ 	</insert>
+ 	
+ 	<!-- 장소리뷰 수정 -->
+ 	<update id="updatePlaceReview" parameterType="PlaceReviewDTO">
+ 		UPDATE place_review
+ 		SET place_score = #{placeScore}, 
+ 	        review_date = sysdate
+ 		WHERE place_id = #{placeId}
+ 	</update>
+ 	
+ 	<!-- 장소리뷰 삭제 -->
+ 	<delete id="deletePlaceReviewByReviewId" parameterType="_int">
+ 		DELETE FROM place_review
+ 		WHERE place_review_id = #{placeReviewId}
+ 	</delete>
+ 	
+ 	<!-- 장소리뷰왕 -->
+	<select id="getReviewTop3" resultType="java.lang.Integer">
+    <![CDATA[
+	    SELECT countList.user_id
+	    FROM (
+	          SELECT user_id, COUNT(user_id) AS countReview
+	          FROM place_review
+	          GROUP BY user_id
+	          HAVING COUNT(user_id) > 1
+	          ORDER BY COUNT(user_id) DESC
+	    	  ) countList
+	    WHERE ROWNUM <= 3
+	 ]]>
+	</select>
+ 	
+ </mapper>
