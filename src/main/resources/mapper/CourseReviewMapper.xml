@@ -51,7 +51,7 @@
  	
     <!-- 코스리뷰 등록 -->
  	<insert id="insertCourseReview" parameterType="CourseReviewDTO">
- 		INSERT INTO course_review (course_review_id, course_id, user_id,content,review_date,course_score) 
+ 		INSERT INTO course_review (course_review_id, course_id, user_id, content,review_date,course_score) 
  		VALUES (course_review_id_seq.nextval, #{courseId}, #{userId}, #{content}, sysdate, #{courseScore})
  	</insert>
  	

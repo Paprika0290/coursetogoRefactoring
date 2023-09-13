@@ -56,8 +56,11 @@ public class ReviewController {
 									  @ModelAttribute("place5") String placeId5,
 									  HttpSession session) {
 		
-		CtgUserDTO user = (CtgUserDTO) session.getAttribute("user");		
-        int userId = user.getUserId();
+		int userId = 0;
+		
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}
         
 		// filterNullValues는 주어진 문자열 배열에서 null이 아니고 빈 문자열이 아닌 값들만 걸러내는 메서드
 		String[] placeScores = filterNullValues(placeScore1, placeScore2, placeScore3, placeScore4, placeScore5);
@@ -84,7 +87,7 @@ public class ReviewController {
                                         try {
                                             placeReviewService.insertPlaceReview(insertedPlaceReview);
                                         } catch (Exception e) {
-                                           	log.warn("코스리뷰 신규 등록 실패");
+                                           	log.warn("장소리뷰 신규 등록 실패");
                                         }
                                         
                             // 매긴 적 있다면---------------------------------    
@@ -92,7 +95,7 @@ public class ReviewController {
                                         try {
                                             placeReviewService.updatePlaceReview(insertedPlaceReview);
                                         } catch (Exception e) {
-                                        	log.warn("코스리뷰 수정 실패");
+                                        	log.warn("장소리뷰 수정 실패");
                                         }
                             }    
 				}
@@ -108,4 +111,55 @@ public class ReviewController {
         return "redirect:/course/courseDetail?courseId=" + courseReview.getCourseId();
 	}
 	
+	@PostMapping("/review/reviewUpdate")
+	public String updateNewCourseReview(@ModelAttribute CourseReviewDTO courseReview,
+										@ModelAttribute("placeScore1") String placeScore1,
+										@ModelAttribute("placeScore2") String placeScore2,
+									    @ModelAttribute("placeScore3") String placeScore3,
+									 	@ModelAttribute("placeScore4") String placeScore4,
+										@ModelAttribute("placeScore5") String placeScore5,
+										@ModelAttribute("place1") String placeId1,
+										@ModelAttribute("place2") String placeId2,
+										@ModelAttribute("place3") String placeId3,
+										@ModelAttribute("place4") String placeId4,
+										@ModelAttribute("place5") String placeId5,
+										HttpSession session) {
+		
+		int userId = 0;
+		
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}
+        
+		// filterNullValues는 주어진 문자열 배열에서 null이 아니고 빈 문자열이 아닌 값들만 걸러내는 메서드
+		String[] placeScores = filterNullValues(placeScore1, placeScore2, placeScore3, placeScore4, placeScore5);
+		String[] placeIds = filterNullValues(placeId1, placeId2, placeId3, placeId4, placeId5);
+		
+		System.out.println("받아온 코스리뷰 출력 : " + courseReview);
+        
+        // 장소리뷰 수정하기-------------------------------------------------------------------
+        for (int i = 0; i < placeIds.length; i++) {
+                
+                if (placeScores[i] != null && placeIds[i] != null) {
+                    PlaceReviewDTO insertedPlaceReview = new PlaceReviewDTO(userId, Integer.parseInt(placeIds[i]), Integer.parseInt(placeScores[i]));
+       
+                    try {
+                        placeReviewService.updatePlaceReview(insertedPlaceReview);
+                    } catch (Exception e) {
+                    	log.warn("장소리뷰 수정 실패");
+                    }
+
+				}
+        }
+				
+        // 코스리뷰 수정하기-------------------------------------------------------------------
+        try {
+            courseReviewService.updateCourseReview(courseReview);
+        } catch (Exception e) {
+            log.warn("코스리뷰 수정 실패");
+            e.printStackTrace();
+        }
+ 
+        return "redirect:/course/courseDetail?courseId=" + courseReview.getCourseId();
+	}
 }

@@ -125,8 +125,15 @@
              	</button>
 
 			 	<c:if test="${not empty sessionScope.user.userId}">
-				    <button class="courseDetailButton" type="button" id= "showReviewWrite"
-				    		style= "padding-left: 20px; padding-right: 20px; color: #FFFFFF">리뷰 작성하기</button>
+			 		<c:if test = "${isAlreadyWroteUser eq false}">
+				 		<button class="courseDetailButton" type="button" id= "showReviewWrite"
+					    		style= "padding-left: 20px; padding-right: 20px; color: #FFFFFF">리뷰 작성하기</button>
+			 		</c:if>
+			 		
+			 		<c:if test = "${isAlreadyWroteUser eq true}">
+				 		<button class="courseDetailButton" type="button" id= "showReviewUpdate"
+					    		style= "padding-left: 20px; padding-right: 20px; color: #FFFFFF">리뷰 수정하기</button>
+			 		</c:if>  
 				</c:if>
 				
 				<c:if test="${empty sessionScope.user.userId}">
@@ -138,8 +145,13 @@
 			</div>	
 			
 			
+			<!-- JS에서 활용을 위해 담아둔 값들 -->
 			<input type= "hidden" id= "thisCourseId" value="${courseInform.courseId}">
 			<input type= "hidden" id= "thisCourseReviewList">
+			<input type="hidden" id ="thisUserId" value="${sessionScope.user.userId}">
+			<input type= "hidden" id= "isAlreadyWrote" value= "${isAlreadyWroteUser}">
+			<input type= "hidden" id= "placeCount" value= "${courseInform.courseNumber}">
+			<input type= "hidden" id= "placeList" value= "${courseInform.courseIdList}">
 						
 						
 			<!-- 토글 영역  start -->
@@ -150,84 +162,163 @@
 			
 			<div id="reviewWritePage" class="informArea" style= "right: 200px; overflow: auto; width: 300px; display: none;">
 				<div id= "reviewWrite" style= "margin-top: 30px;">
-				<br><br>
-					<div style= "margin-bottom: 40px;">
-						<b style = "background-color: #F4F4F4;
-	               	   				padding: 20px 110px;
-	               	   				font-size: 15pt;">리뷰 작성</b>
-					</div>
-	
-					<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif;">
-						 &nbsp; ▶ 각 장소에 별점을 매겨주세요.
-					</div>	
-					
-					<div style = "margin-top: 11px;">
-						<form action= "/review/reviewWrite" method= "POST" id = "insertReview">
+					<br><br>
+						<div style= "margin-bottom: 40px;">
+							<b style = "background-color: #F4F4F4;
+		               	   				padding: 20px 110px;
+		               	   				font-size: 15pt;">리뷰 작성</b>
+						</div>
+		
+						<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif;">
+							 &nbsp; ▶ 각 장소에 별점을 매겨주세요.
+						</div>	
 						
-							<c:forEach items= "${fn:split(courseInform.courseList, ',')}" var="place" varStatus= "placeSt">
-			                      <div class="place" style = "padding: 4.5px 10px;
-					                       							 margin-bottom: 32px;
-						                       						 background-color: #B8CCD9;
-						                       						 color: white;
-						                       						 font-family: 'TheJamsil3Regular', sans-serif;
-						                       						 font-size: 11pt;">
-           						<div class="starsscore${placeSt.index + 1}" style = "display: flex; justify-content: center; align-items: center;">	
-						      	  	<input type="radio" id="stars${placeSt.index + 1}5" name = "placeScore${placeSt.index + 1}" value="5" />
-			  			            <label for ="stars${placeSt.index + 1}5" title = "5" >★</label>
-									<input type="radio" id="stars${placeSt.index + 1}4" name = "placeScore${placeSt.index + 1}" value="4" />
-				        		    <label for ="stars${placeSt.index + 1}4" title = "4" >★</label>						
-									<input type="radio" id="stars${placeSt.index + 1}3" name = "placeScore${placeSt.index + 1}" value="3" />
-				        		    <label for ="stars${placeSt.index + 1}3" title = "3">★</label>								
-									<input type="radio" id="stars${placeSt.index + 1}2" name = "placeScore${placeSt.index + 1}" value="2" />
-				        		    <label for ="stars${placeSt.index + 1}2" title = "2" >★</label>								
-									<input type="radio" id="stars${placeSt.index + 1}1" name = "placeScore${placeSt.index + 1}" value="1" />
-				        		    <label for ="stars${placeSt.index + 1}1" title = "1" >★</label>		
-				        		    
-				        		    <c:forEach items= "${fn:split(courseInform.courseIdList, ',')}" var= "placeId" varStatus= "placeIdSt">
-				        		    	<c:if test= "${placeSt.index eq placeIdSt.index}">
-				        		    		<input type="hidden" name="place${placeSt.index + 1}" id="place${placeSt.index + 1}" value = "${placeId}">	
-				        		    	</c:if>
-				        		    </c:forEach>
-									
-				      	  		</div>
-						           	          						       						 
-						          </div>
+						<div style = "margin-top: 11px;">
+							<form action= "/review/reviewWrite" method= "POST" id = "insertReview">
 							
-							</c:forEach>
+								<c:forEach items= "${fn:split(courseInform.courseList, ',')}" var="place" varStatus= "placeSt">
+				                      <div class="place" style = "padding: 4.5px 10px;
+						                       							 margin-bottom: 32px;
+							                       						 background-color: #B8CCD9;
+							                       						 color: white;
+							                       						 font-family: 'TheJamsil3Regular', sans-serif;
+							                       						 font-size: 11pt;">
+	           						<div class="starsscore${placeSt.index + 1}" style = "display: flex; justify-content: center; align-items: center;">	
+							      	  	<input type="radio" id="stars${placeSt.index + 1}5" name = "placeScore${placeSt.index + 1}" value="5" />
+				  			            <label for ="stars${placeSt.index + 1}5" title = "5" >★</label>
+										<input type="radio" id="stars${placeSt.index + 1}4" name = "placeScore${placeSt.index + 1}" value="4" />
+					        		    <label for ="stars${placeSt.index + 1}4" title = "4" >★</label>						
+										<input type="radio" id="stars${placeSt.index + 1}3" name = "placeScore${placeSt.index + 1}" value="3" />
+					        		    <label for ="stars${placeSt.index + 1}3" title = "3">★</label>								
+										<input type="radio" id="stars${placeSt.index + 1}2" name = "placeScore${placeSt.index + 1}" value="2" />
+					        		    <label for ="stars${placeSt.index + 1}2" title = "2" >★</label>								
+										<input type="radio" id="stars${placeSt.index + 1}1" name = "placeScore${placeSt.index + 1}" value="1" />
+					        		    <label for ="stars${placeSt.index + 1}1" title = "1" >★</label>			
+					        		    
+					        		    <c:forEach items= "${fn:split(courseInform.courseIdList, ',')}" var= "placeId" varStatus= "placeIdSt">
+					        		    	<c:if test= "${placeSt.index eq placeIdSt.index}">
+					        		    		<input type="hidden" name="place${placeSt.index + 1}" id="place${placeSt.index + 1}" value = "${placeId}">	
+					        		    	</c:if>
+					        		    </c:forEach>
+										
+					      	  		</div>
+							           	          						       						 
+							          </div>
+								
+								</c:forEach>
+								
+								<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif; margin-top:10px;">
+									 &nbsp; ▶ 코스에 대한 리뷰를 남겨주세요.
+								</div>	
+					    	    
+					    	    <div class="courseStarsscore" style = "display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+										<input type="radio" id="courseStars5" name="courseScore" value="5" />
+							            <label for ="courseStars5" title = "5">★</label>
+							            <input type="radio" id="courseStars4" name="courseScore" value="4"/>
+							            <label for ="courseStars4" title = "4" >★</label>
+							            <input type="radio" id="courseStars3" name="courseScore" value="3" />
+							            <label for ="courseStars3" title = "3" >★</label>
+							            <input type="radio" id="courseStars2" name="courseScore" value="2" />
+							            <label for ="courseStars2" title = "2" >★</label>
+							            <input type="radio" id="courseStars1" name="courseScore" value="1" />
+							            <label for ="courseStars1" title = "1" >★</label>
+					           	</div>	
+								
+								<input type="hidden" name="courseId" value= "${courseInform.courseId}">
+								<input type="hidden" name="userId" value= "${sessionScope.user.userId}">
+								<textarea rows="13" cols= "30" name= "content"
+										  style= "padding: 10px; background-color: #F4F4F4; margin: 10px 20px;
+										  		  border: 0px solid" maxlength="400"></textarea>	
+										  		  
+								<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 등록</button> 		  		  					
 							
-							<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif; margin-top:10px;">
-								 &nbsp; ▶ 코스에 대한 리뷰를 남겨주세요.
-							</div>	
-				    	    
-				    	    <div class="courseStarsscore" style = "display: flex; justify-content: center; align-items: center; margin-top: 10px;">
-									<input type="radio" id="courseStars5" name="courseScore" value="5" />
-						            <label for ="courseStars5" title = "5">★</label>
-						            <input type="radio" id="courseStars4" name="courseScore" value="4"/>
-						            <label for ="courseStars4" title = "4" >★</label>
-						            <input type="radio" id="courseStars3" name="courseScore" value="3" />
-						            <label for ="courseStars3" title = "3" >★</label>
-						            <input type="radio" id="courseStars2" name="courseScore" value="2" />
-						            <label for ="courseStars2" title = "2" >★</label>
-						            <input type="radio" id="courseStars1" name="courseScore" value="1" />
-						            <label for ="courseStars1" title = "1" >★</label>
-				           	</div>	
+							</form>
 							
-							<input type="hidden" name="courseId" value= "${courseInform.courseId}">
-							<input type="hidden" name="userId" value= "${sessionScope.user.userId}">
-							<textarea rows="13" cols= "30" name= "content"
-									  style= "padding: 10px; background-color: #F4F4F4; margin: 10px 20px;
-									  		  border: 0px solid" maxlength="400"></textarea>	
-									  		  
-							<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 등록</button> 		  		  					
+						</div>
+			 		</div>
+		 		</div>
+		 		
+				<div id="reviewUpdatePage" class="informArea" style= "right: 200px; overflow: auto; width: 300px; display: none;">
+					<div id= "reviewUpdate" style= "margin-top: 30px;">
+					<br><br>
+						<div style= "margin-bottom: 40px;">
+							<b style = "background-color: #F4F4F4;
+		               	   				padding: 20px 110px;
+		               	   				font-size: 15pt;">리뷰 수정</b>
+						</div>
+		
+						<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif;">
+							 &nbsp; ▶ 각 장소 별점을 수정해주세요.
+						</div>	
 						
-						</form>
-						
-					</div>
-		 		</div>			
+						<div style = "margin-top: 11px;">
+							<form action= "/review/reviewUpdate" method= "POST" id = "UpdateReview">
+							
+								<c:forEach items= "${fn:split(courseInform.courseList, ',')}" var="place" varStatus= "placeSt">
+				                      <div class="place" style = "padding: 4.5px 10px;
+						                       							 margin-bottom: 32px;
+							                       						 background-color: #B8CCD9;
+							                       						 color: white;
+							                       						 font-family: 'TheJamsil3Regular', sans-serif;
+							                       						 font-size: 11pt;">
+	           						<div class="starsscore${placeSt.index + 1}" style = "display: flex; justify-content: center; align-items: center;">	
+							      	  	<input type="radio" id="starsUpdate${placeSt.index + 1}5" name = "placeScore${placeSt.index + 1}" value="5" />
+				  			            <label for ="starsUpdate${placeSt.index + 1}5" title = "5" >★</label>
+										<input type="radio" id="starsUpdate${placeSt.index + 1}4" name = "placeScore${placeSt.index + 1}" value="4" />
+					        		    <label for ="starsUpdate${placeSt.index + 1}4" title = "4" >★</label>						
+										<input type="radio" id="starsUpdate${placeSt.index + 1}3" name = "placeScore${placeSt.index + 1}" value="3" />
+					        		    <label for ="starsUpdate${placeSt.index + 1}3" title = "3">★</label>								
+										<input type="radio" id="starsUpdate${placeSt.index + 1}2" name = "placeScore${placeSt.index + 1}" value="2" />
+					        		    <label for ="starsUpdate${placeSt.index + 1}2" title = "2" >★</label>								
+										<input type="radio" id="starsUpdate${placeSt.index + 1}1" name = "placeScore${placeSt.index + 1}" value="1" />
+					        		    <label for ="starsUpdate${placeSt.index + 1}1" title = "1" >★</label>
+					        		    					        		    
+					        		    <c:forEach items= "${fn:split(courseInform.courseIdList, ',')}" var= "placeId" varStatus= "placeIdSt">
+					        		    	<c:if test= "${placeSt.index eq placeIdSt.index}">
+					        		    		<input type="hidden" name="place${placeSt.index + 1}" id="place${placeSt.index + 1}" value = "${placeId}">	
+					        		    	</c:if>
+					        		    </c:forEach>
+										
+					      	  		</div>
+							           	          						       						 
+							          </div>
+								
+								</c:forEach>
+								
+								<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif; margin-top:10px;">
+									 &nbsp; ▶ 코스에 대한 리뷰를 수정해주세요.
+								</div>	
+					    	    
+					    	    <div class="courseStarsscore" style = "display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+										<input type="radio" id="courseStarsUpdate5" name="courseScore" value="5" />
+							            <label for ="courseStarsUpdate5" title = "5">★</label>
+							            <input type="radio" id="courseStarsUpdate4" name="courseScore" value="4"/>
+							            <label for ="courseStarsUpdate4" title = "4" >★</label>
+							            <input type="radio" id="courseStarsUpdate3" name="courseScore" value="3" />
+							            <label for ="courseStarsUpdate3" title = "3" >★</label>
+							            <input type="radio" id="courseStarsUpdate2" name="courseScore" value="2" />
+							            <label for ="courseStarsUpdate2" title = "2" >★</label>
+							            <input type="radio" id="courseStarsUpdate1" name="courseScore" value="1" />
+							            <label for ="courseStarsUpdate1" title = "1" >★</label>
+					           	</div>	
+								
+				    		
+								<input type="hidden" name= "courseReviewId" id="UpdateCourseReviewId">
+								<input type="hidden" name="courseId" value= "${courseInform.courseId}">
+								<input type="hidden" name="userId" value= "${sessionScope.user.userId}">
+								<textarea rows="13" cols= "30" name= "content" id="courseReviewContent"
+										  style= "padding: 10px; background-color: #F4F4F4; margin: 10px 20px;
+										  		  border: 0px solid" maxlength="400"></textarea>	
+										  		  
+								<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 수정</button> 		  		  					
+								<button type= "button" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 삭제</button>
+															
+							</form>
+							
+						</div>
+		 		</div>						
 			</div>		
 			<!-- 토글 영역 end -->
-			
-			
 	</div>
 	
    	<footer>
@@ -240,17 +331,116 @@
 		var map = new naver.maps.Map(mapDiv);
 		
 	<!-- 리뷰 보기 버튼 클릭시 리뷰리스트 출력 + 리뷰 작성 버튼 클릭시 지도 페이지가 리뷰 작성 페이지로 변화 -->
+		var userIdInput = document.getElementById('thisUserId').value;	
+		var isAlready = document.getElementById('isAlreadyWrote').value;
+		var courseIdForAPI= document.getElementById("thisCourseId").value; 
+		
+		console.log(userIdInput);
+		console.log(isAlready);
+		
 		var isListVisible = false;
 		var isWriteVisible = false;
+		var isUpdateVisible = false;
 		var reviewArea = document.getElementById("reviewListPage");
 		var reviewWriteArea = document.getElementById("reviewWritePage");
+		var reviewUpdateArea = document.getElementById("reviewUpdatePage");
+		
+		if(userIdInput !== "") {
+			
+			if(isAlready === "true") {
+				console.log("이미 리뷰함");
+				
+				// 코스리뷰 content
+				var reviewContent = document.getElementById("courseReviewContent");
+				var places = document.getElementById("placeList").value;
+				var placeCount = document.getElementById("placeCount").value;
+				
+				document.getElementById('showReviewUpdate').addEventListener('click', function() {
+			    	if(reviewArea.style.display ==='block' ) {
+			    		reviewArea.style.display = 'none';	
+			    		isListVisible = false;
+			    	}
+			    	
+					if(isUpdateVisible) {
+						reviewUpdateArea.style.display = 'none'; // 숨기기
+				    } else {
+				    	reviewUpdateArea.style.display = 'block'; // 보이기
+				    	
+				    	// 코스리뷰 조회
+				    	axios.get('/review/getCourseReview', {
+							  params: {
+								    userId: userIdInput,
+								    courseId: courseIdForAPI
+								  }
+								}
+				    			
+				    	).then(function(response) {
+				    		var res = response.data;
+				    		reviewContent.value = res.content;
+				    		var elementId = "courseStarsUpdate" + res.courseScore;
+				    		document.getElementById(elementId).checked = true;
+				    		
+				    		document.getElementById("UpdateCourseReviewId").value = res.courseReviewId;
+				    	}).catch(function(error) {
+				    		console.log("기존 코스리뷰 조회 불가");
+				    	});
+				    	
+				    	// 장소리뷰 조회
+				    	axios.get('/review/getPlaceReviews', {
+							  params: {
+								    userId: userIdInput,
+								    places: places
+								  }
+								}
+				    			
+				    	).then(function(response) {
+				    		var res = response.data;
+				    		
+				    		for (let i = 0; i < placeCount; i++) {
+								var elementId = "starsUpdate" + (i + 1) + res[i];
+								document.getElementById(elementId).checked = true;
+								console.log(elementId);
+				    		}
+				    		
+				    	}).catch(function(error) {
+				    		console.log("기존 장소리뷰 조회 불가");
+				    	});
+				    	
+				    	
+				    	reviewContent.addEventListener("click", function() {
+				    		reviewContent.value = "";
+				    	  });
+				    	
+				    }
+					
+					isUpdateVisible = !isUpdateVisible;
+				});
+			}else if(isAlready === "false") {
+				console.log("아직 리뷰안함");
+				document.getElementById('showReviewWrite').addEventListener('click', function() {
+			    	if(reviewArea.style.display ==='block' ) {
+			    		reviewArea.style.display = 'none';	
+			    		isListVisible = false;
+			    	}
+			    	
+					if(isWriteVisible) {
+						reviewWriteArea.style.display = 'none'; // 숨기기
+				    } else {
+				    	reviewWriteArea.style.display = 'block'; // 보이기
+				    }
+					isWriteVisible = !isWriteVisible;
+				});
+			}
+			
+		}	
 		
 		document.getElementById('showCourseReviewList').addEventListener('click', function() {
-			var courseIdForAPI= document.getElementById("thisCourseId").value; 
-
 	    	if(reviewWriteArea.style.display ==='block' ) {
 	    		reviewWriteArea.style.display = 'none';
 	    		isWriteVisible = false;
+	    	} else if (reviewUpdateArea.style.display === 'block') {
+	    		reviewUpdateArea.style.display = 'none';
+	    		isUpdateVisible = false;
 	    	}
 			
 			if(isListVisible) {
@@ -285,23 +475,6 @@
 			});
 			
 		});
-		
-		document.getElementById('showReviewWrite').addEventListener('click', function() {
-	    	if(reviewArea.style.display ==='block' ) {
-	    		reviewArea.style.display = 'none';	
-	    		isListVisible = false;
-	    	}
-	    	
-			if(isWriteVisible) {
-				reviewWriteArea.style.display = 'none'; // 숨기기
-		    } else {
-		    	reviewWriteArea.style.display = 'block'; // 보이기
-		    }
-			isWriteVisible = !isWriteVisible;
-		});
-		
-
-
 		
 	</script>
 </body>
