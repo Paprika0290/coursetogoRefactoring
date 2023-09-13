@@ -21,7 +21,9 @@ import com.coursetogo.controller.review.ReviewController;
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
 import com.coursetogo.dto.review.CourseReviewDTO;
+import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.service.course.CourseService;
+import com.coursetogo.service.review.CourseReviewService;
 import com.coursetogo.service.user.CtgUserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,9 @@ public class MainController {
 	
 	@Autowired
 	private CtgUserService userService;
+	
+	@Autowired
+	private CourseReviewService courseReviewService;
 	
 	
 	// 도메인 주소로 접속 시 첫 화면 출력
@@ -81,33 +86,53 @@ public class MainController {
 	@PostMapping("/course/courseMake")
 	public String insertNewCourse(@ModelAttribute CourseDTO course,
 								  Model mdoel) {
-		System.out.println(course);
-		
-		
-		
+		System.out.println(course);	
 		return "";
 	}
 	
 	// 코스 상세 페이지
 	@GetMapping("course/courseDetail")
 	public String getCourseDetailPage(@RequestParam("courseId") String courseId,
-									  Model model) {
+									  Model model, HttpSession session) {
+		
+		// 이미 리뷰를 작성한 유저인지 판별, 판별값을 페이지로 전달
+	    // 유저 아이디는 1부터 시작. NullPointerException 대책으로 설정 
+		int userId = 0;
+		
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}
+		
+		
+		boolean isAlreadyWroteUser = false; //true: 이미 작성함 / false: 작성하지 않음
+		
+		
+		try {
+			if(courseReviewService.getCourseReviewByUserIdAndCourseId(userId, Integer.parseInt(courseId)) != null) {
+				isAlreadyWroteUser = true;
+			};
+		} catch (NumberFormatException | SQLException e) {
+			log.warn("리뷰 작성여부 확인 실패");
+		}		
+		
+		// 작성자의 사진과 코스 정보를 조회, 페이지로 전달
 		CourseInformDTO courseInform = null;
-
 		String userPhoto = null;
 		
 		try {
 			log.info(courseId + "번 코스 조회");
 			courseInform = courseService.getCourseInformByCourseId(Integer.parseInt(courseId));
-			int userId = courseService.getCourseById(courseInform.getCourseId()).getUserId();
-			userPhoto = userService.getCtgUserByUserId(userId).getUserPhoto();
+			int courseMadeUserId = courseService.getCourseById(courseInform.getCourseId()).getUserId();
+			userPhoto = userService.getCtgUserByUserId(courseMadeUserId).getUserPhoto();
 		} catch (Exception e) {
 			log.warn("코스 상세 페이지 return 실패");
 			e.printStackTrace();
 		}
 
+		model.addAttribute("isAlreadyWroteUser", isAlreadyWroteUser);
 		model.addAttribute("courseInform", courseInform);
 		model.addAttribute("userPhoto", userPhoto);
+		
 		
 		return "map_CourseDetail";
 	}
@@ -159,6 +184,5 @@ public class MainController {
 		
 		return "map_CourseList";
 	}
-	
 	
 }
