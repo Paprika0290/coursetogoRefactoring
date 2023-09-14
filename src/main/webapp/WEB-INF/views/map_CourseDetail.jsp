@@ -310,9 +310,11 @@
 										  style= "padding: 10px; background-color: #F4F4F4; margin: 10px 20px;
 										  		  border: 0px solid" maxlength="400"></textarea>	
 										  		  
-								<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 수정</button> 		  		  					
-								<button type= "button" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 삭제</button>
-															
+								<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 수정</button>			
+								<button type= "button" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;"
+							 			id="courseReviewDelete">
+							 	리뷰 삭제</button>			
+							 				
 							</form>
 							
 						</div>
@@ -328,15 +330,23 @@
 	<script>
 	<!-- 지도 출력 -->
 		var mapDiv = document.getElementById('mapArea');
-		var map = new naver.maps.Map(mapDiv);
+		<!-- 기본 위치를 광화문으로 설정 -->
+		var map = new naver.maps.Map(mapDiv, {center: new naver.maps.LatLng(37.576026, 126.9768428), zoom: 15});
+		
+		var directions = new naver.maps.Directions({map: map});
+		
+		directions.route({
+						
+		});
+		
+		
+		
+		
 		
 	<!-- 리뷰 보기 버튼 클릭시 리뷰리스트 출력 + 리뷰 작성 버튼 클릭시 지도 페이지가 리뷰 작성 페이지로 변화 -->
 		var userIdInput = document.getElementById('thisUserId').value;	
 		var isAlready = document.getElementById('isAlreadyWrote').value;
 		var courseIdForAPI= document.getElementById("thisCourseId").value; 
-		
-		console.log(userIdInput);
-		console.log(isAlready);
 		
 		var isListVisible = false;
 		var isWriteVisible = false;
@@ -348,7 +358,6 @@
 		if(userIdInput !== "") {
 			
 			if(isAlready === "true") {
-				console.log("이미 리뷰함");
 				
 				// 코스리뷰 content
 				var reviewContent = document.getElementById("courseReviewContent");
@@ -399,7 +408,6 @@
 				    		for (let i = 0; i < placeCount; i++) {
 								var elementId = "starsUpdate" + (i + 1) + res[i];
 								document.getElementById(elementId).checked = true;
-								console.log(elementId);
 				    		}
 				    		
 				    	}).catch(function(error) {
@@ -476,6 +484,23 @@
 			
 		});
 		
+		var reviewDelete = document.getElementById('courseReviewDelete');
+		var thisCourseReviewId = document.getElementById("UpdateCourseReviewId").value;
+		
+		reviewDelete.addEventListener('click', function() {
+			  axios.get('/review/reviewDelete', {params: {userId: userIdInput, courseId: courseIdForAPI}})
+			    .then(response => {
+			      console.log('리뷰 삭제 성공');
+			    })
+			    .catch(error => {
+			      console.log('리뷰 삭제 실패');
+			    });
+			});
+		
+		
 	</script>
+	
+	
+	
 </body>
 </html>
