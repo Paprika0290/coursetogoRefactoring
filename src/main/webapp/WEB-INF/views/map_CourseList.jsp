@@ -11,7 +11,7 @@
 <html>
 <head>
      <title>Searching Courses</title> 
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+     <link rel="stylesheet" type="text/css" href="/css/starScore.css">
  	 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 	 <style>
@@ -69,8 +69,18 @@
 			    	 		</c:forEach>
 						<p style= "position: flex; flex-direction: row; justify-content: center;">
 							&nbsp;&nbsp;&nbsp;
-							${courseInformDTO.userNickname} 님의 < <a href="/course/courseDetail?${query}" style= "text-decoration: none;"><span style="color: #FF962B;">${courseInformDTO.courseName}</span></a> > 코스
+							${courseInformDTO.userNickname} 님의 < <a href="/course/courseDetail?${query}" style= "text-decoration: none;"><span style="color: #FF962B;">${courseInformDTO.courseName}</span></a> > 코스 &nbsp;&nbsp;
 						</p>
+						<div style = "background-color: #eeeeee; display: flex; align-items: center; border-radius: 5px; padding: 0px 10px;" >
+							<span style = "color: #636363;"> 평균 별점 : </span>
+							<div class="stars small" id= "courseAvgScore${courseSt.index}" style= "margin-left: 10px; font-size: 20px; display: flex; justify-content: flex-end; " data-score="${courseInformDTO.courseAvgScore}"></div>
+										<script>
+											var courseStars = courseStars = document.getElementById("courseAvgScore${courseSt.index}");
+											courseStars.setAttribute("data-score", Math.floor(courseStars.getAttribute("data-score")));
+										</script>
+						</div>
+						
+						
 					</div>	
 					
 					<div class="inline-items" style = "border-radius:5px;
@@ -89,7 +99,7 @@
 	                </div>
 					
 					<div style= "background-color: #F7F9F9; padding: 5px; margin-top: 10px;">
-						<span>${courseInformDTO.courseContent}</span>
+						<span>"&nbsp; ${courseInformDTO.courseContent} &nbsp;"</span>
 					</div>
 				</div>
 	        </c:forEach>

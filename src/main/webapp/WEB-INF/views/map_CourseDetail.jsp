@@ -7,6 +7,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.coursetogo.dto.map.PlaceDTO" %>
 <%@ page import="com.coursetogo.dto.review.CourseReviewDTO" %>
+<%@ page import="com.coursetogo.dto.course.CourseDirectionDTO" %>
 
 <!DOCTYPE html>
 <html>
@@ -83,11 +84,17 @@
 			</div>		
 			
 			<div class="informArea">
-				<p style= "margin-bottom: 40px;">
+				<p>
 					<img src="${userPhoto}" style= "width: 40px;"><br>
 					<span style= "color: #FF962B;">${courseInform.userNickname}</span>님의<br><br>
-					<b><span style= "color: #00008b; font-family: 'TheJamsil5Bold', sans-serif; font-size: 14pt;"><${courseInform.courseName}></span></b>
+					<b><span style= "color: #00008b; font-family: 'TheJamsil5Bold', sans-serif; font-size: 14pt;"><${courseInform.courseName}></span></b><br>
 				</p>
+				<div class="stars" id= "courseAvgScore" style= "margin-bottom: 20px;" data-score="${courseInform.courseAvgScore}"></div>
+	
+	<script>
+	var courseStars = document.getElementById("courseAvgScore");
+	courseStars.setAttribute("data-score", Math.floor(courseStars.getAttribute("data-score")));
+	</script>
 				
 				<c:forEach items="${fn:split(courseInform.courseList, ',')}" var="place" varStatus= "placeSt">
                        <div class="place" style = "padding:10px 10px;
@@ -169,7 +176,7 @@
 		               	   				font-size: 15pt;">리뷰 작성</b>
 						</div>
 		
-						<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif;">
+						<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif; margin-top: 63px;">
 							 &nbsp; ▶ 각 장소에 별점을 매겨주세요.
 						</div>	
 						
@@ -247,7 +254,7 @@
 		               	   				font-size: 15pt;">리뷰 수정</b>
 						</div>
 		
-						<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif;">
+						<div style= "text-align: left; color: #454545; font-family:'TheJamsil3Regular', sans-serif; margin-top: 63px;">
 							 &nbsp; ▶ 각 장소 별점을 수정해주세요.
 						</div>	
 						
@@ -328,19 +335,94 @@
 	</footer>
 	
 	<script>
+	
+	var places = document.getElementById("placeList").value;
+	var placeCount = document.getElementById("placeCount").value;
+	
+	
 	<!-- 지도 출력 -->
 		var mapDiv = document.getElementById('mapArea');
-		<!-- 기본 위치를 광화문으로 설정 -->
-		var map = new naver.maps.Map(mapDiv, {center: new naver.maps.LatLng(37.576026, 126.9768428), zoom: 15});
+		<!-- 지도에 표시될 경로 표시용 -->
+		let polyLinePath = [];
 		
-		var directions = new naver.maps.Directions({map: map});
+		var receivedPathArray = null;
+		var borderArray = null;		
+		var totalLocArray = null;
 		
-		directions.route({
-						
-		});
-		
-		
-		
+		axios.get('/map/getDirection', {params: {places: places}})
+		  .then(function (response) {
+		    
+		    <!-- response로 CourseDirectionDTO 객체를 돌려받음. -->
+		    borderArray = response.data.borderLocations;
+		    receivedPathArray = response.data.totalPath;
+		    totalLocArray = response.data.totalLocations;
+		    
+			<!-- 기본 위치 설정 -->
+			var border = new naver.maps.LatLngBounds(
+											    new naver.maps.LatLng(borderArray[0][0]-0.002, borderArray[0][1]-0.002),
+											    new naver.maps.LatLng(borderArray[1][0]+0.002, borderArray[1][1]+0.002));	
+				
+			var map = new naver.maps.Map(mapDiv, {
+				center: new naver.maps.LatLng((borderArray[0][0] + borderArray[1][0])/2,
+						                      (borderArray[0][1] + borderArray[1][1])/2),
+				zoom: 16,
+				maxBounds: border,
+			});
+			
+			if(totalLocArray.length == 1){
+				var marker = new naver.maps.Marker({
+		            position: new naver.maps.LatLng(totalLocArray[0][0],totalLocArray[0][1]),
+		            map: map,
+		            icon: {url: '../images/directionFrom.png'}
+		        });	
+				
+		        
+			}else if(totalLocArray.length >= 2) {
+				for(var i = 0; i < receivedPathArray.length; i ++){
+			    	polyLinePath.push(new naver.maps.LatLng(receivedPathArray[i][0], receivedPathArray[i][1]));
+			    }
+			    
+			    const polyline = new naver.maps.Polyline({
+			        path: polyLinePath,
+			        strokeColor: "#271DD7", 
+			        strokeOpacity: 0.7,
+			        strokeWeight: 7, 
+			        map: map
+			      });
+			    
+			    for(let i = 0; i < totalLocArray.length; i++) {
+		        	if(totalLocArray.length == 1) {	        	     
+		        	} else{
+		        		if(i == 0) {
+		    		        var marker = new naver.maps.Marker({
+		    		            position: new naver.maps.LatLng(totalLocArray[i][0],totalLocArray[i][1]),
+		    		            map: map,
+		    		            icon: {url: '../images/directionFrom.png'}
+		    		        });	
+		        		}else if(i == totalLocArray.length-1) {
+		        			var marker = new naver.maps.Marker({
+		    		            position: new naver.maps.LatLng(totalLocArray[i][0],totalLocArray[i][1]),
+		    		            map: map,
+		    		            icon: {url: '../images/directionTo.png'}
+		    		        });	
+		        		}else {
+		    		        var marker = new naver.maps.Marker({
+		    		            position: new naver.maps.LatLng(totalLocArray[i][0],totalLocArray[i][1]),
+		    		            map: map,
+		    		            icon: {url: '../images/directionStopOver.png'}
+		    		        });		     			
+		        		}
+
+		        	}     
+		        }	 
+			}
+		    
+	        
+	        
+		  })
+		  .catch(function (error) {
+		    console.error('direction 요청 실패');
+		  });
 		
 		
 	<!-- 리뷰 보기 버튼 클릭시 리뷰리스트 출력 + 리뷰 작성 버튼 클릭시 지도 페이지가 리뷰 작성 페이지로 변화 -->
@@ -424,7 +506,7 @@
 					isUpdateVisible = !isUpdateVisible;
 				});
 			}else if(isAlready === "false") {
-				console.log("아직 리뷰안함");
+				console.log("사용자가 리뷰하지 않은 코스");
 				document.getElementById('showReviewWrite').addEventListener('click', function() {
 			    	if(reviewArea.style.display ==='block' ) {
 			    		reviewArea.style.display = 'none';	

@@ -2,6 +2,7 @@ package com.coursetogo.controller.main;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +22,11 @@ import com.coursetogo.controller.map.CourseController;
 import com.coursetogo.controller.review.ReviewController;
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
-import com.coursetogo.dto.course.Direction15ResultDTO;
 import com.coursetogo.dto.map.PlaceDTO;
 import com.coursetogo.dto.review.CourseReviewDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
+import com.coursetogo.enumType.Area;
+import com.coursetogo.enumType.Category;
 import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.map.PlaceService;
 import com.coursetogo.service.review.CourseReviewService;
@@ -90,7 +92,14 @@ public class MainController {
 	
 	// 코스 만들기 페이지
 	@GetMapping("/course/courseMake")
-	public String getCourseMakePage() {
+	public String getCourseMakePage(HttpSession session, Model model) {
+		
+		Area[] areaList = Area.values();
+		Category[] categoryList = Category.values();
+
+		model.addAttribute("areaList", areaList);
+		model.addAttribute("categoryList", categoryList);
+		
 		return "map_CourseMake";
 	}
 	
@@ -98,6 +107,8 @@ public class MainController {
 	@PostMapping("/course/courseMake")
 	public String insertNewCourse(@ModelAttribute CourseDTO course,
 								  Model mdoel) {
+		
+		
 		System.out.println(course);	
 		return "";
 	}
@@ -152,7 +163,6 @@ public class MainController {
 			model.addAttribute("userPhoto", userPhoto);
 			
 		 // 해당 코스 정보 영역 - 코스 경로를 Naver Direction15를 통해 수신, 페이지로 경로 전달 (동기 방식으로 진행하려 했으나, 비동기 방식으로 진행 시도하기로 변경)
-			String[] courseIdList = courseInform.getCourseIdList().split(",");
 		
 		return "map_CourseDetail";
 	}

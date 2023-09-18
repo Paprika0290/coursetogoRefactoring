@@ -58,29 +58,59 @@ div[class^=courseStarsscore] label:hover ~ label {
 		.stars[data-score="1"]::before {
 		  content: "★";
 		  color:#ffd400;
-   		  font-size:20px;
+   		  font-size:25px;
+		}
+		
+		.stars[data-score="1"].small::before {
+		  content: "★";
+		  color:#ffd400;
+   		  font-size:20px !important;
 		}
 		
 		.stars[data-score="2"]::before {
 		  content: "★★";
 		  color:#ffd400;
-   		  font-size:20px;	  
+   		  font-size:25px;	  
+		}
+		
+		.stars[data-score="2"].small::before {
+		  content: "★★";
+		  color:#ffd400;
+   		  font-size:20px !important;
 		}
 		
 		.stars[data-score="3"]::before {
 		  content: "★★★";
 		  color:#ffd400;
-   		  font-size:20px;
+   		  font-size:25px;
   		}
+
+		.stars[data-score="3"].small::before {
+		  content: "★★★";
+		  color:#ffd400;
+   		  font-size:20px !important;
+		}
 		
 		.stars[data-score="4"]::before {
 		  content: "★★★★";
 		  color:#ffd400;
-   		  font-size:20px;
+   		  font-size:25px;
+		}
+		
+		.stars[data-score="4"].small::before {
+		  content: "★★★★";
+		  color:#ffd400;
+   		  font-size:20px !important;
 		}
 		
 		.stars[data-score="5"]::before {
 		  content: "★★★★★";
 		  color:#ffd400;
-   		  font-size:20px;
+   		  font-size:25px;
+		}
+		
+		.stars[data-score="5"].small::before {
+		  content: "★★★★★";
+		  color:#ffd400;
+   		  font-size:20px !important;
 		}
