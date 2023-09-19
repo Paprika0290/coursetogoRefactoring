@@ -45,6 +45,16 @@
 			background-color: white;
 		}
 		
+		.placeDiv {
+			padding:5px 5px;
+			margin-bottom: 10px;
+			background-color: #7FB3D5;
+			border-radius:5px;
+			color: white;
+			font-family: 'TheJamsil3Regular', sans-serif;
+			font-size: 11pt;"
+		}
+		
 		.fontTheJamsil {
 			font-family: 'TheJamsil5Bold', sans-serif;
 		}
@@ -119,13 +129,6 @@
 					
 			</div>
 			
-			<div id = "selectedMarkersContainer" style= "background-color: rgba(255, 255, 255, 0.95); border-radius: 2px;
-														 position: absolute; top: 150px; right: 330px; text-align:center; display: none; font-family: 'TheJamsil5Bold', sans-serif;
-														 padding: 10px 5px; padding-top: 20px;">
-				<span>선택된 장소</span>
-		
-			</div>
-			
 	</div>
 	
 	<div id= "makeCourse" style= "background-color: white;
@@ -145,23 +148,128 @@
 						font-size: 0.9rem;
 						font-weight: 300;
 						padding: 10px;
-						margin-bottom: 50px;
+						margin-bottom: 20px;
 						color: #3C3C3C;"
 				 class= "fontTheJamsil">
 				1. 좌측 상단 검색창을 통해 장소를<br>검색해주세요.<br>
 				(예시 : 지역명 - 홍대 / 업종명 - 음식점)<br><br>
-				2. 표시되는 검색결과를 클릭, 지도에 표시되는 장소를 확인하세요.<br><br>
+				2. 표시되는 검색결과를 클릭, 지도에 표시되는 장소를 확인하세요.<br>
 				장소는 최대 5개까지 선택 가능하며, 하단에<br>표시되는 장소명을 클릭하면 취소가 가능합니다.<br><br>
 				3. 선택한 장소를 확인 후, 코스의 이름과 코스에 대한 설명을 작성해주세요.<br><br>
 				4. 작성이 끝나면 코스 만들기 버튼을 클릭,<br>자신만의 코스를 만들어주세요.<br><br>
-				<br>
 				<span style= "color: #FF962B; font-size: 1rem;">코스 만들기 기능은 로그인 후<br>사용 가능합니다.</span><br><br>
 			</div>
 		
 		<!-- 코스 정보 입력 form start -->
 		<form id = "courseInfo" method= "POST" accept-charset= "UTF-8"
 			  action = "/course/courseMake">
-			<span style= "font-family: 'TheJamsil5Bold', sans-serif; text-align: center;">코스 상세</span><br><br>
+			<span style= "font-family: 'TheJamsil5Bold', sans-serif; text-align: center;">코스 정보</span><br><br>
+			
+			
+			<input id= "currentPlace" type= "hidden">
+			
+			<div id= "selectedPlaceDiv1" class= "placeDiv" style= "cursor: pointer;">첫번째 장소</div>
+			<input id= "selectedPlaceId1" name= "selectedPlaceId1" type= "hidden">
+			<div id= "selectedPlaceDiv2"  class= "placeDiv" style= "cursor: pointer;">두번째 장소</div>
+			<input id= "selectedPlaceId2" name= "selectedPlaceId2" type= "hidden">
+			<div id= "selectedPlaceDiv3" class= "placeDiv" style= "cursor: pointer;">세번째 장소</div>
+			<input id= "selectedPlaceId3" name= "selectedPlaceId3" type= "hidden">
+			<div id= "selectedPlaceDiv4" class= "placeDiv" style= "cursor: pointer;">네번째 장소</div>
+			<input id= "selectedPlaceId4" name= "selectedPlaceId4" type= "hidden">
+			<div id= "selectedPlaceDiv5" class= "placeDiv" style= "cursor: pointer;">다섯번째 장소</div>
+			<input id= "selectedPlaceId5" name= "selectedPlaceId5" type= "hidden">
+						
+			<script>
+				var placeDivs = document.querySelectorAll('[id^="selectedPlaceDiv"]');			
+				var place1Selected = false;
+				var place2Selected = false;
+				var place3Selected = false;
+				var place4Selected = false;
+				var place5Selected = false;
+				
+				placeDivs.forEach(function(div) {
+				    div.addEventListener('click', function() {
+						var placeDivId = document.getElementById('currentPlace').value;
+						var placeId = document.getElementById(placeDivId).querySelector('input').value;
+						var placeName = document.getElementById(placeDivId).querySelector('p').textContent;									
+						
+						if(div.id === 'selectedPlaceDiv1'){				
+							if(place1Selected) {
+								div.textContent = '첫번째 장소';
+								div.style.backgroundColor = '#7FB3D5';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId1').value = null;
+								place1Selected = false;
+							}else {
+								div.textContent = placeName;
+								div.style.backgroundColor = '#FF962B';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId1').value = placeId;
+								place1Selected = true;
+							}
+						}else if(div.id === 'selectedPlaceDiv2') {
+							if(place2Selected) {
+								div.textContent = '두번째 장소';
+								div.style.backgroundColor = '#7FB3D5';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId2').value = null;
+								place2Selected = false;
+							}else {
+								div.textContent = placeName;
+								div.style.backgroundColor = '#FF962B';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId2').value = placeId;
+								place2Selected = true;
+							}
+						}else if(div.id === 'selectedPlaceDiv3') {
+							if(place3Selected) {
+								div.textContent = '세번째 장소';
+								div.style.backgroundColor = '#7FB3D5';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId3').value = null;
+								place3Selected = false;
+							}else {
+								div.textContent = placeName;
+								div.style.backgroundColor = '#FF962B';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId3').value = placeId;
+								place3Selected = true;
+							}
+						}else if(div.id === 'selectedPlaceDiv4') {
+							if(place4Selected) {
+								div.textContent = '네번째 장소';
+								div.style.backgroundColor = '#7FB3D5';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId4').value = null;
+								place4Selected = false;
+							}else {
+								div.textContent = placeName;
+								div.style.backgroundColor = '#FF962B';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId4').value = placeId;
+								place4Selected = true;
+							}
+						}else if(div.id === 'selectedPlaceDiv5') {
+							if(place5Selected) {
+								div.textContent = '다섯번째 장소';
+								div.style.backgroundColor = '#7FB3D5';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId5').value = null;
+								place5Selected = false;
+							}else {
+								div.textContent = placeName;
+								div.style.backgroundColor = '#FF962B';
+								div.style.cursor = 'pointer';
+								document.getElementById('selectedPlaceId5').value = placeId;
+								place5Selected = true;
+							}
+						}
+						
+						// 현재 마커의 placeId, placeName
+
+				    });
+				});		
+			</script>		
 			<input id= "courseName" name= "courseName" class= "courseMakeInputBox" type= "text"
 				   value= "코스 이름" style= "text-align: center; padding: 5px; width: 150px;" onfocus="clearInputValue(this)"><br>
 			<textarea id= "courseContent" name= "courseContent" class= "courseMakeInputBox"
@@ -172,7 +280,7 @@
 			
 			 <c:if test="${not empty sessionScope.user.userId}">
 			 <br>
-			    <button class="courseMakeButton" type="submit" style= "padding-left: 20px; padding-right: 20px; color: #FFFFFF">코스 만들기!</button>
+			    <button id= "courseMakeButton" class="courseMakeButton" type="submit" style= "padding-left: 20px; padding-right: 20px; color: #FFFFFF">코스 만들기!</button>
 			</c:if>
 			
 			<c:if test="${empty sessionScope.user.userId}">
@@ -180,19 +288,34 @@
 			</c:if>
 			
 			<input type= "hidden" name= "userId" value= "${sessionScope.user.userId}">
-			<input type= "hidden" name= "courseNumber" value= "">
-			
-			<input type= "hidden" name= "placeOfCourse1">
-			<input type= "hidden" name= "placeOfCourse2">
-			<input type= "hidden" name= "placeOfCourse3">
-			<input type= "hidden" name= "placeOfCourse4">
-			<input type= "hidden" name= "placeOfCourse5">
-			
+			<input id = "courseNumber" type= "hidden" name= "courseNumber" value= "">
 		</form>
 		<!-- 코스 정보 입력 form end -->	
 	</div>
 	
-	
+	<script>
+		document.getElementById('courseMakeButton').addEventListener('click', function(){
+			var placeCount = 0;
+			
+			if(place1Selected){
+				placeCount++;
+			}
+			if(place2Selected){
+				placeCount++;
+			}
+			if(place3Selected){
+				placeCount++;
+			}
+			if(place4Selected){
+				placeCount++;
+			}
+			if(place5Selected){
+				placeCount++;
+			}
+			
+			document.getElementById('courseNumber').value = placeCount;
+		});
+	</script>
 	
 	<script>
 	<!-- 지도 출력 -->
@@ -219,7 +342,6 @@
 	    			
 	    	).then(function(response) {
 	    		var resultContainer = document.getElementById('searchResultList');
-	    		var selectedMarkers = document.getElementById('selectedMarkersContainer');
 	    		resultContainer.style.display = 'block';
 	    		resultContainer.innerHTML = '';
 	    		
@@ -230,7 +352,7 @@
 				
 				var markers = [],
 				    infoWindows = [];
-				  
+				  	
 				// return받은 place정보에서 name을 리스트뷰로 표시  
 	    		response.data.forEach(function(place, index) {
 					  var div = document.createElement('div');
@@ -251,41 +373,36 @@
 					  var marker = new naver.maps.Marker({
 						position: new naver.maps.LatLng(place.latitude, place.longitude),
 						title: place.placeId,
-						map: map
+						map: null
 					  });
 					  
 					  var infoWindow = new naver.maps.InfoWindow({
-					        content: '<div style="width:100px;text-align:center;padding:5px;font-family:\'TheJamsil3Regular\', sans-serif;font-size:10pt; color: #00008b;"><b>'+ place.placeName +'</b></div>'
-					    });
+				        content: '<div id= "windowContent" style="width:100px;text-align:center;padding:5px;font-family:\'TheJamsil3Regular\', sans-serif;font-size:10pt; color: #00008b;"><a href="https://map.naver.com/p/search/'+ place.placeName + " " + areaSelect +'" target="_blank"><b>'+ place.placeName +'</b> </a></div>',
+				        map: null
+				      });
 					  
 					  markers.push(marker);
 					  infoWindows.push(infoWindow);
-					  console.log(divId);
+					  
+					  document.getElementById(divId).addEventListener('click', function(){
+						  showMarkerAndInfoWindow(index);
+						  document.getElementById('currentPlace').value = divId;
+					  }); 
+					  
+					  
+			    		function showMarkerAndInfoWindow(index) {		    			
+			    		    markers.forEach(function(marker, i) {
+			    		        if (i === index) {
+			    		            marker.setMap(map);
+			    		            infoWindows[i].open(map, marker);
+			    		        } else {
+			    		            marker.setMap(null);
+			    		            infoWindows[i].close();
+			    		        }
+			    		    });
+			    		}
 					});
 	    		
-	    		
-	    		
-	    		naver.maps.Event.addListener(map, 'idle', function() {
-	    		    updateMarkers(map, markers);
-	    		});
-	    		
-	    		function updateMarkers(map, markers) {
-
-	    		    var mapBounds = map.getBounds();
-	    		    var marker, position;
-
-	    		    for (var i = 0; i < markers.length; i++) {
-
-	    		        marker = markers[i]
-	    		        position = marker.getPosition();
-
-	    		        if (mapBounds.hasLatLng(position)) {
-	    		            showMarker(map, marker);
-	    		        } else {
-	    		            hideMarker(map, marker);
-	    		        }
-	    		    }
-	    		}
 
 	    		function showMarker(map, marker) {
 
@@ -318,30 +435,7 @@
 	    		}
 	    			
 	    		
-	    		
-	    		<!-- 클릭된 업체명에 이벤트 리스너 추가 -->
-	    		var searchedNames = document.querySelectorAll('[id^="placeDiv"]');
-	    		
-	    		searchedNames.forEach(function(element) {
-	    		    element.addEventListener('click', function() {
-	    		    	var divContent = document.getElementById(element.id).textContent;
-	    		    	var inputDivContent = document.getElementById('input' + element.id).value;
-	    		    
-	    		        console.log(element.id);
-	    		        console.log(divContent);
-						console.log(inputDivContent);
-						
-						
-						// placeid와 placename반환 
-						
-	    		    });
-	    		});
-	    			
-	    		
-	    		
-	    		
-	    		
-	    		
+
 	    		
 	    	}).catch(function(error) {
 	    		console.log("장소 조회 불가");

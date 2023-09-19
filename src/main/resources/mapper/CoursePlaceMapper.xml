@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.coursetogo.mapper.course.CoursePlaceMapper">
+
+ 	<insert id="insertCoursePlace" parameterType="CoursePlaceDTO">
+ 		INSERT INTO course_place (COURSE_ID, PLACE_ID, SELECTION_ORDER) VALUES (Course_seq.currval, #{placeId}, #{selectionOrder})
+ 	</insert>
+ 	
+ 	
+ 	
+ </mapper>

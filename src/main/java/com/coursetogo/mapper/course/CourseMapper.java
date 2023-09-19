@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
+import com.coursetogo.dto.course.CoursePlaceDTO;
 import com.coursetogo.dto.course.PageRequestDTO;
 import com.coursetogo.dto.course.SearchKeywordDTO;
 
@@ -30,9 +31,10 @@ public interface CourseMapper {
 	public List<CourseInformDTO> getCourseInformByUserId(int userId)throws SQLException;
 
 	
-	
 	// 코스작성왕
 	public List<Integer> getCourseTop3();
+
+	
 
 	
 

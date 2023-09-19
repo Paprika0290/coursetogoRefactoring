@@ -35,7 +35,7 @@ public class ReviewController {
 	
 	// course당 입력될 수 있는 place수가 가변적이기 때문에 만든 메서드
 	// models 배열에서 null 이거나 빈 문자열인 요소들을 걸러낸 새로운 문자열 배열을 얻을수 있음 
-	private String[] filterNullValues(String... models) {
+	public String[] filterNullValues(String... models) {
 	    List<String> filteredValues = new ArrayList<>();
 	    for (String value : models) {
 	        if (value != null && !value.isEmpty()) {

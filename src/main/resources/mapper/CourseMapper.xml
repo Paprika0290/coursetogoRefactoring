@@ -184,5 +184,10 @@
 			course_id = #{courseId}		 	
 	 	</select>
 		
+	 	<insert id="insertCourse" parameterType="CourseDTO">
+	 		INSERT INTO course (COURSE_ID, USER_ID, COURSE_NAME, COURSE_AVG_SCORE, COURSE_NUMBER,COURSE_CONTENT)
+	 		VALUES (course_seq.nextval, #{userId}, #{courseName}, 0, #{courseNumber}, #{courseContent})
+	 	</insert>
+		
 		
  </mapper>

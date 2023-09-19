@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-     <title>Searching Courses</title> 
+     <title>CourseToGo / 코스 찾기</title> 
      <link rel="stylesheet" type="text/css" href="/css/starScore.css">
  	 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 

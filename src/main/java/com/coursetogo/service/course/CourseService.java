@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
+import com.coursetogo.dto.course.CoursePlaceDTO;
 import com.coursetogo.dto.course.PageRequestDTO;
 import com.coursetogo.mapper.course.CourseMapper;
 
@@ -19,27 +20,25 @@ import lombok.extern.slf4j.Slf4j;
 public class CourseService {
 	
 	@Autowired
-	private CourseMapper courseMapper;
+	private CourseMapper mapper;
 	
 
 	public int insertCourse(CourseDTO course) throws Exception {
-		int courseId = -1;
-				
-		 courseMapper.insertCourse(course);
-		 courseId = course.getCourseId();	
-			if(courseId == -1) {
-				throw new Exception("no sequence");
-			} else {
+		int res = mapper.insertCourse(course);
+		
+		if(res == 0) {
+			log.warn("새로운 course 만들기 실패");
+		} else {
+			log.info("새로운 course 만들기 성공");
+		}
 			
-			}
-				
-			return courseId;
+		return res;
 		
 	}
 	public List<CourseInformDTO>  getAllCourses() throws Exception {
 	
 		List<CourseInformDTO> res = new ArrayList<>();
-				 res= courseMapper.getAllCourses();
+				 res= mapper.getAllCourses();
 				if(!res.isEmpty()) {
 					
 				} else {
@@ -52,7 +51,7 @@ public class CourseService {
 	public CourseInformDTO  getCourseInformByCourseId(int courseId) throws Exception {
 		
 		CourseInformDTO res=null;
-				 res= courseMapper.getCourseInformByCourseId(courseId);
+				 res= mapper.getCourseInformByCourseId(courseId);
 				if(res!=null) {
 					
 				} else {
@@ -65,7 +64,7 @@ public class CourseService {
 	public List<CourseInformDTO> getCourseInformByUserId(int userId) throws Exception {
 		
 		List<CourseInformDTO> res=null;
-				 res= courseMapper.getCourseInformByUserId(userId);
+				 res= mapper.getCourseInformByUserId(userId);
 				if(res!=null) {
 					
 				} else {
@@ -78,7 +77,7 @@ public class CourseService {
 	
 	public CourseDTO getCourseById(int courseId) throws SQLException {
 		CourseDTO res;
-		 res= courseMapper.getCourseById(courseId);
+		 res= mapper.getCourseById(courseId);
 		if(res == null) {
 			log.warn("no data - getCourseById");
 		} else {
@@ -89,21 +88,20 @@ public class CourseService {
 	}
 
 	public int getTotalCount(PageRequestDTO pageRequest) throws SQLException {
-		return courseMapper.getTotalCount(pageRequest);
+		return mapper.getTotalCount(pageRequest);
 	}
 	
 	public List<CourseInformDTO> getCourseWithPageRequest(PageRequestDTO pageRequest) throws Exception {
 		List<CourseInformDTO> res;
-	    res= courseMapper.getCourseWithPageRequest(pageRequest);	
+	    res= mapper.getCourseWithPageRequest(pageRequest);	
 		return res;
 	}
 
-
-
 	
+
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3() throws SQLException	{
-		return courseMapper.getCourseTop3();
+		return mapper.getCourseTop3();
 	}
 }

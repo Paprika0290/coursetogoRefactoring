@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.coursetogo.controller.api.N_LoginAPIController;
 import com.coursetogo.controller.api.N_MapAPIController;
@@ -27,6 +28,7 @@ import com.coursetogo.dto.review.CourseReviewDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.enumType.Area;
 import com.coursetogo.enumType.Category;
+import com.coursetogo.service.course.CoursePlaceService;
 import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.map.PlaceService;
 import com.coursetogo.service.review.CourseReviewService;
@@ -42,9 +44,6 @@ public class MainController {
 	private N_LoginAPIController loginApiController;
 	
 	@Autowired
-	private N_MapAPIController mapApiController;
-	
-	@Autowired
 	private CourseController courseController;
 	
 	@Autowired
@@ -57,9 +56,7 @@ public class MainController {
 	private CourseReviewService courseReviewService;
 	
 	@Autowired
-	private PlaceService placeService;
-	
-	
+	private ReviewController reviewController;
 	
 	
 	// 도메인 주소로 접속 시 첫 화면 출력
@@ -105,19 +102,29 @@ public class MainController {
 	
 	// 코스 만들기 (INSERT)
 	@PostMapping("/course/courseMake")
-	public String insertNewCourse(@ModelAttribute CourseDTO course,
-								  Model mdoel) {
+	public String insertNewCourse(@ModelAttribute CourseDTO newCourse,
+								  @ModelAttribute("selectedPlaceId1") String placeId1,
+								  @ModelAttribute("selectedPlaceId2") String placeId2,
+								  @ModelAttribute("selectedPlaceId3") String placeId3,
+								  @ModelAttribute("selectedPlaceId4") String placeId4,
+								  @ModelAttribute("selectedPlaceId5") String placeId5,
+								  RedirectAttributes attributes, Model model) {
 		
+		// reviewController에서 만들어 사용했던 filterNullValues 메서드를 사용, null이 아닌 값들로 배열 생성
+		String[] placeIds = reviewController.filterNullValues(placeId1, placeId2, placeId3, placeId4, placeId5);
+		courseController.insertCourse(newCourse, placeIds);
+
+		List<CourseInformDTO> courseList = new ArrayList<CourseInformDTO>();
 		
-		System.out.println(course);	
-		return "";
+		try {
+			courseList = courseService.getCourseInformByUserId(185);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		attributes.addAttribute("courseId", courseList.get(courseList.size()-1).getCourseId());
+		return "redirect:/course/courseDetail";
 	}
-	
-	
-	
-	
-	
-	
 	
 	
 	// 코스 상세 페이지

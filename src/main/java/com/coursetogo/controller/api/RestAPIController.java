@@ -88,8 +88,6 @@ public class RestAPIController {
 	public List<PlaceDTO> getPlaceList(@RequestParam("areaName") String areaName,
 									   @RequestParam(name= "categoryName", required= false) String categoryName) {
 		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
-		System.out.println(areaName);
-		System.out.println(categoryName);
 		
 		if(categoryName == null) {
 			placeList = placeService.searchPlacesByArea(areaName);
@@ -99,9 +97,6 @@ public class RestAPIController {
 		
 		return placeList;
 	}
-	
-	
-	// course/courseMake 페이지에서 장소명 클릭시 place/getPlaceLocation 요청, 장소 좌표를 반환 
 	
 	
 	
