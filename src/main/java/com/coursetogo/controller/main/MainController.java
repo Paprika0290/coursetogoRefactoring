@@ -3,6 +3,7 @@ package com.coursetogo.controller.main;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
 import com.coursetogo.dto.map.PlaceDTO;
 import com.coursetogo.dto.review.CourseReviewDTO;
+import com.coursetogo.dto.review.PlaceReviewDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.enumType.Area;
 import com.coursetogo.enumType.Category;
@@ -32,6 +34,7 @@ import com.coursetogo.service.course.CoursePlaceService;
 import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.map.PlaceService;
 import com.coursetogo.service.review.CourseReviewService;
+import com.coursetogo.service.review.PlaceReviewService;
 import com.coursetogo.service.user.CtgUserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +57,9 @@ public class MainController {
 	
 	@Autowired
 	private CourseReviewService courseReviewService;
+	
+	@Autowired
+	private PlaceReviewService placeReviewService;
 	
 	@Autowired
 	private ReviewController reviewController;
@@ -85,6 +91,142 @@ public class MainController {
 	@GetMapping("/user/updateUserInfo") 
 	public String getUpdateUserInfoPage() {
 		return "userInfoUpdate";
+	}
+	
+	// 유저 마이페이지
+	@GetMapping("user/myPage")
+	public String getMyPage() {
+		return "user_MyPage";
+	}
+	
+	// 유저 마이페이지 - 로그인 되어 있지 않은 경우
+	@GetMapping("user/myPage/loginRequired")
+	public String getLoginRequiredPage() {
+		return "user_MyPage_Null";
+	}
+	
+	// 유저 마이페이지 - 코스리스트
+	@GetMapping("user/myPage/courseList")
+	public String getUserCourseList(HttpSession session, Model model) {
+		int userId = -1;
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}		
+		
+		List<CourseInformDTO> userCourseList = new ArrayList<CourseInformDTO>();
+		List<String> courseDetailPageList = new ArrayList<String>();
+		
+		String userPhoto = "";
+		
+		try {
+			userCourseList = courseService.getCourseInformByUserId(userId);
+		} catch (Exception e) {
+			log.warn("유저의 코스리스트 조회 실패");
+			e.printStackTrace();
+		}
+		
+		userPhoto = ((CtgUserDTO) session.getAttribute("user")).getUserPhoto();
+		
+		for (CourseInformDTO course : userCourseList) {
+        	int courseId = course.getCourseId();
+            String query = "";
+         
+            query += ("courseId="+ String.valueOf(courseId));
+        
+            courseDetailPageList.add(query);    
+		}
+		
+		model.addAttribute("userCourseList", userCourseList);
+		model.addAttribute("userPhoto", userPhoto);
+		model.addAttribute("courseDetailPageList", courseDetailPageList);
+		
+		return "user_MyPage_CourseList";
+	}
+	
+	// 유저 마이페이지 - 리뷰리스트
+	@GetMapping("user/myPage/reviewList")
+	public String getUserReviewList(HttpSession session, Model model) {
+		int userId = -1;
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}	
+			
+		List<CourseReviewDTO> courseReviewList = null;
+
+		try {
+			courseReviewList = courseReviewService.getCourseReviewByUserId(userId);
+		} catch (SQLException e) {
+			log.warn("유저 리뷰리스트 - 코스리뷰리스트 조회 실패");
+			e.printStackTrace();
+		}
+		
+		// 리뷰리스트에 필요한 정보만 담은 이중배열을 model을 통해 전달
+		String[][] entireReviewInfo = new String[courseReviewList.size()][12];
+		
+		for(int j = 0; j < courseReviewList.size(); j++) {
+				CourseInformDTO courseInform = null;			
+					try {
+						courseInform = courseService.getCourseInformByCourseId(courseReviewList.get(j).getCourseId());
+					} catch (Exception e) {
+						log.warn("유저 리뷰리스트 - 코스inform리스트 조회 실패");		
+						e.printStackTrace();
+					}
+				
+				String[] placeIds = courseInform.getCourseIdList().split(",");
+				PlaceReviewDTO[] placeReviews = new PlaceReviewDTO[placeIds.length];
+				StringBuilder builder1 = new StringBuilder();
+				StringBuilder builder2 = new StringBuilder();
+				
+					for(int i = 0; i < placeIds.length; i++) {	
+						try {
+							placeReviews[i] = placeReviewService.getPlaceReviewByUserIdAndPlaceId(userId, Integer.parseInt(placeIds[i]));
+							
+							if(i == placeIds.length - 1) {
+								builder1.append(placeReviews[i].getPlaceReviewId());
+								builder2.append((int)(Math.floor(placeReviews[i].getPlaceScore())));
+							}else {
+								builder1.append(placeReviews[i].getPlaceReviewId());
+								builder1.append(",");
+								
+								builder2.append((int)(Math.floor(placeReviews[i].getPlaceScore())));
+								builder2.append(",");
+							}
+						} catch (NumberFormatException | SQLException e) {
+							log.warn("유저 리뷰리스트 - "+ placeIds[i] + "번 장소 조회 실패");
+							e.printStackTrace();
+						}	
+					}	
+					
+			entireReviewInfo[j][0] = String.valueOf(courseInform.getCourseId());                            
+			entireReviewInfo[j][1] = courseInform.getUserNickname();										  
+			entireReviewInfo[j][2] = courseInform.getCourseName();										   
+			entireReviewInfo[j][3] = String.valueOf((int)(Math.floor(courseInform.getCourseAvgScore())));   	
+			entireReviewInfo[j][4] = courseInform.getCourseList();										  
+			entireReviewInfo[j][5] = courseInform.getCourseIdList();										   
+			entireReviewInfo[j][6] = builder1.toString();											
+			entireReviewInfo[j][7] = builder2.toString();							                     
+			entireReviewInfo[j][8] = String.valueOf(courseReviewList.get(j).getCourseReviewId());					 
+			entireReviewInfo[j][9] = courseReviewList.get(j).getContent();						                      
+			entireReviewInfo[j][10] = String.valueOf((int)(Math.floor(courseReviewList.get(j).getCourseScore())));			
+			entireReviewInfo[j][11] = String.valueOf(courseReviewList.get(j).getReviewDate());						  
+		}
+		
+//		for(String[] reviewInfo : entireReviewInfo) {
+//			System.out.println("리뷰정보출력 -------------------------------");
+//			for(String info : reviewInfo) {
+//				System.out.println(info);
+//			}
+//		}
+				
+		model.addAttribute("entireReviewInfo", entireReviewInfo);
+		
+		return "user_MyPage_ReviewList";
+	}
+
+	// 유저 마이페이지 - 즐겨찾기리스트
+	@GetMapping("user/myPage/bookmarkList")
+	public String getUserBookmarkList() {
+		return "user_MyPage_BookmarkList";
 	}
 	
 	// 코스 만들기 페이지
@@ -130,11 +272,12 @@ public class MainController {
 	// 코스 상세 페이지
 	@GetMapping("course/courseDetail")
 	public String getCourseDetailPage(@RequestParam("courseId") String courseId,
+									  @RequestParam(value= "isMod", required= false) String isMod,
 									  Model model, HttpSession session) {
-		
+
 		// 해당 코스 정보 영역 - 리뷰 - 이미 리뷰를 작성한 유저인지 판별, 판별값을 페이지로 전달 (리뷰 작성/수정버튼 출력 판별용)
 	    // 유저 아이디는 1부터 시작. NullPointerException 대책으로 설정 
-			int userId = 0;
+			int userId = -1;
 			
 			if(session.getAttribute("user") != null) {
 				userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
@@ -168,9 +311,8 @@ public class MainController {
 
 			model.addAttribute("courseInform", courseInform);
 			model.addAttribute("userPhoto", userPhoto);
+			model.addAttribute("isMod", isMod);
 			
-		 // 해당 코스 정보 영역 - 코스 경로를 Naver Direction15를 통해 수신, 페이지로 경로 전달 (동기 방식으로 진행하려 했으나, 비동기 방식으로 진행 시도하기로 변경)
-		
 		return "map_CourseDetail";
 	}
 	
@@ -185,7 +327,7 @@ public class MainController {
 		List<String> userPhotoSrcList = new ArrayList<String>();
 		List<String> courseDetailPageList = new ArrayList<String>();
 		
-		int userId = 0;
+		int userId = -1;
 		String userPhoto = null;
 		
 		for(CourseInformDTO courseInform : courseInformList) {

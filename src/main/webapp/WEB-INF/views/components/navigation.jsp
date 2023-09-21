@@ -104,7 +104,7 @@
 	    	<div class="menuItem"><a href = "/"><img src="/images/logo.png" width = "50px"></a></div>	
 		    <div class="menuItem"><a href="/course/courseList"><span>코스 찾기</span></a></div>
 		    <div class="menuItem"><a href="/course/courseMake"><span>코스 만들기</span></a></div>
-		    <div class="menuItem"><a href="/"><span>마이 페이지</span></a></div>
+		    <div class="menuItem"><a href="/user/myPage"><span>마이 페이지</span></a></div>
 		    
 		    <div class="menuItem" style="margin-top:5px; margin-left:25px;">
 		    	<c:if test="${empty sessionScope.user.userId}">

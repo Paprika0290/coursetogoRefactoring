@@ -140,6 +140,7 @@
 			 		<c:if test = "${isAlreadyWroteUser eq true}">
 				 		<button class="courseDetailButton" type="button" id= "showReviewUpdate"
 					    		style= "padding-left: 20px; padding-right: 20px; color: #FFFFFF">리뷰 수정하기</button>
+					    			
 			 		</c:if>  
 				</c:if>
 				
@@ -159,6 +160,7 @@
 			<input type= "hidden" id= "isAlreadyWrote" value= "${isAlreadyWroteUser}">
 			<input type= "hidden" id= "placeCount" value= "${courseInform.courseNumber}">
 			<input type= "hidden" id= "placeList" value= "${courseInform.courseIdList}">
+			<div id="isMod" style="display: none;">${isMod}</div>
 						
 						
 			<!-- 토글 영역  start -->
@@ -330,6 +332,7 @@
 			<!-- 토글 영역 end -->
 	</div>
 	
+	
    	<footer>
 		<jsp:include page="components/footer.jsp" />
 	</footer>
@@ -446,7 +449,9 @@
 				var places = document.getElementById("placeList").value;
 				var placeCount = document.getElementById("placeCount").value;
 				
-				document.getElementById('showReviewUpdate').addEventListener('click', function() {
+				
+				// 리뷰수정 버튼을 눌렀을때 작동하는 함수
+				var showReviewUpdate = function() {
 			    	if(reviewArea.style.display ==='block' ) {
 			    		reviewArea.style.display = 'none';	
 			    		isListVisible = false;
@@ -504,7 +509,9 @@
 				    }
 					
 					isUpdateVisible = !isUpdateVisible;
-				});
+				};
+				
+				document.getElementById('showReviewUpdate').addEventListener('click', showReviewUpdate);
 			}else if(isAlready === "false") {
 				console.log("사용자가 리뷰하지 않은 코스");
 				document.getElementById('showReviewWrite').addEventListener('click', function() {
@@ -579,7 +586,14 @@
 			    });
 			});
 		
+		var isMod = document.getElementById('isMod').textContent;
 		
+		if (isMod === "true") {
+	        showReviewUpdate();
+	    } else {
+	    }
+		
+
 	</script>
 	
 	
