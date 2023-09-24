@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
-import com.coursetogo.dto.course.CoursePlaceDTO;
 import com.coursetogo.dto.course.PageRequestDTO;
 import com.coursetogo.mapper.course.CourseMapper;
 
@@ -35,10 +34,10 @@ public class CourseService {
 		return res;
 		
 	}
-	public List<CourseInformDTO>  getAllCourses() throws Exception {
+	public List<CourseInformDTO>  getAllCourses(int userId) throws Exception {
 	
 		List<CourseInformDTO> res = new ArrayList<>();
-				 res= mapper.getAllCourses();
+				 res= mapper.getAllCourses(userId);
 				if(!res.isEmpty()) {
 					
 				} else {
@@ -104,4 +103,9 @@ public class CourseService {
 	public List<Integer> getCourseTop3() throws SQLException	{
 		return mapper.getCourseTop3();
 	}
+	
+	
+	
+	
+
 }

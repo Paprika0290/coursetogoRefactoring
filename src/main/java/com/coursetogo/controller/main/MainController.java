@@ -3,6 +3,8 @@ package com.coursetogo.controller.main;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +77,7 @@ public class MainController {
 	// 회원가입
 	@GetMapping("/user/sign_up")
 	public String getSignUpPage(HttpSession session) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		return "userSignup";
 	}
 	
@@ -89,25 +92,30 @@ public class MainController {
 	
 	// 회원정보 수정 페이지
 	@GetMapping("/user/updateUserInfo") 
-	public String getUpdateUserInfoPage() {
+	public String getUpdateUserInfoPage(HttpSession session) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		return "userInfoUpdate";
 	}
 	
 	// 유저 마이페이지
 	@GetMapping("user/myPage")
-	public String getMyPage() {
+	public String getMyPage(HttpSession session) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());			
 		return "user_MyPage";
 	}
 	
 	// 유저 마이페이지 - 로그인 되어 있지 않은 경우
 	@GetMapping("user/myPage/loginRequired")
-	public String getLoginRequiredPage() {
+	public String getLoginRequiredPage(HttpSession session) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		return "user_MyPage_Null";
 	}
 	
 	// 유저 마이페이지 - 코스리스트
 	@GetMapping("user/myPage/courseList")
 	public String getUserCourseList(HttpSession session, Model model) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
+		
 		int userId = -1;
 		if(session.getAttribute("user") != null) {
 			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
@@ -146,6 +154,7 @@ public class MainController {
 	// 유저 마이페이지 - 리뷰리스트
 	@GetMapping("user/myPage/reviewList")
 	public String getUserReviewList(HttpSession session, Model model) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		int userId = -1;
 		if(session.getAttribute("user") != null) {
 			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
@@ -225,13 +234,15 @@ public class MainController {
 
 	// 유저 마이페이지 - 즐겨찾기리스트
 	@GetMapping("user/myPage/bookmarkList")
-	public String getUserBookmarkList() {
+	public String getUserBookmarkList(HttpSession session) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		return "user_MyPage_BookmarkList";
 	}
 	
 	// 코스 만들기 페이지
 	@GetMapping("/course/courseMake")
 	public String getCourseMakePage(HttpSession session, Model model) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		
 		Area[] areaList = Area.values();
 		Category[] categoryList = Category.values();
@@ -250,7 +261,8 @@ public class MainController {
 								  @ModelAttribute("selectedPlaceId3") String placeId3,
 								  @ModelAttribute("selectedPlaceId4") String placeId4,
 								  @ModelAttribute("selectedPlaceId5") String placeId5,
-								  RedirectAttributes attributes, Model model) {
+								  RedirectAttributes attributes, Model model, HttpSession session) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		
 		// reviewController에서 만들어 사용했던 filterNullValues 메서드를 사용, null이 아닌 값들로 배열 생성
 		String[] placeIds = reviewController.filterNullValues(placeId1, placeId2, placeId3, placeId4, placeId5);
@@ -274,6 +286,7 @@ public class MainController {
 	public String getCourseDetailPage(@RequestParam("courseId") String courseId,
 									  @RequestParam(value= "isMod", required= false) String isMod,
 									  Model model, HttpSession session) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 
 		// 해당 코스 정보 영역 - 리뷰 - 이미 리뷰를 작성한 유저인지 판별, 판별값을 페이지로 전달 (리뷰 작성/수정버튼 출력 판별용)
 	    // 유저 아이디는 1부터 시작. NullPointerException 대책으로 설정 
@@ -319,15 +332,34 @@ public class MainController {
 	// 코스 찾기 페이지
 	@GetMapping("/course/courseList")
 	public String getCourseListPage(HttpSession session, Model model) {
-		Map<String, Object> getCourseList = courseController.makeCourseList(session);
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 
-		List<CourseInformDTO> courseInformList = (List<CourseInformDTO>) getCourseList.get("courseInformList");
-		List<CourseInformDTO> recommendedCourseInformList = (List<CourseInformDTO>) getCourseList.get("recommendedCourseInformList");
+		int userId = -1;
+		
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}
+		
+		List<CourseInformDTO> courseInformList = new ArrayList<CourseInformDTO>();
+		
+		try {
+			courseInformList = courseService.getAllCourses(userId);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		Collections.sort(courseInformList, new Comparator<CourseInformDTO>() {
+			@Override
+			public int compare(CourseInformDTO course1, CourseInformDTO course2) {
+				return Integer.compare(course2.getCourseId(), course1.getCourseId());
+			}
+			
+		});
 		
 		List<String> userPhotoSrcList = new ArrayList<String>();
 		List<String> courseDetailPageList = new ArrayList<String>();
 		
-		int userId = -1;
+		userId = -1;
 		String userPhoto = null;
 		
 		for(CourseInformDTO courseInform : courseInformList) {
@@ -352,18 +384,24 @@ public class MainController {
             courseDetailPageList.add(query);    
 		}			
 		
+		Area[] areaList = Area.values();
+		String[] areaListToString = new String[areaList.length];
+				
+		for(int i = 0; i < areaList.length; i++) {
+			areaListToString[i] = areaList[i].toString();
+		}
+		
+		Arrays.sort(areaListToString);
+		
 		model.addAttribute("courseInformList", courseInformList);
-		model.addAttribute("pageInfo", getCourseList.get("pageInfo"));
-		model.addAttribute("recommendedCourseInformList", recommendedCourseInformList);
 		model.addAttribute("userPhotoSrcList", userPhotoSrcList);
 		model.addAttribute("courseDetailPageList", courseDetailPageList);
+		model.addAttribute("areaList", areaListToString);
+		
+		System.out.println(courseInformList);
 		
 		return "map_CourseList";
 	}
 	
-	@GetMapping("talkypleTest")
-	public String talkyple() {
-		return "talkypleTest";
-	}
 	
 }

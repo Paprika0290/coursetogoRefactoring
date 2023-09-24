@@ -4,7 +4,45 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
  <mapper namespace="com.coursetogo.mapper.course.CourseMapper">
-
+	
+	<select id="getAllCourses" parameterType="_int" resultType="CourseInformDTO">
+	  SELECT
+	    c.course_id AS courseId,
+	    u.user_nickname AS userNickName,
+	    c.course_name AS courseName,
+	    c.course_avg_score AS courseAvgScore,
+	    c.course_number AS courseNumber,
+	    c.course_content AS courseContent,
+	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
+	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
+	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
+	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+	    CASE
+	      WHEN user_bookmark_course.BOOKMARK_ID IS NULL THEN 0
+	      ELSE 1
+	    END AS isBookmarked
+	  FROM
+	    Course c
+	    JOIN Course_place ON c.course_id = Course_place.course_id
+	    JOIN place ON Course_place.place_id = place.place_id
+	    JOIN area_place ON place.place_id = area_place.place_id
+	    JOIN category_place ON place.place_id = category_place.place_id
+	    JOIN area ON area_place.area_id = area.area_id
+	    JOIN category ON category_place.category_id = category.category_id
+	    JOIN ctg_user u ON c.user_id = u.user_id
+	    LEFT JOIN user_bookmark_course ON c.course_id = user_bookmark_course.COURSE_ID
+	    
+	    AND user_bookmark_course.user_id = #{userId}
+	  GROUP BY
+	    c.course_id,
+	    u.user_nickname,
+	    c.course_name,
+	    c.course_content,
+	    c.course_avg_score,
+	    c.course_number,
+	    user_bookmark_course.BOOKMARK_ID
+	</select>
+	
 	<select id="getCourseInformByUserId" parameterType="_int" resultType="CourseInformDTO">
 	  SELECT
 	    c.course_id AS courseId,

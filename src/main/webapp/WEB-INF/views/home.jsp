@@ -21,11 +21,10 @@
 
     <style>	
 		.mainContent {
-			margin-top: 150px;
 		    display: flex;
 		    justify-content: center;
 		    align-items: center;
-		    height: 100vh-100px;
+		    height: calc(100vh - 100px);
 		    text-align: center;
 		}
 		
@@ -85,9 +84,9 @@
 		</div>
 	</div>
 	
-	
-   	<footer>
+	<footer>
 		<jsp:include page="components/footer.jsp" />
 	</footer>
+	
 </body>
 </html>

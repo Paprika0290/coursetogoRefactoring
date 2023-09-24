@@ -20,14 +20,18 @@
 		}
 	
 		.mainContent {
-			margin-top: 100px;
-		    display: flex;
+			margin-top: 30px;
+		    display: absolute;
 		    justify-content: center;
 		    align-items: center;
 		    height: 80vh;
 		    text-align: center;
 		    overflow: auto;
-		    padding-top: 100px;
+		}
+		
+		.searchContainer {
+			margin-top: 100px;
+			text-align: center;
 		}
 		
 		.courseBox {
@@ -48,66 +52,185 @@
 		<jsp:include page="components/navigation.jsp" />	
 	</header>
 	
-	<div class = "mainContent">	
-		<div id="courseContainer" style= "width: 85%; max-height: 100vh;">
-    	 	<c:forEach items="${requestScope.courseInformList}" var="courseInformDTO" varStatus="courseSt">
-				<div class= "courseBox">
-					<div id= "courseTitle" style= "display: flex; align-items: center;">
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						
-							<c:forEach items="${requestScope.userPhotoSrcList}" var= "userPhotoSrc" varStatus= "photoSt">
-								<c:if test="${courseSt.index eq photoSt.index}">
-									<c:set var="photoSrc" value="${userPhotoSrc}" scope= "request" />
-								</c:if>
-							</c:forEach>			
-							
-						<img class="userPhotoOfCourse" src="${photoSrc}" style= "width: 30px;">				
-							<c:forEach items="${requestScope.courseDetailPageList}" var="coursePage" varStatus="pageSt">
-			    	 			<c:if test="${courseSt.index eq pageSt.index}">
-			    	 				<c:set var="query" value="${coursePage}" scope="request" />
-			    	 			</c:if>
-			    	 		</c:forEach>
-						<p style= "position: flex; flex-direction: row; justify-content: center;">
-							&nbsp;&nbsp;&nbsp;
-							${courseInformDTO.userNickname} 님의 < <a href="/course/courseDetail?${query}" style= "text-decoration: none;"><span style="color: #FF962B;">${courseInformDTO.courseName}</span></a> > 코스 &nbsp;&nbsp;
-						</p>
-						<div style = "background-color: #eeeeee; display: flex; align-items: center; border-radius: 5px; padding: 0px 10px;" >
-							<span style = "color: #636363;"> 평균 별점 : </span>
-							<div class="stars small" id= "courseAvgScore${courseSt.index}" style= "margin-left: 10px; font-size: 20px; display: flex; justify-content: flex-end; " data-score="${courseInformDTO.courseAvgScore}"></div>
-										<script>
-											var courseStars = document.getElementById("courseAvgScore${courseSt.index}");
-											courseStars.setAttribute("data-score", Math.floor(courseStars.getAttribute("data-score")));
-										</script>
-						</div>
-						
-						
-					</div>	
-					
-					<div class="inline-items" style = "border-radius:5px;
-	                								   display:flex;
-	                								   align-items: center;
-	                								   justify-content: center;">
-	                								   
-	                    <c:forEach items="${fn:split(courseInformDTO.courseList, ',')}" var="place">
-	                        <div class="item" style = "padding:5px 10px;
-	                        						   background-color: #7FB3D5;
-	                        						   border-radius:5px;
-	                        						   color: white;
-	                        						   margin-right:15px;
-	                        						   font-family: 'TheJamsil3Regular', sans-serif;">${place}</div>
-	                    </c:forEach>
-	                </div>
-					
-					<div style= "background-color: #F7F9F9; padding: 5px; margin-top: 10px;">
-						<span>"&nbsp; ${courseInformDTO.courseContent} &nbsp;"</span>
-					</div>
-				</div>
-	        </c:forEach>
-		</div>	
-	</div>
+	<div class= "searchContainer">
+		<div id= "areaSearch" class= "searchInput" >
+			<select style= "padding: 2px;
+							text-align: center;
+							width: 200px;
+							border: 3px solid #FF962B;
+							border-radius: 3px;"
+					id= "areaSelect">
+				  <option value="" selected>지역별 코스 검색 </option>	
+				  
+				  <c:forEach items = "${areaList}" var="area" varStatus="areaSt">
+				  	<c:if test="${area eq '홍대'}">
+				  		<option value="${area}">${area} &nbsp;&nbsp;</option>
+				  	</c:if>
+				  	<c:if test="${area ne '홍대'}">
+				  		<option style= "background-color: #cccccc" value="${area}"
+				  				disabled> ${area} &nbsp;&nbsp;</option>
+				  	</c:if>	
+				  </c:forEach>					  							
+			</select>
+		</div>
+		
+		<script>
+			// <option>으로 주어지는 area값중 어떤 값이 선택될 시, API 요청 발생
+			var areaSelected = document.getElementById('areaSelect');
+			
+			areaSelected.addEventListener('change', function() {
+				  const selectedValue = areaSelected.value;
 
-   	<footer>
+				  axios.get('/course/courseListByPage', {
+				    params: {
+				      areaName: selectedValue 
+				    }
+				  })
+				  .then(function (response) {
+				    console.log(response.data);
+				  })
+				  .catch(function (error) {
+				    console.error(error);
+				  });
+				});
+		</script>
+		
+	</div>
+	
+	<div class= "mainContent">
+		<c:forEach items= "${courseInformList}" var= "courseInformDTO" varStatus= "courseSt">
+ 			<div class= "courseBox">
+               <div id= "courseTitle" style= "display: flex; align-items: center; width: 90vw;">
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  
+                     <c:forEach items="${userPhotoSrcList}" var= "userPhotoSrc" varStatus= "photoSt">
+                        <c:if test="${courseSt.index eq photoSt.index}">
+                           <c:set var="photoSrc" value="${userPhotoSrc}" scope= "request" />
+                        </c:if>
+                     </c:forEach>         
+                     
+                  <img class="userPhotoOfCourse" src="${photoSrc}" style= "width: 30px;">            
+                     <c:forEach items="${courseDetailPageList}" var="coursePage" varStatus="pageSt">
+                          <c:if test="${courseSt.index eq pageSt.index}">
+                             <c:set var="query" value="${coursePage}" scope="request" />
+                          </c:if>
+                       </c:forEach>
+                  <p style= "position: flex; flex-direction: row; justify-content: center;">
+                     &nbsp;&nbsp;&nbsp;
+                     ${courseInformDTO.userNickname} 님의 < <a href="/course/courseDetail?${query}" style= "text-decoration: none;"><span style="color: #FF962B;">${courseInformDTO.courseName}</span></a> > 코스 &nbsp;&nbsp;
+                  </p>
+                  <div style = "background-color: #eeeeee; display: flex; align-items: center; border-radius: 5px; padding: 0px 10px;" >
+                     <span style = "color: #636363;"> 평균 별점 : </span>
+                     <div class="stars small" id= "courseAvgScore${courseSt.index}" style= "margin-left: 10px; font-size: 20px; display: flex; justify-content: flex-end; " data-score="${courseInformDTO.courseAvgScore}"></div>
+                              <script>
+                                 var courseStars = document.getElementById("courseAvgScore${courseSt.index}");
+                                 courseStars.setAttribute("data-score", Math.floor(courseStars.getAttribute("data-score")));
+                              </script>
+                  </div>    
+                 
+                 <c:if test= "${not empty sessionScope.user}">
+                 	  <c:if test= "${courseInformDTO.isBookMarked eq 0}">
+                  		<img src= "/images/unBookmarked.png" width= "30px;" style= "position: flex; margin-left: auto; cursor: pointer;"
+                  		 	id= "bookmarkIn${courseInformDTO.courseId}">
+	                  </c:if>
+	
+	                  <c:if test= "${courseInformDTO.isBookMarked eq 1}">
+	                  	<img src= "/images/bookmarked.png" width= "30px;" style= "position: flex; margin-left: auto; cursor: pointer;"
+	                  		 id= "bookmarkOut${courseInformDTO.courseId}">
+	                  </c:if>
+                 </c:if>
+                  
+              	 
+               </div>   
+
+               <div class="inline-items" style = "border-radius:5px;
+                                              display:flex;
+                                              align-items: center;
+                                              justify-content: center;">
+                                              
+                       <c:forEach items="${fn:split(courseInformDTO.courseList, ',')}" var="place">
+                           <div class="item" style = "padding:5px 10px;
+                                                background-color: #7FB3D5;
+                                                border-radius:5px;
+                                                color: white;
+                                                margin-right:15px;
+                                                font-family: 'TheJamsil3Regular', sans-serif;">${place}</div>
+                       </c:forEach>
+                   </div>
+               
+               <div style= "background-color: #F7F9F9; padding: 5px; margin-top: 10px;">
+                  <span>"&nbsp; ${courseInformDTO.courseContent} &nbsp;"</span>
+               </div>
+            </div>
+		</c:forEach>
+	</div>
+	
+	<input type= "hidden" id= "userId" value= "${sessionScope.user.userId}">
+	
+	<script>
+	var thisUserId = document.getElementById("userId").value;
+	
+	<!-- 회색 북마크 버튼 클릭시 북마크 추가 -->
+	document.querySelectorAll('[id^="bookmarkIn"]').forEach(function(bookmarkIn) {
+		bookmarkIn.addEventListener('click', function(event) {
+			var targetIdIn = event.target.id;
+	        var thisCourseIdIn = targetIdIn.replace("bookmarkIn", "");
+			
+	        console.log(targetIdIn);
+	        console.log(thisCourseIdIn);
+	        console.log(thisUserId);
+	        
+	        axios.post('/user/bookmark/insert',  null, {
+	        	params: {
+	        		courseId: thisCourseIdIn,
+		        	userId: thisUserId	
+	        	}
+	        })
+	        .then(function (response) {
+	            if(response.data) {
+	            	window.location.reload();
+	            }
+	        })
+	        .catch(function (error) {
+	            console.error("북마크 추가 요청 실패:", error);
+	        });
+	    });
+	});
+
+	<!-- 주황색 북마크 버튼 클릭시 북마크 추가 -->
+	document.querySelectorAll('[id^="bookmarkOut"]').forEach(function(bookmarkOut) {
+		bookmarkOut.addEventListener('click', function(event) {
+			var targetIdOut = event.target.id;
+	        var thisCourseIdOut = targetIdOut.replace("bookmarkOut", "");
+			
+	        console.log(targetIdOut);
+	        console.log(thisCourseIdOut);
+	        console.log(thisUserId);
+	        
+	        axios.post('/user/bookmark/delete',  null, {
+	        	params: {
+	        		courseId: thisCourseIdOut,
+		        	userId: thisUserId	
+	        	}
+	        })
+	        .then(function (response) {
+	            if(response.data) {
+	            	window.location.reload();
+	            }
+	        })
+	        .catch(function (error) {
+	            console.error("북마크 삭제 요청 실패:", error);
+	        });
+	    });
+	});
+
+	
+	</script>
+	
+	<footer>
 		<jsp:include page="components/footer.jsp" />
 	</footer>
+	
+
 </body>
 </html>

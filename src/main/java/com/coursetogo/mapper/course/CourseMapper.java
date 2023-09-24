@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
@@ -16,7 +17,7 @@ public interface CourseMapper {
 
 	public int insertCourse(CourseDTO course) throws SQLException;
 
-	public List<CourseInformDTO> getAllCourses() throws SQLException;
+	public List<CourseInformDTO> getAllCourses(@Param("userId") int userId) throws SQLException;
 
 	public CourseDTO getCourseById(int courseId) throws SQLException;
 
@@ -33,7 +34,6 @@ public interface CourseMapper {
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3();
-
 	
 
 	

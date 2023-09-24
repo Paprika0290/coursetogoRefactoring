@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.coursetogo.mapper.user.UserBookmarkCourseMapper">
+
+ 	<insert id="insertNewBookmark" parameterType="UserBookmarkCourseDTO">
+ 		INSERT INTO user_bookmark_course (bookmark_id, user_id, course_id)
+ 		VALUES (user_bookmark_course_seq.nextval, #{userId}, #{courseId})
+ 	</insert>
+		
+ 	<delete id="deleteBookmark" parameterType="int">
+	    DELETE FROM user_bookmark_course
+	    WHERE user_id = #{userId} AND course_id = #{courseId}
+	</delete>
+		
+ </mapper>
