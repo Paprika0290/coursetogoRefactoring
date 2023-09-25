@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
@@ -30,59 +31,103 @@ public class CourseService {
 		} else {
 			log.info("새로운 course 만들기 성공");
 		}
-			
 		return res;
 		
 	}
-	public List<CourseInformDTO>  getAllCourses(int userId) throws Exception {
 	
+	public List<CourseInformDTO> getAllCourses(int userId) throws Exception {
 		List<CourseInformDTO> res = new ArrayList<>();
-				 res= mapper.getAllCourses(userId);
-				if(!res.isEmpty()) {
-					
-				} else {
-					throw new Exception("no data");
-				}
-				
-				return res;
 		
+		res= mapper.getAllCourses(userId);
+		
+		if(!res.isEmpty()) {
+			
+		} else {
+			log.warn("전체 코스 검색 실패");
+		}
+		return res;
 	}
+	
+	public List<CourseInformDTO> getAllCoursesByPage(int userId, int pageNum, int pageSize) throws Exception {
+		List<CourseInformDTO> res = new ArrayList<>();
+		
+		int startRow = ((pageNum-1) * pageSize) + 1;
+		int endRow = ((pageNum-1) * pageSize) + pageSize;
+		res= mapper.getAllCoursesByPage(userId, startRow, endRow);
+		
+		if(!res.isEmpty()) {
+			
+		} else {
+			log.warn("전체 코스(+페이지네이션) 검색 실패");
+		}
+		return res;
+	}
+	
+	public int getCourseCount() throws Exception  {
+		int count = 0;
+		count = mapper.getCourseCount();
+		
+		return count;
+	}
+	
+	public int getCourseCountWithArea(int area) throws Exception  {
+		int count = 0;
+		count = mapper.getCourseCountWithArea(area);
+		
+		return count;
+	}
+	
+	
 	public CourseInformDTO  getCourseInformByCourseId(int courseId) throws Exception {
-		
-		CourseInformDTO res=null;
-				 res= mapper.getCourseInformByCourseId(courseId);
-				if(res!=null) {
-					
-				} else {
-					throw new Exception("no data");
-				}
+		CourseInformDTO res= null;
 				
-				return res;
+		res= mapper.getCourseInformByCourseId(courseId);
+				
+		if(res!= null) {
+			
+		} else {
+			log.warn("코스ID로 코스Inform 검색 실패");
+		}
+		return res;
 		
 	}
+	
 	public List<CourseInformDTO> getCourseInformByUserId(int userId) throws Exception {
+		List<CourseInformDTO> res= new ArrayList<>();
 		
-		List<CourseInformDTO> res=null;
-				 res= mapper.getCourseInformByUserId(userId);
-				if(res!=null) {
-					
-				} else {
-					throw new Exception("no data");
-				}
-				
-				return res;
+		res= mapper.getCourseInformByUserId(userId);
+		
+		if(res!= null) {
+			
+		} else {
+			log.warn("유저가 작성한 코스 검색 실패");
+		}
+		return res;
+		
+	}
+	
+	public List<CourseInformDTO> getBookmarkedCourseInformByUserId(int userId) throws Exception {
+		
+		List<CourseInformDTO> res = new ArrayList<>();
+		
+		res= mapper.getBookmarkedCourseInformByUserId(userId);
+		 
+		if(res!= null) {
+			
+		} else {
+			log.warn("유저가 북마크한 코스 검색 실패");
+		}
+		return res;
 		
 	}
 	
 	public CourseDTO getCourseById(int courseId) throws SQLException {
-		CourseDTO res;
+		CourseDTO res= null;
 		 res= mapper.getCourseById(courseId);
 		if(res == null) {
-			log.warn("no data - getCourseById");
+			log.warn("코스ID로 코스 검색 실패");
 		} else {
-			
 		}
-		
 		return res;
 	}
 
@@ -91,7 +136,7 @@ public class CourseService {
 	}
 	
 	public List<CourseInformDTO> getCourseWithPageRequest(PageRequestDTO pageRequest) throws Exception {
-		List<CourseInformDTO> res;
+		List<CourseInformDTO> res= new ArrayList<>();
 	    res= mapper.getCourseWithPageRequest(pageRequest);	
 		return res;
 	}

@@ -18,22 +18,35 @@ public interface CourseMapper {
 	public int insertCourse(CourseDTO course) throws SQLException;
 
 	public List<CourseInformDTO> getAllCourses(@Param("userId") int userId) throws SQLException;
+	
+	public List<CourseInformDTO> getAllCoursesByPage(@Param("userId") int userId,
+													 @Param("startRow") int startRow, @Param("endRow") int endRow) throws SQLException;
+	
+	public int getCourseCount() throws SQLException;
+	public int getCourseCountWithArea(@Param("area") int area) throws SQLException;
 
+	
 	public CourseDTO getCourseById(int courseId) throws SQLException;
 
-	public List<CourseInformDTO> getCourseBySearchKeyword(SearchKeywordDTO searchKeyword)throws SQLException;
+	public List<CourseInformDTO> getCourseBySearchKeyword(SearchKeywordDTO searchKeyword) throws SQLException;
 
-	public int getTotalCount(PageRequestDTO pageRequest)throws SQLException;
+	public int getTotalCount(PageRequestDTO pageRequest) throws SQLException;
 
 	public List<CourseInformDTO> getCourseWithPageRequest(PageRequestDTO pageRequest);
 
-	public CourseInformDTO getCourseInformByCourseId(int courseId);
+	public CourseInformDTO getCourseInformByCourseId(@Param("courseId") int courseId) throws SQLException;
 
-	public List<CourseInformDTO> getCourseInformByUserId(int userId)throws SQLException;
+	public List<CourseInformDTO> getCourseInformByUserId(@Param("userId") int userId) throws SQLException;
+	
+	public List<CourseInformDTO> getBookmarkedCourseInformByUserId(@Param("userId") int userId) throws SQLException;
 
 	
 	// 코스작성왕
-	public List<Integer> getCourseTop3();
+	public List<Integer> getCourseTop3() throws SQLException;
+
+	
+
+	
 	
 
 	

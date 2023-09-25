@@ -124,9 +124,6 @@ public class RestAPIController {
 								  @RequestParam("userId") String userId) {
 		boolean res = false; 
 		
-		System.out.println(courseId);
-		System.out.println(userId);
-		
 		try {
 			res = bookmarkService.insertNewBookmark(Integer.parseInt(userId), Integer.parseInt(courseId));
 		} catch (SQLException e) {
@@ -137,7 +134,6 @@ public class RestAPIController {
 		if(res) {
 			return true;
 		}
-		
 		return false;
 	}
 	
@@ -146,9 +142,6 @@ public class RestAPIController {
 	public boolean deleteBookmark(@RequestParam("courseId") String courseId,
 								  @RequestParam("userId") String userId) {
 		boolean res = false; 
-		
-		System.out.println(courseId);
-		System.out.println(userId);
 		
 		try {
 			res = bookmarkService.deleteBookmark(Integer.parseInt(userId), Integer.parseInt(courseId));
@@ -160,7 +153,6 @@ public class RestAPIController {
 		if(res) {
 			return true;
 		}
-		
 		return false;
 	}
 	

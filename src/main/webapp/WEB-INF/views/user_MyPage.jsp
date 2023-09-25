@@ -21,6 +21,7 @@
 		 	margin-right: 30px;
 		 	font-size: 11pt;
 		 	margin-bottom: 25px;
+		 	cursor: pointer;
 		 }
 	</style>
 	<link rel="stylesheet" type="text/css" href="/css/fonts.css">	

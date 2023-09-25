@@ -124,7 +124,7 @@ public class N_MapAPIController {
 								e.printStackTrace();
 							}
 							courseDirection = new CourseDirectionDTO(new double[] {placeDTOArray[0].getLatitude(), placeDTOArray[0].getLongitude()});
-							System.out.println(courseDirection);
+//							System.out.println(courseDirection);
 			
 		}else if(placeIdArray.length == 2) {
 							// 장소가 2개일 때 : stopOverLocations 필드만 빠짐
@@ -140,7 +140,7 @@ public class N_MapAPIController {
 				
 							courseDirection = new CourseDirectionDTO(new double[] {placeDTOArray[0].getLatitude(), placeDTOArray[0].getLongitude()},
 																	 new double[] {placeDTOArray[1].getLatitude(), placeDTOArray[1].getLongitude()});
-							System.out.println(courseDirection);
+//							System.out.println(courseDirection);
 		}else {
 							// 장소가 3개 이상일 때
 							double[][] stopOverLocations = new double[placeIdArray.length-2][2];

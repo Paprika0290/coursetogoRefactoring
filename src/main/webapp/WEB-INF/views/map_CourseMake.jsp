@@ -313,6 +313,10 @@
 				placeCount++;
 			}
 			
+			if(placeCount == 0) {
+				alert("장소는 1개 이상 선택되어야 해요.");
+				window.location.reload();
+			}
 			document.getElementById('courseNumber').value = placeCount;
 		});
 	</script>
