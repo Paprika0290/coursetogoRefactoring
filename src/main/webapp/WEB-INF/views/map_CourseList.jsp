@@ -163,6 +163,31 @@
                </div>
             </div>
 		</c:forEach>
+		
+		<div id= "pageNumbersContainer" style= "font-family: 'TheJamsil3Regular', sans-serif;">
+			<br>
+			<c:if test= "${(groupNum * 10) <= totalPages}">
+				<c:set var= "endPage" value= "${groupNum * 10}" />
+			</c:if>
+			<c:if test= "${(groupNum * 10) > totalPages}">
+				<c:set var= "endPage" value= "${totalPages}" />
+			</c:if>
+			
+			
+			
+			<c:if test= "${groupNum != 1}">
+				<a href= "/course/courseList?pageNum=${(groupNum-1)*10}&pageSize=${pageSize}&groupNum=${groupNum-1}" style= "color: #00008b; text-decoration: none;">◀</a>&nbsp;
+			</c:if>
+						
+			<c:forEach var= "i" begin= "${(groupNum - 1) * 10 + 1}" end= "${endPage}">
+				<a href= "/course/courseList?pageNum=${i}&pageSize=${pageSize}" style= "color: #00008b; text-decoration: none;"><b>${i}</b></a>&nbsp;
+			</c:forEach>
+			
+			<c:if test= "${groupNum != totalGroups}">
+				<a href= "/course/courseList?pageNum=${(groupNum*10)+1}&pageSize=${pageSize}&groupNum=${groupNum+1}" style= "color: #00008b; text-decoration: none;">▶</a>&nbsp;
+			</c:if>
+			
+		</div>
 	</div>
 	
 	<input type= "hidden" id= "userId" value= "${sessionScope.user.userId}">

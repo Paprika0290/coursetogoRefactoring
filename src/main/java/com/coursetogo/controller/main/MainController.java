@@ -219,13 +219,6 @@ public class MainController {
 			entireReviewInfo[j][10] = String.valueOf((int)(Math.floor(courseReviewList.get(j).getCourseScore())));			
 			entireReviewInfo[j][11] = String.valueOf(courseReviewList.get(j).getReviewDate());						  
 		}
-		
-//		for(String[] reviewInfo : entireReviewInfo) {
-//			System.out.println("리뷰정보출력 -------------------------------");
-//			for(String info : reviewInfo) {
-//				System.out.println(info);
-//			}
-//		}
 				
 		model.addAttribute("entireReviewInfo", entireReviewInfo);
 		
@@ -234,8 +227,50 @@ public class MainController {
 
 	// 유저 마이페이지 - 즐겨찾기리스트
 	@GetMapping("user/myPage/bookmarkList")
-	public String getUserBookmarkList(HttpSession session) {
+	public String getUserBookmarkList(HttpSession session, Model model) {
 		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
+	
+		int userId = -1;
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}		
+
+		List<CourseInformDTO> userCourseList = new ArrayList<CourseInformDTO>();
+		List<String> courseDetailPageList = new ArrayList<String>();
+		List<String> userPhotoSrcList = new ArrayList<String>();
+		
+		try {
+			userCourseList = courseService.getBookmarkedCourseInformByUserId(userId);
+		} catch (Exception e) {
+			log.warn("유저의 코스리스트 조회 실패");
+			e.printStackTrace();
+		}
+		
+		String userPhoto = null;
+				
+		for (CourseInformDTO course : userCourseList) {
+        	int courseId = course.getCourseId();
+        	CourseDTO thisCourse = null;
+        	try {
+				thisCourse = courseService.getCourseById(courseId);
+				userPhoto = userService.getCtgUserByUserId(thisCourse.getUserId()).getUserPhoto();
+				userPhotoSrcList.add(userPhoto);
+			} catch (SQLException e) {
+				log.warn("즐겨찾기 리스트 - 유저의 코스 조회 실패");
+				e.printStackTrace();
+			}
+
+            String query = "";
+         
+            query += ("courseId="+ String.valueOf(courseId));
+        
+            courseDetailPageList.add(query);    
+		}
+		
+		model.addAttribute("userCourseList", userCourseList);
+		model.addAttribute("userPhotoSrcList", userPhotoSrcList);
+		model.addAttribute("courseDetailPageList", courseDetailPageList);		
+		
 		return "user_MyPage_BookmarkList";
 	}
 	
@@ -264,20 +299,31 @@ public class MainController {
 								  RedirectAttributes attributes, Model model, HttpSession session) {
 		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		
-		// reviewController에서 만들어 사용했던 filterNullValues 메서드를 사용, null이 아닌 값들로 배열 생성
-		String[] placeIds = reviewController.filterNullValues(placeId1, placeId2, placeId3, placeId4, placeId5);
-		courseController.insertCourse(newCourse, placeIds);
-
-		List<CourseInformDTO> courseList = new ArrayList<CourseInformDTO>();
+		int userId = -1;
 		
-		try {
-			courseList = courseService.getCourseInformByUserId(185);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
 		}
 		
-		attributes.addAttribute("courseId", courseList.get(courseList.size()-1).getCourseId());
-		return "redirect:/course/courseDetail";
+		// reviewController에서 만들어 사용했던 filterNullValues 메서드를 사용, null이 아닌 값들로 배열 생성
+		String[] placeIds = reviewController.filterNullValues(placeId1, placeId2, placeId3, placeId4, placeId5);
+		
+		if(placeIds.length < 1) {
+			return "redirect:/course/courseMake";
+		}else {
+			courseController.insertCourse(newCourse, placeIds);
+
+			List<CourseInformDTO> courseList = new ArrayList<CourseInformDTO>();
+			
+			try {
+				courseList = courseService.getCourseInformByUserId(userId);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			attributes.addAttribute("courseId", courseList.get(courseList.size()-1).getCourseId());
+			return "redirect:/course/courseDetail";
+		}
 	}
 	
 	
@@ -331,9 +377,12 @@ public class MainController {
 	
 	// 코스 찾기 페이지
 	@GetMapping("/course/courseList")
-	public String getCourseListPage(HttpSession session, Model model) {
+	public String getCourseListPage(HttpSession session, Model model,
+									@RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
+									@RequestParam(name= "pageSize", defaultValue= "10") int pageSize,
+									@RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum) {
 		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
-
+		
 		int userId = -1;
 		
 		if(session.getAttribute("user") != null) {
@@ -341,20 +390,14 @@ public class MainController {
 		}
 		
 		List<CourseInformDTO> courseInformList = new ArrayList<CourseInformDTO>();
-		
+		int totalCourseCount = 0;
 		try {
-			courseInformList = courseService.getAllCourses(userId);
+			courseInformList = courseService.getAllCoursesByPage(userId, pageNum, pageSize);
+			//area 검색이 안 들어왔을 경우
+			totalCourseCount = courseService.getCourseCount();
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		
-		Collections.sort(courseInformList, new Comparator<CourseInformDTO>() {
-			@Override
-			public int compare(CourseInformDTO course1, CourseInformDTO course2) {
-				return Integer.compare(course2.getCourseId(), course1.getCourseId());
-			}
-			
-		});
 		
 		List<String> userPhotoSrcList = new ArrayList<String>();
 		List<String> courseDetailPageList = new ArrayList<String>();
@@ -398,8 +441,44 @@ public class MainController {
 		model.addAttribute("courseDetailPageList", courseDetailPageList);
 		model.addAttribute("areaList", areaListToString);
 		
-		System.out.println(courseInformList);
+		System.out.println("pageNum : " + pageNum);
+		System.out.println("pageSize : " + pageSize);
+		System.out.println("totalCourseCount : " + totalCourseCount);
 		
+		// pageNum : 기본-1, 페이지 번호 누를시 새로 입력됨 / pageSize: 기본-10
+		int totalPages = 0;
+		if( (totalCourseCount / pageSize) < ((double)totalCourseCount / (double)pageSize) &&
+			((double)totalCourseCount / (double)pageSize) < (totalCourseCount / pageSize) + 1 ) {
+			totalPages = (totalCourseCount / pageSize) + 1;
+		} else {
+			totalPages = (totalCourseCount / pageSize);
+		}
+
+		int totalGroups = 0;
+		if( (totalPages / 10) < ((double)totalPages / 10) &&
+			((double)totalPages / 10) < (totalPages / 10) + 1 ) {
+			totalGroups = (totalPages / 10) + 1;
+		} else {
+			totalGroups = (totalPages / 10);
+		}
+		
+		
+		for(int i = 1; i <= totalGroups; i++) {
+			if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
+				groupNum = i;
+				break;
+			}
+		}
+		System.out.println("groupnum: " + groupNum);
+		System.out.println("totalgroups: " + totalGroups);
+		
+		model.addAttribute("pageNum", pageNum);
+		model.addAttribute("pageSize", pageSize);
+		model.addAttribute("groupNum", groupNum);
+		model.addAttribute("totalPages", totalPages);
+		model.addAttribute("totalGroups", totalGroups);
+//		model.addAttribute();
+				
 		return "map_CourseList";
 	}
 	
