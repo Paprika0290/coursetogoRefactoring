@@ -85,13 +85,7 @@
 							  <option value="" selected>지역명 선택 </option>	
 							  
 							  <c:forEach items = "${areaList}" var="area" varStatus="areaSt">
-							  	<c:if test="${areaSt.index eq 0}">
 							  		<option value="${area}">${area} &nbsp;&nbsp;</option>
-							  	</c:if>
-							  	<c:if test="${areaSt.index ne 0}">
-							  		<option style= "background-color: #cccccc" value="${area}"
-							  				disabled> ${area} &nbsp;&nbsp;</option>
-							  	</c:if>	
 							  </c:forEach>					  							
 						</select>
 					</div>
@@ -284,7 +278,7 @@
 			</c:if>
 			
 			<c:if test="${empty sessionScope.user.userId}">
-			    <button class="courseMakeButton" disabled > 로그인 후 사용가능합니다</button>
+			    <button id= "invalidButton" class="courseMakeButton" disabled > 로그인 후 사용가능합니다</button>
 			</c:if>
 			
 			<input type= "hidden" name= "userId" value= "${sessionScope.user.userId}">
@@ -294,6 +288,7 @@
 	</div>
 	
 	<script>
+	if(document.getElementById('invalidButton') === null) {
 		document.getElementById('courseMakeButton').addEventListener('click', function(){
 			var placeCount = 0;
 			
@@ -319,6 +314,8 @@
 			}
 			document.getElementById('courseNumber').value = placeCount;
 		});
+	}
+		
 	</script>
 	
 	<script>
@@ -345,6 +342,7 @@
 					}
 	    			
 	    	).then(function(response) {
+	    		
 	    		var resultContainer = document.getElementById('searchResultList');
 	    		resultContainer.style.display = 'block';
 	    		resultContainer.innerHTML = '';
@@ -393,7 +391,7 @@
 						  document.getElementById('currentPlace').value = divId;
 					  }); 
 					  
-					  
+					  	<!-- 호출시 마커와 가게이름을 띄워주는 함수 start-->
 			    		function showMarkerAndInfoWindow(index) {		    			
 			    		    markers.forEach(function(marker, i) {
 			    		        if (i === index) {
@@ -405,6 +403,7 @@
 			    		        }
 			    		    });
 			    		}
+			    		<!-- 호출시 마커와 가게이름을 띄워주는 함수 end-->
 					});
 	    		
 
