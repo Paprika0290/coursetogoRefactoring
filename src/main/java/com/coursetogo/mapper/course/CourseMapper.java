@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Param;
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
 import com.coursetogo.dto.course.CoursePlaceDTO;
-import com.coursetogo.dto.course.PageRequestDTO;
 import com.coursetogo.dto.course.SearchKeywordDTO;
 
 @Mapper
@@ -29,10 +28,6 @@ public interface CourseMapper {
 	public CourseDTO getCourseById(int courseId) throws SQLException;
 
 	public List<CourseInformDTO> getCourseBySearchKeyword(SearchKeywordDTO searchKeyword) throws SQLException;
-
-	public int getTotalCount(PageRequestDTO pageRequest) throws SQLException;
-
-	public List<CourseInformDTO> getCourseWithPageRequest(PageRequestDTO pageRequest);
 
 	public CourseInformDTO getCourseInformByCourseId(@Param("courseId") int courseId) throws SQLException;
 

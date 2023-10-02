@@ -144,7 +144,7 @@ public class N_LoginAPIController {
 			session.setMaxInactiveInterval(3600);
 			session.setAttribute("user", userForSession);	
 			log.info("회원 접근");
-		return "home";
+		return "redirect:/";
 	}
 	
 	

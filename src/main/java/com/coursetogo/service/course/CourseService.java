@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
-import com.coursetogo.dto.course.PageRequestDTO;
 import com.coursetogo.mapper.course.CourseMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +55,6 @@ public class CourseService {
 		res= mapper.getAllCoursesByPage(userId, startRow, endRow);
 		
 		if(!res.isEmpty()) {
-			
 		} else {
 			log.warn("전체 코스(+페이지네이션) 검색 실패");
 		}
@@ -131,15 +129,6 @@ public class CourseService {
 		return res;
 	}
 
-	public int getTotalCount(PageRequestDTO pageRequest) throws SQLException {
-		return mapper.getTotalCount(pageRequest);
-	}
-	
-	public List<CourseInformDTO> getCourseWithPageRequest(PageRequestDTO pageRequest) throws Exception {
-		List<CourseInformDTO> res= new ArrayList<>();
-	    res= mapper.getCourseWithPageRequest(pageRequest);	
-		return res;
-	}
 
 	
 

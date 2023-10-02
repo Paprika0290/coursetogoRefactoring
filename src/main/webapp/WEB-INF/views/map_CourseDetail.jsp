@@ -87,7 +87,7 @@
 				<p>
 					<img src="${userPhoto}" style= "width: 40px;"><br>
 					<span style= "color: #FF962B;">${courseInform.userNickname}</span>님의<br><br>
-					<b><span style= "color: #00008b; font-family: 'TheJamsil5Bold', sans-serif; font-size: 14pt;"><${courseInform.courseName}></span></b><br>
+					<b><span style= "color: #00008b; font-family: 'TheJamsil5Bold', sans-serif; font-size: 14pt;">< ${courseInform.courseName} ></span></b><br>
 				</p>
 				<div class="stars" id= "courseAvgScore" style= "margin-bottom: 20px;" data-score="${courseInform.courseAvgScore}"></div>
 	

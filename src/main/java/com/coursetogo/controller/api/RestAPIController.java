@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -106,10 +107,10 @@ public class RestAPIController {
 	// course/courseMake 페이지에서 area or area + category 검색시 장소리스트 반환
 	@GetMapping("/place/getPlaceList")
 	public List<PlaceDTO> getPlaceList(@RequestParam("areaName") String areaName,
-									   @RequestParam(name= "categoryName", required= false) String categoryName) {
+									   @RequestParam(name= "categoryName", defaultValue = "none") String categoryName) {
 		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
 		
-		if(categoryName == null) {
+		if(categoryName.equals("none")) {
 			placeList = placeService.searchPlacesByArea(areaName);
 		}else {
 			placeList = placeService.searchPlacesByAreaOrCategory(areaName, categoryName);
@@ -117,6 +118,7 @@ public class RestAPIController {
 		
 		return placeList;
 	}
+	
 	
 	// course/courseList 페이지에서 회색 북마크 버튼 클릭시 북마크 추가 처리
 	@PostMapping("/user/bookmark/insert")

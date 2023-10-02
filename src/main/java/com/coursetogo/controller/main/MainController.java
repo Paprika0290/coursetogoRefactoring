@@ -66,11 +66,64 @@ public class MainController {
 	@Autowired
 	private ReviewController reviewController;
 	
+	@Autowired
+	private PlaceService placeService;
 	
 	// 도메인 주소로 접속 시 첫 화면 출력
 	@GetMapping("/")
-	public String getHomePage(HttpSession session) {
-		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());		
+	public String getHomePage(HttpSession session, Model model) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
+		
+		List<Integer> kingIdList = new ArrayList<Integer>();
+		List<String> kingNicknameList = new ArrayList<String>();
+		
+		try {
+			kingIdList.addAll(courseService.getCourseTop3());
+			kingIdList.addAll(courseReviewService.getReviewTop3());
+			kingIdList.addAll(placeReviewService.getReviewTop3());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		CtgUserDTO user;
+		
+		for(int a : kingIdList) {
+			
+			try {
+				user = userService.getCtgUserByUserId(a);
+				
+				if(user != null) {
+					kingNicknameList.add(user.getUserNickname());
+				}else {
+					kingNicknameList.add("-");
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		model.addAttribute("kingNicknameList", kingNicknameList);
+		
+//		if(session.getAttribute("user") != null) {
+//			user = (CtgUserDTO) session.getAttribute("user"); 
+//			
+//			for(int i = 1; i <= kingNicknameList.size(); i++) {
+//				if( (kingNicknameList.get(i-1)).equals(user.getUserNickname())) {
+//					if(i <= 3) {
+//						session.setAttribute("Top3Num", "1"+String.valueOf(i));
+//					}else if(i > 3 && i <= 6) {
+//						session.setAttribute("Top3Num", "2"+String.valueOf(i-3));
+//					}else {
+//						session.setAttribute("Top3Num", "3"+String.valueOf(i-6));
+//					}
+//				}
+//			}
+//			
+//			
+//		}
+		
+		
 		return "home";
 	}
 	
@@ -367,7 +420,7 @@ public class MainController {
 				log.warn("코스 상세 페이지 return 실패");
 				e.printStackTrace();
 			}
-
+			System.out.println(courseInform);
 			model.addAttribute("courseInform", courseInform);
 			model.addAttribute("userPhoto", userPhoto);
 			model.addAttribute("isMod", isMod);
@@ -441,9 +494,9 @@ public class MainController {
 		model.addAttribute("courseDetailPageList", courseDetailPageList);
 		model.addAttribute("areaList", areaListToString);
 		
-		System.out.println("pageNum : " + pageNum);
-		System.out.println("pageSize : " + pageSize);
-		System.out.println("totalCourseCount : " + totalCourseCount);
+//		System.out.println("pageNum : " + pageNum);
+//		System.out.println("pageSize : " + pageSize);
+//		System.out.println("totalCourseCount : " + totalCourseCount);
 		
 		// pageNum : 기본-1, 페이지 번호 누를시 새로 입력됨 / pageSize: 기본-10
 		int totalPages = 0;
@@ -469,8 +522,8 @@ public class MainController {
 				break;
 			}
 		}
-		System.out.println("groupnum: " + groupNum);
-		System.out.println("totalgroups: " + totalGroups);
+//		System.out.println("groupnum: " + groupNum);
+//		System.out.println("totalgroups: " + totalGroups);
 		
 		model.addAttribute("pageNum", pageNum);
 		model.addAttribute("pageSize", pageSize);

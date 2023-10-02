@@ -63,13 +63,7 @@
 				  <option value="" selected>지역별 코스 검색 </option>	
 				  
 				  <c:forEach items = "${areaList}" var="area" varStatus="areaSt">
-				  	<c:if test="${area eq '홍대'}">
 				  		<option value="${area}">${area} &nbsp;&nbsp;</option>
-				  	</c:if>
-				  	<c:if test="${area ne '홍대'}">
-				  		<option style= "background-color: #cccccc" value="${area}"
-				  				disabled> ${area} &nbsp;&nbsp;</option>
-				  	</c:if>	
 				  </c:forEach>					  							
 			</select>
 		</div>

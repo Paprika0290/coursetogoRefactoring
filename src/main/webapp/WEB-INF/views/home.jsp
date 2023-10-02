@@ -77,8 +77,41 @@
 				<div class = "rankingContainer" style = "border: 1px solid #E5E5E5;
 														 padding: 20px;">
 					<span class ="fontTheJamsil" style = "font-size: 1.5rem; color:#3C3C3C;">
-						CourseToGo의 인싸피플 (이 아래에 top3~ 들)
+						CourseToGo의 <span style= "font-size: 20pt; color: #FF962B;">&nbsp;&nbsp;최고 </span><span style= "font-size: 20pt; color: #00008b;">인-싸피플</span>
 					</span>
+					
+					<div style= "text-align: center; display: flex; flex-direction: row; padding: 30px 80px; font-family: 'TheJamsil3Regular', sans-serif;
+								 background-color: #ECF0F1; margin: 20px 10px;">
+						<div class= "top3Container" id= "courseKing" style= "padding: 5px; border-radius: 5px; ">
+							<div style= "background-color: #ffffff; padding: 20px; border-radius: 5px;">
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #FF962B;"> 코스를<br>가장 많이 만드신 </span><br>
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif;"> TOP3</span><br><br>
+								<img src="/images/goldMedal.png"><br>${kingNicknameList[0]}<br><br>
+								<img src="/images/silverMedal.png"><br>${kingNicknameList[1]}<br><br>
+								<img src="/images/bronzeMedal.png"><br>${kingNicknameList[2]}	
+							</div>	
+						</div>					
+
+						<div class= "top3Container" id= "courseReviewKing" style= "padding: 5px; margin-left: 30px;">
+								<div style= "background-color: #ffffff; padding: 20px; border-radius: 5px;">			
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #FF962B;"> 리뷰를<br>가장 많이 남긴</span><br>
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif;"> TOP3</span><br><br>			
+								<img src="/images/goldMedal.png"><br>${kingNicknameList[3]}<br><br>
+								<img src="/images/silverMedal.png"><br>${kingNicknameList[4]}<br><br>
+								<img src="/images/bronzeMedal.png"><br>${kingNicknameList[5]}	
+							</div>
+						</div>					
+						
+						<div class= "top3Container" id= "placeReviewKing" style= "padding: 5px; margin-left: 30px;">
+								<div style= "background-color: #ffffff; padding: 20px; border-radius: 5px;">			
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #FF962B;"> 다양한 장소를<br>많이 다녀오신</span><br>		
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif;"> TOP3</span><br><br>							
+								<img src="/images/goldMedal.png"><br>${kingNicknameList[6]}<br><br>
+								<img src="/images/silverMedal.png"><br>${kingNicknameList[7]}<br><br>
+								<img src="/images/bronzeMedal.png"><br>${kingNicknameList[8]}							
+							</div>	
+						</div>					
+					</div>
 				</div>					
 			</div>
 		</div>

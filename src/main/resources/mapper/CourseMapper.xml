@@ -227,5 +227,20 @@
  		VALUES (course_seq.nextval, #{userId}, #{courseName}, 0, #{courseNumber}, #{courseContent})
  	</insert>
 		
+	
+	<!-- 코스작성왕 -->
+	<select id="getCourseTop3" resultType="java.lang.Integer">
+	    <![CDATA[
+		    SELECT countList.user_id
+		    FROM (
+		      SELECT user_id, COUNT(user_id) AS countCourse
+		      FROM course
+		      GROUP BY user_id
+		      HAVING COUNT(user_id) > 1
+		      ORDER BY COUNT(user_id) DESC
+		    	  ) countList
+		    WHERE ROWNUM <= 3
+		 ]]>
+	</select>
 		
  </mapper>

@@ -97,7 +97,7 @@
 										border: 3px solid #FF962B;
 										border-radius: 10px;
 										background-color: white;"
-								id= "categorySelect">
+								id= "categorySelect" disabled>
 							  <option value="" selected>장소 분류 선택 </option>	
 							  
 							  <c:forEach items = "${categoryList}" var="category" varStatus="categorySt">
@@ -348,7 +348,7 @@
 	    		resultContainer.innerHTML = '';
 	    		
 				  map = new naver.maps.Map(mapDiv, {
-						center: new naver.maps.LatLng(response.data[0].latitude, response.data[0].longitude),
+						center: new naver.maps.LatLng(response.data[1].latitude, response.data[1].longitude),
 						zoom: 16
 				  });
 				
@@ -368,7 +368,9 @@
 				      div.style.cursor = 'pointer';
 					  
 					  div.innerHTML = '<p style="background-color: #FFD1A1; padding: 10px 10px; border-radius: 5px; ">' + place.placeName + '</p>' +
-	        		  				  '<input type="hidden" value="' + place.placeId  + '"id= "input' + divId + '">';
+	        		  				  '<input type="hidden" value="' + place.placeId  + '"id= "input' + divId + '">' +
+	        		  				  '<input type="hidden" id= "lat' + divId + '" value= "' + place.latitude + '">' +
+	           		  				  '<input type="hidden" id= "long' + divId + '" value= "' + place.longitude + '">' ;
 					  resultContainer.appendChild(div);	
 
 					  
@@ -389,6 +391,14 @@
 					  document.getElementById(divId).addEventListener('click', function(){
 						  showMarkerAndInfoWindow(index);
 						  document.getElementById('currentPlace').value = divId;
+						  
+						  var currLat = document.getElementById('lat' + divId).value;
+						  var currLong = document.getElementById('long' + divId).value; 
+							
+						  var placeLocation = new naver.maps.LatLng(currLat, currLong);
+						  
+						  map.panTo(placeLocation);
+						  
 					  }); 
 					  
 					  	<!-- 호출시 마커와 가게이름을 띄워주는 함수 start-->
