@@ -2,7 +2,11 @@ package com.coursetogo.controller.api;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -10,11 +14,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.coursetogo.controller.map.CourseController;
 import com.coursetogo.dto.course.CourseInformDTO;
 import com.coursetogo.dto.map.PlaceDTO;
 import com.coursetogo.dto.review.CourseReviewDTO;
 import com.coursetogo.dto.review.PlaceReviewDTO;
+import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.map.PlaceService;
 import com.coursetogo.service.review.CourseReviewService;
@@ -26,9 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 public class RestAPIController {
-
-	@Autowired
-	private CourseService courseService;
 	
 	@Autowired
 	private CourseReviewService courseReviewService; 
@@ -41,17 +45,7 @@ public class RestAPIController {
 	
 	@Autowired
 	private UserBookmarkCourseService bookmarkService;
-	
-	// course/courseListByPage 페이지에서 area값에 따른 코스리스트 조회
-	@GetMapping("course/courseListByPage")
-	public List<CourseInformDTO> getCourseListWithArea(@RequestParam("areaName") String area) {
-		List<CourseInformDTO> courseList = new ArrayList<CourseInformDTO>();
-		System.out.println(area);
-		
-		return courseList; 
-	}
-	
-	
+
 	// course/courseDetail 페이지에서 코스 리뷰 리스트 조회
 	@GetMapping("/course/courseDetail/reviewList")
 	public List<CourseReviewDTO> getCourseReviewList(String courseId) {
@@ -111,9 +105,19 @@ public class RestAPIController {
 		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
 		
 		if(categoryName.equals("none")) {
-			placeList = placeService.searchPlacesByArea(areaName);
+			try {
+				placeList = placeService.searchPlacesByArea(areaName);
+			} catch (SQLException e) {
+				log.warn("지역별 장소 조회 불가");
+				e.printStackTrace();
+			}
 		}else {
-			placeList = placeService.searchPlacesByAreaOrCategory(areaName, categoryName);
+			try {
+				placeList = placeService.searchPlacesByAreaOrCategory(areaName, categoryName);
+			} catch (SQLException e) {
+				log.warn("category + 지역별 장소 조회 불가");
+				e.printStackTrace();
+			}
 		}
 		
 		return placeList;

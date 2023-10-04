@@ -433,7 +433,8 @@ public class MainController {
 	public String getCourseListPage(HttpSession session, Model model,
 									@RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
 									@RequestParam(name= "pageSize", defaultValue= "10") int pageSize,
-									@RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum) {
+									@RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
+									@RequestParam(name= "areaName", defaultValue = "전체") String areaName) {
 		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
 		
 		int userId = -1;
@@ -441,97 +442,11 @@ public class MainController {
 		if(session.getAttribute("user") != null) {
 			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
 		}
-		
-		List<CourseInformDTO> courseInformList = new ArrayList<CourseInformDTO>();
-		int totalCourseCount = 0;
-		try {
-			courseInformList = courseService.getAllCoursesByPage(userId, pageNum, pageSize);
-			//area 검색이 안 들어왔을 경우
-			totalCourseCount = courseService.getCourseCount();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		
-		List<String> userPhotoSrcList = new ArrayList<String>();
-		List<String> courseDetailPageList = new ArrayList<String>();
-		
-		userId = -1;
-		String userPhoto = null;
-		
-		for(CourseInformDTO courseInform : courseInformList) {
-			
-			try {
-				userId = courseService.getCourseById(courseInform.getCourseId()).getUserId();
-				userPhoto = userService.getCtgUserByUserId(userId).getUserPhoto();
-			} catch (SQLException e) {
-				log.warn("코스를 작성한 유저의 사진을 가져오는 과정에 에러 발생");
-				e.printStackTrace();
-			}
-			
-			userPhotoSrcList.add(userPhoto);
-		}
-		
-		for (CourseInformDTO course : courseInformList) {
-        	int courseId = course.getCourseId();
-            String query = "";
-         
-            query += ("courseId="+ String.valueOf(courseId));
-        
-            courseDetailPageList.add(query);    
-		}			
-		
-		Area[] areaList = Area.values();
-		String[] areaListToString = new String[areaList.length];
-				
-		for(int i = 0; i < areaList.length; i++) {
-			areaListToString[i] = areaList[i].toString();
-		}
-		
-		Arrays.sort(areaListToString);
-		
-		model.addAttribute("courseInformList", courseInformList);
-		model.addAttribute("userPhotoSrcList", userPhotoSrcList);
-		model.addAttribute("courseDetailPageList", courseDetailPageList);
-		model.addAttribute("areaList", areaListToString);
-		
-//		System.out.println("pageNum : " + pageNum);
-//		System.out.println("pageSize : " + pageSize);
-//		System.out.println("totalCourseCount : " + totalCourseCount);
-		
-		// pageNum : 기본-1, 페이지 번호 누를시 새로 입력됨 / pageSize: 기본-10
-		int totalPages = 0;
-		if( (totalCourseCount / pageSize) < ((double)totalCourseCount / (double)pageSize) &&
-			((double)totalCourseCount / (double)pageSize) < (totalCourseCount / pageSize) + 1 ) {
-			totalPages = (totalCourseCount / pageSize) + 1;
-		} else {
-			totalPages = (totalCourseCount / pageSize);
-		}
 
-		int totalGroups = 0;
-		if( (totalPages / 10) < ((double)totalPages / 10) &&
-			((double)totalPages / 10) < (totalPages / 10) + 1 ) {
-			totalGroups = (totalPages / 10) + 1;
-		} else {
-			totalGroups = (totalPages / 10);
-		}
+		HashMap<String, Object> ListValues = new HashMap<String, Object>();
+		ListValues = courseController.getCourseInformListValues(areaName, userId, pageNum, pageSize, groupNum);
 		
-		
-		for(int i = 1; i <= totalGroups; i++) {
-			if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
-				groupNum = i;
-				break;
-			}
-		}
-//		System.out.println("groupnum: " + groupNum);
-//		System.out.println("totalgroups: " + totalGroups);
-		
-		model.addAttribute("pageNum", pageNum);
-		model.addAttribute("pageSize", pageSize);
-		model.addAttribute("groupNum", groupNum);
-		model.addAttribute("totalPages", totalPages);
-		model.addAttribute("totalGroups", totalGroups);
-//		model.addAttribute();
-				
+		model.addAttribute("ListValues", ListValues);		
 		return "map_CourseList";
 	}
 	

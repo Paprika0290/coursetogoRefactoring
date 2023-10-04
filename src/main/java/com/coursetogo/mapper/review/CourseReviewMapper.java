@@ -12,7 +12,7 @@ import com.coursetogo.dto.review.CourseReviewDTO;
 public interface CourseReviewMapper {
 	
 	// 코스리뷰 Id로 코스리뷰 검색
-	public CourseReviewDTO getCourseReviewByReviewId (int courseReviewId);
+	public CourseReviewDTO getCourseReviewByReviewId (int courseReviewId) throws SQLException;
 	
     // 코스Id로 코스리뷰 검색
     public List<CourseReviewDTO> getCourseReviewByCourseId (int courseId) throws SQLException;

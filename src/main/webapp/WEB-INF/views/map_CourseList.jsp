@@ -52,6 +52,19 @@
 		<jsp:include page="components/navigation.jsp" />	
 	</header>
 	
+	<c:set var = "courseInformList" value= "${ListValues['courseInformList']}" />
+	<c:set var = "userPhotoSrcList" value= "${ListValues['userPhotoSrcList']}" />
+	<c:set var = "courseDetailPageList" value= "${ListValues['courseDetailPageList']}" />
+	<c:set var = "areaList" value= "${ListValues['areaList']}" />
+	<c:set var = "totalCourseCount" value= "${ListValues['totalCourseCount']}" />
+	
+	<c:set var = "pageNum" value= "${ListValues['pageNum']}" />
+	<c:set var = "pageSize" value= "${ListValues['pageSize']}" />
+	<c:set var = "groupNum" value= "${ListValues['groupNum']}" />
+	<c:set var = "totalPages" value= "${ListValues['totalPages']}" />
+	<c:set var = "totalGroups" value= "${ListValues['totalGroups']}" />
+	
+	
 	<div class= "searchContainer">
 		<div id= "areaSearch" class= "searchInput" >
 			<select style= "padding: 2px;
@@ -61,7 +74,7 @@
 							border-radius: 3px;"
 					id= "areaSelect">
 				  <option value="" selected>지역별 코스 검색 </option>	
-				  
+				  <option value="전체"> 전체 &nbsp;&nbsp;</option>
 				  <c:forEach items = "${areaList}" var="area" varStatus="areaSt">
 				  		<option value="${area}">${area} &nbsp;&nbsp;</option>
 				  </c:forEach>					  							
@@ -73,20 +86,10 @@
 			var areaSelected = document.getElementById('areaSelect');
 			
 			areaSelected.addEventListener('change', function() {
-				  const selectedValue = areaSelected.value;
-
-				  axios.get('/course/courseListByPage', {
-				    params: {
-				      areaName: selectedValue 
-				    }
-				  })
-				  .then(function (response) {
-				    console.log(response.data);
-				  })
-				  .catch(function (error) {
-				    console.error(error);
-				  });
-				});
+				  var selectedValue = areaSelected.value;
+				  console.log(selectedValue);
+				  window.location.href= '/course/courseList?areaName=' + selectedValue;
+			})
 		</script>
 		
 	</div>
@@ -169,16 +172,34 @@
 			
 			
 			
-			<c:if test= "${groupNum != 1}">
-				<a href= "/course/courseList?pageNum=${(groupNum-1)*10}&pageSize=${pageSize}&groupNum=${groupNum-1}" style= "color: #00008b; text-decoration: none;">◀</a>&nbsp;
-			</c:if>
-						
-			<c:forEach var= "i" begin= "${(groupNum - 1) * 10 + 1}" end= "${endPage}">
-				<a href= "/course/courseList?pageNum=${i}&pageSize=${pageSize}" style= "color: #00008b; text-decoration: none;"><b>${i}</b></a>&nbsp;
-			</c:forEach>
-			
-			<c:if test= "${groupNum != totalGroups}">
-				<a href= "/course/courseList?pageNum=${(groupNum*10)+1}&pageSize=${pageSize}&groupNum=${groupNum+1}" style= "color: #00008b; text-decoration: none;">▶</a>&nbsp;
+			<c:if test= "${totalPages > 1}">
+				<c:if test= "${param.areaName == ''}">
+					<c:if test= "${groupNum != 1}">
+						<a href= "/course/courseList?pageNum=${(groupNum-1)*10}&pageSize=${pageSize}&groupNum=${groupNum-1}" style= "color: #00008b; text-decoration: none;">◀</a>&nbsp;
+					</c:if>
+								
+					<c:forEach var= "i" begin= "${(groupNum - 1) * 10 + 1}" end= "${endPage}">
+						<a href= "/course/courseList?pageNum=${i}&pageSize=${pageSize}" style= "color: #00008b; text-decoration: none;"><b>${i}</b></a>&nbsp;
+					</c:forEach>
+					
+					<c:if test= "${groupNum != totalGroups}">
+						<a href= "/course/courseList?pageNum=${(groupNum*10)+1}&pageSize=${pageSize}&groupNum=${groupNum+1}" style= "color: #00008b; text-decoration: none;">▶</a>&nbsp;
+					</c:if>
+				</c:if>
+				
+				<c:if test= "${param.areaName != ''}">
+					<c:if test= "${groupNum != 1}">
+						<a href= "/course/courseList?pageNum=${(groupNum-1)*10}&pageSize=${pageSize}&groupNum=${groupNum-1}&areaName=${param.areaName}" style= "color: #00008b; text-decoration: none;">◀</a>&nbsp;
+					</c:if>
+								
+					<c:forEach var= "i" begin= "${(groupNum - 1) * 10 + 1}" end= "${endPage}">
+						<a href= "/course/courseList?pageNum=${i}&pageSize=${pageSize}&areaName=${param.areaName}" style= "color: #00008b; text-decoration: none;"><b>${i}</b></a>&nbsp;
+					</c:forEach>
+					
+					<c:if test= "${groupNum != totalGroups}">
+						<a href= "/course/courseList?pageNum=${(groupNum*10)+1}&pageSize=${pageSize}&groupNum=${groupNum+1}&areaName=${param.areaName}" style= "color: #00008b; text-decoration: none;">▶</a>&nbsp;
+					</c:if>
+				</c:if>
 			</c:if>
 			
 		</div>

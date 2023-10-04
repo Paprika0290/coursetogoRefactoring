@@ -104,7 +104,7 @@
 						
 						<div class= "top3Container" id= "placeReviewKing" style= "padding: 5px; margin-left: 30px;">
 								<div style= "background-color: #ffffff; padding: 20px; border-radius: 5px;">			
-								<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #FF962B;"> 다양한 장소를<br>많이 다녀오신</span><br>		
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #FF962B;"> 가장 다양한 장소에<br>리뷰를 남겨주신</span><br>		
 								<span style= "font-family: 'TheJamsil5Bold', sans-serif;"> TOP3</span><br><br>							
 								<img src="/images/goldMedal.png"><br>${kingNicknameList[6]}<br><br>
 								<img src="/images/silverMedal.png"><br>${kingNicknameList[7]}<br><br>

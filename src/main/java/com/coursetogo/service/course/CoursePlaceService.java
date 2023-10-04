@@ -19,14 +19,14 @@ public class CoursePlaceService {
 	public boolean insertCoursePlace(CoursePlaceDTO CoursePlace) throws Exception {
 		boolean result = false;
 				
-				int res = mapper.insertCoursePlace(CoursePlace);
-				
-				if(res != 0) {
-					result = true;
-				} else {
-				}
-				
-				return result;
+		int res = mapper.insertCoursePlace(CoursePlace);
+		
+		if(res != 0) {
+			result = true;
+		} else {
+		}
+		
+		return result;
 		
 	}
 }

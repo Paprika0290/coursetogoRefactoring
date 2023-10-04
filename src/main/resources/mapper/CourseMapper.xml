@@ -47,20 +47,15 @@
 		FROM course
 	</select>
 	
-	<select id= "getCourseCountWithArea" parameterType="_int" resultType= "_int">
-		SELECT DISTINCT course_id
-		FROM (
-		    SELECT
-		     c.course_id,
-		     c_p.place_id,
-		     a_p.area_id
-		    FROM
-		     course c
-		     INNER JOIN course_place c_p ON c.course_id = c_p.course_id
-		     INNER JOIN area_place a_p ON a_p.place_id = c_p.place_id
-		    WHERE
-		     a_p.area_id = #{area}
-		)
+	<select id= "getCourseCountWithArea" parameterType="String" resultType= "_int">
+		SELECT count(DISTINCT c.course_id)
+		FROM
+			course c
+			JOIN course_place c_p ON c_p.course_id = c.course_id
+			JOIN area_place a_p ON a_p.place_id = c_p.place_id
+			JOIN area a ON a.area_id = a_p.area_id
+		WHERE a.area_name = #{areaName}
+		ORDER BY c.course_id
 	</select>
 	
 	<select id="getAllCoursesByPage" parameterType="_int" resultType="CourseInformDTO">
@@ -101,6 +96,52 @@
 	    c.course_avg_score,
 	    c.course_number,
 	    user_bookmark_course.BOOKMARK_ID	
+	  ORDER BY
+	  	c.course_id DESC
+	  )
+	  WHERE r BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="getAllCoursesOfAreaByPage" resultType="CourseInformDTO">
+	  SELECT *
+	  FROM (
+	  	SELECT
+	    c.course_id AS courseId,
+	    u.user_nickname AS userNickName,
+	    c.course_name AS courseName,
+	    c.course_avg_score AS courseAvgScore,
+	    c.course_number AS courseNumber,
+	    c.course_content AS courseContent,
+	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
+	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
+	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
+	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+	    CASE
+	      WHEN user_bookmark_course.BOOKMARK_ID IS NULL THEN 0
+	      ELSE 1
+	    END AS isBookmarked,
+	    row_number() OVER (ORDER BY c.course_id DESC) AS r
+	  FROM
+	    Course c
+	    JOIN Course_place ON c.course_id = Course_place.course_id
+	    JOIN place ON Course_place.place_id = place.place_id
+	    JOIN area_place ON place.place_id = area_place.place_id
+	    JOIN category_place ON place.place_id = category_place.place_id
+	    JOIN area ON area_place.area_id = area.area_id
+	    JOIN category ON category_place.category_id = category.category_id
+	    JOIN ctg_user u ON c.user_id = u.user_id
+	    LEFT JOIN user_bookmark_course ON c.course_id = user_bookmark_course.COURSE_ID
+	    		  AND user_bookmark_course.user_id = #{userId}
+	  GROUP BY
+	    c.course_id,
+	    u.user_nickname,
+	    c.course_name,
+	    c.course_content,
+	    c.course_avg_score,
+	    c.course_number,
+	    user_bookmark_course.BOOKMARK_ID	
+	    
+	  HAVING LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) LIKE '%' || #{areaName} || '%'
 	  ORDER BY
 	  	c.course_id DESC
 	  )

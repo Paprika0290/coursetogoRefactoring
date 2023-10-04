@@ -61,6 +61,20 @@ public class CourseService {
 		return res;
 	}
 	
+	public List<CourseInformDTO> getCoursesOfAreaByPage(int userId, String areaName, int pageNum, int pageSize) throws Exception {
+		List<CourseInformDTO> res = new ArrayList<>();
+		
+		int startRow = ((pageNum-1) * pageSize) + 1;
+		int endRow = ((pageNum-1) * pageSize) + pageSize;
+		res= mapper.getAllCoursesOfAreaByPage(userId, areaName, startRow, endRow);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("전체 코스(+페이지네이션) 검색 실패");
+		}
+		return res;
+	}
+	
 	public int getCourseCount() throws Exception  {
 		int count = 0;
 		count = mapper.getCourseCount();
@@ -68,9 +82,9 @@ public class CourseService {
 		return count;
 	}
 	
-	public int getCourseCountWithArea(int area) throws Exception  {
+	public int getCourseCountWithArea(String areaName) throws Exception  {
 		int count = 0;
-		count = mapper.getCourseCountWithArea(area);
+		count = mapper.getCourseCountWithArea(areaName);
 		
 		return count;
 	}
