@@ -64,7 +64,7 @@
 					<br>
 					자기소개 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<br><br>
-					<textarea rows= "4" cols= "30" name= "userIntroduce"
+					<textarea rows= "4" cols= "30" name= "userIntroduce" id= "userIntroduceArea"
 							  style= "background-color: #F1F1F1; border: 1px solid #F1F1F1;
 						   		   padding: 3px; width: 250px; height: 80px;" maxlength="50"></textarea>				
 				</p>
@@ -72,7 +72,7 @@
 				<input type= "hidden" name= "userName" value= "${sessionScope.newUser.userName}">
 				<input type= "hidden" name= "userEmail" value= "${sessionScope.newUser.userEmail}">
 				
-				<input type= "submit" value= "회원가입"
+				<input type= "submit" value= "회원가입" id= "signUpButton"
 					   style= "background-color: #FF962B; padding: 10px; padding-left: 20px; padding-right: 20px; color: white;
 					   		   font-weight: bold; border-radius: 5px; border: 1px solid #FF962B;">
 				
@@ -84,7 +84,7 @@
 	<!-- 닉네임 중복 확인 start-->
 		var userNicknameInput = document.getElementById('userNickname');
 		
-	    userNicknameInput.addEventListener('input', function() {
+	    userNicknameInput.addEventListener('change', function() {
 		    var updatedValue = userNicknameInput.value;	
 		    
  		      axios.get('/user/userNicknameCheck', {
@@ -114,6 +114,23 @@
 			  });
 	    })
 	<!-- 닉네임 중복 확인 end-->    
+	    
+	<!-- 자기소개 내용 확인 start-->
+		document.getElementById('signUpButton').addEventListener('click', function(event) {
+			var nicknameCheck = document.getElementById('userNicknameCheck').textContent;
+			if(nicknameCheck !== "사용 가능한 닉네임입니다.") {
+				alert('닉네임을 확인해주세요.');
+				event.preventDefault();
+			}
+			
+			var submitContent = document.getElementById('userIntroduceArea').value;
+			if(submitContent.trim() === '') {
+				alert('자기소개를 입력해주세요.');
+				event.preventDefault();
+			}
+			
+		});
+	<!-- 자기소개 내용 확인 end-->    
     </script>
     
 	<c:if test="${not empty sessionScope.newUser}">

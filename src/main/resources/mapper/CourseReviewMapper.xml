@@ -24,6 +24,13 @@
  		WHERE course_id = #{courseId}
  	</select>
  	
+ 	<!-- 코스Id로 코스리뷰 개수 확인 -->
+ 	<select id= "getCourseReviewCountByCourseId" parameterType="_int" resultType="_int">
+ 		SELECT count(course_review_id)
+ 		FROM course_review
+ 		WHERE course_id = #{courseId}
+ 	</select>
+ 	
 	<!-- userId로 CourseReview 객체 리스트 반환 -->
  	<select id="getCourseReviewByUserId" parameterType="_int" resultType="CourseReviewDTO">
  		SELECT course_review_id AS courseReviewId,
@@ -68,6 +75,12 @@
  	<delete id="deleteCourseReviewByReviewId" parameterType="_int">
  		DELETE FROM course_review
  		WHERE course_review_id = #{courseReviewId}
+ 	</delete>
+
+ 	<!-- 코스리뷰 삭제 (코스 삭제로 인한 삭제) -->
+ 	<delete id="deleteCourseReviewByCourseId" parameterType="_int">
+ 		DELETE FROM course_review
+ 		WHERE course_id = #{courseId}
  	</delete>
 
 	<!-- 코스리뷰왕 -->

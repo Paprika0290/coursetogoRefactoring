@@ -57,7 +57,6 @@
             user_name = null,
             user_email = null,
             user_admin = null,
-            user_photo = null,
             user_introduce = null,
             user_unsigndate = SYSDATE
         WHERE user_id = #{userId}

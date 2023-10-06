@@ -64,13 +64,8 @@ public class CourseController {
 		return result; 
 	}
 	
-	@GetMapping("/course/courseDelete")
-	public Integer deleteCourse(@RequestParam("courseId") int courseId) {
-		System.out.println(courseId);
-		
-		return 0;
-	}
 	
+	// courseList 페이지를 구성하는 데에 필요한 정보들을 담아 돌려주는 메서드. 
 	public HashMap<String, Object> getCourseInformListValues(String areaName, int userId,
 															 int pageNum, int pageSize, int groupNum) {	
 		List<CourseInformDTO> courseInformList = new ArrayList<CourseInformDTO>();

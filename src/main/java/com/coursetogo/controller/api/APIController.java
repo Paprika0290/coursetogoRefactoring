@@ -104,7 +104,13 @@ public class APIController {
 	public String signUpDone(@ModelAttribute CtgUserDTO user,
 							 HttpSession session) {		
 		boolean result = false;
-		result = userController.insertCtgUser(user);
+		
+		try {
+			result = userController.insertCtgUser(user);
+		}catch(Exception e){
+			return "error";
+		}
+		
 	
 		
 		if(result) {

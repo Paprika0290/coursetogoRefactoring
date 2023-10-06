@@ -10,8 +10,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,6 +25,7 @@ import com.coursetogo.dto.map.PlaceDTO;
 import com.coursetogo.dto.review.CourseReviewDTO;
 import com.coursetogo.dto.review.PlaceReviewDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
+import com.coursetogo.service.course.CoursePlaceService;
 import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.map.PlaceService;
 import com.coursetogo.service.review.CourseReviewService;
@@ -39,9 +43,15 @@ public class RestAPIController {
 	
 	@Autowired
 	private PlaceReviewService placeReviewService;
+
+	@Autowired
+	private CourseService courseService;
 	
 	@Autowired
 	private PlaceService placeService;
+	
+	@Autowired
+	private CoursePlaceService coursePlaceService;
 	
 	@Autowired
 	private UserBookmarkCourseService bookmarkService;
@@ -162,8 +172,51 @@ public class RestAPIController {
 		return false;
 	}
 	
+	@GetMapping("/user/course/check/{courseId}")
+	public int getCourseReviewCount(@PathVariable int courseId) {
+		int reviewCount = 0;
+		
+		try {
+			reviewCount = courseReviewService.getCourseReviewCountByCourseId(courseId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return reviewCount;
+	}	
 	
-	
-	
+	@DeleteMapping("/user/course/delete/{courseId}/{checked}")
+	public int deleteCourse(@PathVariable int courseId, @PathVariable int checked) {
+		int res = 0;
+		
+		// 작성된 리뷰가 없고 삭제 요청
+		if(checked == 21) {
+		// 작성된 리뷰가 있고 삭제 요청 + 작성자가 삭제를 재확인
+		}else if(checked == 11) {
+			try {
+				courseReviewService.deleteCourseReviewByCourseId(courseId);
+			} catch (SQLException e) {
+				log.warn("코스 아이디를 통한 코스 리뷰 삭제에 실패하였습니다.");
+				e.printStackTrace();
+			}	
+		}
+		
+		try {
+			bookmarkService.deleteBookmarkByCourseId(courseId);
+			coursePlaceService.deleteCoursePlace(courseId);
+		} catch (SQLException e) {
+			log.warn("코스 즐겨찾기 내역, 코스-장소 내역 삭제에 실패하였습니다.");
+			e.printStackTrace();
+		}
+		
+		try {
+			res = courseService.deleteCourse(courseId);
+		} catch (SQLException e) {
+			log.warn("코스 삭제에 실패하였습니다.");
+			e.printStackTrace();
+		}
+
+		return res;
+	}
 	
 }

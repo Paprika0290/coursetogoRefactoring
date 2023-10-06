@@ -143,14 +143,40 @@ public class CourseService {
 		return res;
 	}
 
-
+	public int deleteCourse(int courseId) throws SQLException {
+		int res = 0; 
+		res = mapper.deleteCourse(courseId);
+		
+		return res;
+	}
 	
-
+	public int updateCourseAvgScore(int courseId) throws SQLException {
+		int res = 0;
+		res = mapper.updateCourseAvgScore(courseId);
+		
+		return res;
+	}
+	
+	
+	public List<CourseDTO> recommendCourseTop5() throws SQLException {
+		List<CourseDTO> res = new ArrayList<CourseDTO>();
+		res = mapper.recommendCourseTop5();
+		
+		return res;
+	}
+	
+	
+	
+	
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3() throws SQLException	{
 		return mapper.getCourseTop3();
 	}
+
+
+
+
 	
 	
 	

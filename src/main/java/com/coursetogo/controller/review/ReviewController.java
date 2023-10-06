@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.coursetogo.dto.review.CourseReviewDTO;
 import com.coursetogo.dto.review.PlaceReviewDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
+import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.review.CourseReviewService;
 import com.coursetogo.service.review.PlaceReviewService;
 
@@ -28,10 +29,16 @@ import lombok.extern.slf4j.Slf4j;
 public class ReviewController {
 
 	@Autowired
+	private CourseService courseService;
+	
+	@Autowired
 	private CourseReviewService courseReviewService;
 
 	@Autowired
 	private PlaceReviewService placeReviewService;
+	
+	
+	
 	
 	// course당 입력될 수 있는 place수가 가변적이기 때문에 만든 메서드
 	// models 배열에서 null 이거나 빈 문자열인 요소들을 걸러낸 새로운 문자열 배열을 얻을수 있음 
@@ -106,6 +113,7 @@ public class ReviewController {
         // 코스리뷰 남기기-------------------------------------------------------------------
         try {
             courseReviewService.insertCourseReview(courseReview);
+            courseService.updateCourseAvgScore(courseReview.getCourseId());
         } catch (Exception e) {
             log.warn("코스리뷰 등록 실패");
         }

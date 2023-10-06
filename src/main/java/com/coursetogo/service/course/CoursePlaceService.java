@@ -1,5 +1,7 @@
 package com.coursetogo.service.course;
 
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +30,16 @@ public class CoursePlaceService {
 		
 		return result;
 		
+	}
+	
+	public boolean deleteCoursePlace(int courseId) throws SQLException {
+		boolean result = false;
+		
+		int res = mapper.deleteCoursePlace(courseId);
+		if(res != 0) {
+			result = true;
+		}
+		
+		return result;
 	}
 }

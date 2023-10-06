@@ -1,5 +1,5 @@
 package com.coursetogo.enumType;
 
 public enum Area {
-	홍대, 서대문구
+	서대문구, 마포구
 }

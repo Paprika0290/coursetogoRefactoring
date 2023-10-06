@@ -13,10 +13,10 @@
 	    c.course_avg_score AS courseAvgScore,
 	    c.course_number AS courseNumber,
 	    c.course_content AS courseContent,
-	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
-	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
-	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
-	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseIdList,
+	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseList,
+	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS areaNameList,
+	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS categoryNameList,
 	    CASE
 	      WHEN user_bookmark_course.BOOKMARK_ID IS NULL THEN 0
 	      ELSE 1
@@ -68,10 +68,10 @@
 	    c.course_avg_score AS courseAvgScore,
 	    c.course_number AS courseNumber,
 	    c.course_content AS courseContent,
-	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
-	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
-	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
-	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseIdList,
+	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseList,
+	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS areaNameList,
+	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS categoryNameList,
 	    CASE
 	      WHEN user_bookmark_course.BOOKMARK_ID IS NULL THEN 0
 	      ELSE 1
@@ -112,10 +112,10 @@
 	    c.course_avg_score AS courseAvgScore,
 	    c.course_number AS courseNumber,
 	    c.course_content AS courseContent,
-	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
-	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
-	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
-	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseIdList,
+	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseList,
+	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS areaNameList,
+	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS categoryNameList,
 	    CASE
 	      WHEN user_bookmark_course.BOOKMARK_ID IS NULL THEN 0
 	      ELSE 1
@@ -156,10 +156,10 @@
 	    c.course_avg_score AS courseAvgScore,
 	    c.course_number AS courseNumber,
 	    c.course_content AS courseContent,
-	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
-	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
-	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
-	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList
+	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseIdList,
+	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseList,
+	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS areaNameList,
+	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS categoryNameList
 	  FROM
 	    Course c
 	    JOIN Course_place ON c.course_id = Course_place.course_id
@@ -217,10 +217,10 @@
 	    c.course_avg_score AS courseAvgScore,
 	    c.course_number AS courseNumber,
 	    c.course_content AS courseContent,
-	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseIdList,
-	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS courseList,
-	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS areaNameList,
-	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.place_id) AS categoryNameList,
+	    LISTAGG(Course_place.place_id, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseIdList,
+	    LISTAGG(place.place_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS courseList,
+	    LISTAGG(area.area_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS areaNameList,
+	    LISTAGG(category.category_name, ',') WITHIN GROUP (ORDER BY Course_place.selection_order) AS categoryNameList,
 	    CASE
 	      WHEN user_bookmark_course.BOOKMARK_ID IS NULL THEN 0
 	      ELSE 1
@@ -268,6 +268,22 @@
  		VALUES (course_seq.nextval, #{userId}, #{courseName}, 0, #{courseNumber}, #{courseContent})
  	</insert>
 		
+	<delete id= "deleteCourse" parameterType="_int">
+	    DELETE FROM course
+	    WHERE course_id = #{courseId}
+	</delete>	
+	
+	<update id= "updateCourseAvgScore" parameterType="_int">
+		UPDATE course
+		SET course_avg_score = (SELECT AVG(course_score) FROM course_review WHERE course_id = #{courseId})
+		WHERE course_id = #{courseId}
+	</update>
+	
+	<select id= "recommendCourseTop5" resultType= "courseDTO">
+
+	</select>
+	
+	
 	
 	<!-- 코스작성왕 -->
 	<select id="getCourseTop3" resultType="java.lang.Integer">

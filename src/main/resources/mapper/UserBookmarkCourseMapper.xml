@@ -14,5 +14,10 @@
 	    DELETE FROM user_bookmark_course
 	    WHERE user_id = #{userId} AND course_id = #{courseId}
 	</delete>
+	
+ 	<delete id="deleteBookmarkByCourseId" parameterType="int">
+	    DELETE FROM user_bookmark_course
+	    WHERE course_id = #{courseId}
+	</delete>
 		
  </mapper>

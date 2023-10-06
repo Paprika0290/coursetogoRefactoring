@@ -30,6 +30,12 @@ public class CourseReviewService {
 		return coursereview; 
 	}
 	
+	// 코스Id로 코스리뷰 개수 확인
+	public int getCourseReviewCountByCourseId(int courseId) throws SQLException {
+		int courseReviewCount = mapper.getCourseReviewCountByCourseId(courseId);
+		return courseReviewCount;
+	}
+	
 	// userId로 코스리뷰 리스트 검색
 	public List<CourseReviewDTO> getCourseReviewByUserId(int userId) throws SQLException {
 		return mapper.getCourseReviewByUserId(userId);
@@ -82,9 +88,18 @@ public class CourseReviewService {
 		return result;
 	}
 	
+	public int deleteCourseReviewByCourseId(int courseId) throws SQLException {
+		int res = 0;
+		res = mapper.deleteCourseReviewByCourseId(courseId);
+		
+		return res;
+	}	
+	
     // 코스리뷰왕
 	public List<Integer> getReviewTop3() throws SQLException{
 		return mapper.getReviewTop3();
-	}	
+	}
+
+
 	
 }

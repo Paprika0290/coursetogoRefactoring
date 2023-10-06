@@ -34,6 +34,11 @@ public class UserBookmarkCourseService {
 		}
 		return false;
 	}
+
+	public int deleteBookmarkByCourseId(int courseId) throws SQLException {
+		int res = mapper.deleteBookmarkByCourseId(courseId);
+		return res;
+	}
 	
 	
 	

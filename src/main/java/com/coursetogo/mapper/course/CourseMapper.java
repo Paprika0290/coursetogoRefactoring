@@ -35,9 +35,20 @@ public interface CourseMapper {
 	
 	public List<CourseInformDTO> getBookmarkedCourseInformByUserId(@Param("userId") int userId) throws SQLException;
 
+	public int deleteCourse(@Param("courseId") int courseId) throws SQLException;
+	
+	public int updateCourseAvgScore(int courseId) throws SQLException;
+	
+	public List<CourseDTO> recommendCourseTop5() throws SQLException;
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3() throws SQLException;
+
+	
+
+	
+
+	
 
 
 	

@@ -64,7 +64,65 @@
 											courseStars.setAttribute("data-score", Math.floor(courseStars.getAttribute("data-score")));
 										</script>
 						</div>
-						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<button id= "deleteCourseButton" style= "cursor: pointer; color: #ffffff; font-family: 'TheJamsil3Regular', sans-serif; background-color: #E87A5A;
+																 border: 0px; border-radius: 3px; padding: 5px 12px;" 
+								onclick= "checkBeforeDeleteCourse(${courseInformDTO.courseId})">
+							삭제
+						</button>
+							
+							<script>
+								
+								function checkBeforeDeleteCourse(thisCourseId) {	
+									var isChecked = 0;
+									axios.get('/user/course/check/' + thisCourseId)
+								    .then(response => {
+										if(response.data < 1) {
+												var result1 = confirm("이 코스를 삭제하시나요?");
+												
+												if (result1 == true) {
+													isChecked = 21;
+													deleteCourse(thisCourseId);
+												} else {
+												}
+										}else {
+												var result2 = confirm("누군가가 리뷰를 남긴 코스입니다. 정말로 삭제하시나요?");
+												
+												if (result2 == true) {
+													isChecked = 11;
+													deleteCourse(thisCourseId);
+												} else {
+												}
+										}
+										
+										
+								    })
+								    .catch(error => {
+								      console.log('코스 리뷰 조회 실패');
+								    });
+									
+									function deleteCourse(CourseIdForDelete){
+										if (isChecked == 11 || isChecked == 21) {
+											axios.delete('/user/course/delete/' + CourseIdForDelete + '/' + isChecked)
+											.then(response => {
+												if(response.data >= 1) {
+													alert("코스가 삭제되었습니다.");
+													window.location.reload();
+												}else {
+													alert("코스 삭제 중 오류가 발생하였습니다.");
+												}
+											})
+											.catch(error => {
+												console.log('코스 삭제 실패');
+											});
+										}
+										
+									}
+									
+								}
+								
+								
+							</script>
 						
 					</div>	
 					

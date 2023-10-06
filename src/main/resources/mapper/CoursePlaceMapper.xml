@@ -9,6 +9,9 @@
  		INSERT INTO course_place (COURSE_ID, PLACE_ID, SELECTION_ORDER) VALUES (Course_seq.currval, #{placeId}, #{selectionOrder})
  	</insert>
  	
- 	
+	<delete id= "deleteCoursePlace" parameterType="int">
+	    DELETE FROM course_place
+	    WHERE course_id = #{courseId}
+	</delete>	
  	
  </mapper>

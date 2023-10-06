@@ -162,7 +162,7 @@
 					</div>
 					<br>
 					<div style= "margin-left: 10px;">
-						<textarea rows= "4" cols= "30" name= "userIntroduce"
+						<textarea id= "userIntroduceArea" rows= "4" cols= "30" name= "userIntroduce"
 							  style= "background-color: #F1F1F1; border: 1px solid #F1F1F1;
 				   		      padding: 3px; width: 250px; height: 80px;" maxlength="50">${sessionScope.user.userIntroduce}</textarea><br>			
 					</div>
@@ -171,7 +171,7 @@
 					<input type= "hidden" name= "userPhoto" id= "updatePhoto" value= "${sessionScope.user.userPhoto}">
 					
 					<div style= "display: flex; flex-direction: row; align-items: center; margin-top: 20px; margin-bottom: 80px;">
-						<input type= "submit" class= "profileUpdateButton" value= "회원정보 수정" style= "margin-left: 50px;">
+						<input id= "modifyButton" type= "submit" class= "profileUpdateButton" value= "회원정보 수정" style= "margin-left: 50px;">
 						<input type= "button" class= "profileUpdateButton" id="unsign" value="회원 탈퇴" onclick="unsignConfirm()" style= "background-color: #BFB7B7; border: 1px solid #BFB7B7; margin-left: 10px;">
 					</div>
 				</div>
@@ -243,12 +243,20 @@
 				  if(res === 1) {
 					  userNicknameCheckSpan.innerHTML = '이미 사용중인 닉네임입니다.';
 					  userNicknameCheckSpan.style.color = '#E74C3C';
+						  document.getElementById("modifyButton").addEventListener("click", function(event) {
+							  event.preventDefault();
+							});
 				  }else if (res === 0) {
 					  userNicknameCheckSpan.innerHTML = '사용 가능한 닉네임입니다.';
 					  userNicknameCheckSpan.style.color = '#138D75';
+						  document.getElementById("modifyButton").addEventListener("click", function(event) {
+							});
 				  } else if (res === -1) {
 					  userNicknameCheckSpan.innerHTML = '닉네임은 비어있을 수 없습니다.';
 					  userNicknameCheckSpan.style.color = '#E74C3C';
+						  document.getElementById("modifyButton").addEventListener("click", function(event) {
+							  event.preventDefault();
+							});
 				    }
 				  
 			    console.log(response.data);
@@ -259,6 +267,17 @@
 	    })
 	<!-- 닉네임 중복 확인 end-->    
 	
+	<!-- 자기소개 내용 확인 start-->
+		document.getElementById('modifyButton').addEventListener('click', function(event) {
+			var submitContent = document.getElementById('userIntroduceArea').value;
+			if(submitContent.trim() === '') {
+				alert('자기소개를 입력해주세요.');
+				event.preventDefault();
+			}
+			
+		});
+	<!-- 자기소개 내용 확인 end-->
+	    
 	    
 	<!-- 회원탈퇴 버튼 클릭 시 사용자에 확인 요청 -->
 		function unsignConfirm() {

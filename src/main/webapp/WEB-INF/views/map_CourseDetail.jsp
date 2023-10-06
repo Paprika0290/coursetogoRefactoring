@@ -235,12 +235,39 @@
 								
 								<input type="hidden" name="courseId" value= "${courseInform.courseId}">
 								<input type="hidden" name="userId" value= "${sessionScope.user.userId}">
-								<textarea rows="13" cols= "30" name= "content"
+								<textarea id= "reviewSubmitContent" rows="13" cols= "30" name= "content"
 										  style= "padding: 10px; background-color: #F4F4F4; margin: 10px 20px;
 										  		  border: 0px solid" maxlength="400"></textarea>	
 										  		  
-								<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 등록</button> 		  		  					
-							
+								<button id= "reviewSubmit" type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 등록</button> 		  		  					
+									<script>
+										document.getElementById('reviewSubmit').addEventListener('click', function(event) {
+											var submitContent = document.getElementById('reviewSubmitContent').value;
+											if(submitContent.trim() === '') {
+												alert('내용을 입력해주세요.');
+												event.preventDefault();
+											}
+											
+											var placeStars = document.querySelectorAll('[id^="stars"]');
+											var checked = 0;
+											placeStars.forEach(function(element) {
+												if(element.checked) {
+													checked++;
+												}
+											});
+											
+												if(checked < document.getElementById('placeCount').value) {
+													alert('장소 별점을 입력해주세요.');
+													event.preventDefault();
+												}
+											
+											var courseStar = document.querySelector('[id^="courseStars"]:checked');
+											if(!courseStar) {
+												alert('코스 별점을 입력해주세요.');
+												event.preventDefault();
+											}
+										});
+									</script>
 							</form>
 							
 						</div>
@@ -319,10 +346,28 @@
 										  style= "padding: 10px; background-color: #F4F4F4; margin: 10px 20px;
 										  		  border: 0px solid" maxlength="400"></textarea>	
 										  		  
-								<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;">리뷰 수정</button>			
+								<button type= "submit" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;"
+										id="courseReviewMod">
+								리뷰 수정</button>			
 								<button type= "button" class= "courseDetailButton" style= "color: #ffffff; padding-left: 15px; padding-right: 15px;"
 							 			id="courseReviewDelete">
-							 	리뷰 삭제</button>			
+							 	리뷰 삭제</button>		
+							 	
+							 	<script>
+							 		document.getElementById('courseReviewDelete').addEventListener('click', function() {
+							 			window.location.reload();
+							 		});
+							 		
+									document.getElementById('courseReviewMod').addEventListener('click', function(event) {
+										var submitContent = document.getElementById('courseReviewContent').value;
+										if(submitContent.trim() === '') {
+											alert('내용을 입력해주세요.');
+											event.preventDefault();
+										}
+										
+									});
+							 	</script>
+							 		
 							 				
 							</form>
 							
