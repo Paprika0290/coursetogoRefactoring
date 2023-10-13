@@ -99,11 +99,46 @@ public class MainController {
 				}
 				
 			} catch (SQLException e) {
+				log.warn("top3리스트 가져오기 실패");
 				e.printStackTrace();
 			}
 		}
 		
+		List<CourseDTO> recommendCourseList = new ArrayList<CourseDTO>();
+		try {
+			recommendCourseList = courseService.recommendCourseTop5();
+		} catch (SQLException e) {
+			log.warn("top3리스트 가져오기 실패");
+			e.printStackTrace();
+		}
+		
+		List<String> userPhotoSrcList = new ArrayList<String>();
+		List<String> courseDetailPageList = new ArrayList<String>();
+		List<String> userNicknameList = new ArrayList<String>();
+		user = null;
+		String query = "";
+		
+		for(CourseDTO course : recommendCourseList) {
+			try {
+				user = userService.getCtgUserByUserId(course.getUserId());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			userPhotoSrcList.add(user.getUserPhoto());
+			userNicknameList.add(user.getUserNickname());
+			
+            query = "";
+            query += ("courseId="+ String.valueOf(course.getCourseId()));
+            
+			courseDetailPageList.add(query);
+		}
+		
 		model.addAttribute("kingNicknameList", kingNicknameList);
+		model.addAttribute("recommendCourseList", recommendCourseList);
+		model.addAttribute("userPhotoSrcList", userPhotoSrcList);
+		model.addAttribute("userNicknameList", userNicknameList);
+		model.addAttribute("courseDetailPageList", courseDetailPageList);
+
 		
 //		if(session.getAttribute("user") != null) {
 //			user = (CtgUserDTO) session.getAttribute("user"); 
@@ -450,5 +485,42 @@ public class MainController {
 		return "map_CourseList";
 	}
 	
+	// 관리자페이지 - 메인
+	@GetMapping("/admin")
+	public String getAdminPage(HttpSession session, Model model) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
+		
+		int userId = -1;
+		
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}
+
+		return "admin_AdminPage";
+	}
+	
+	@GetMapping("/admin/user")
+	public String getAdminUserPage(HttpSession session, Model model) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
+		
+		int userId = -1;
+		if(session.getAttribute("user") != null) {
+			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
+		}
+		
+		int allUserCount = 0;
+		int unsignedUserCount = 0;
+		
+		try {
+			allUserCount = userService.getAllUserCount();
+			unsignedUserCount = userService.getUnsignedUserCount();
+		} catch (SQLException e) {
+			log.warn("admin- 유저 수 조회에 실패하였습니다.");
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("")
+		return "admin_AdminPage_User";
+	}
 	
 }

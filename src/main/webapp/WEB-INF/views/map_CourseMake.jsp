@@ -58,6 +58,17 @@
 		.fontTheJamsil {
 			font-family: 'TheJamsil5Bold', sans-serif;
 		}
+		
+		.consonantButton {
+			font-family: 'TheJamsil3Regular', sans-serif;
+			background-color: #FF962B;
+			color: #ffffff;
+			border: 1px solid #ffffff;
+			height: 22px;
+			width: 30px;
+			cursor: pointer;
+		}
+		
     </style>
     
 	<link rel="stylesheet" type="text/css" href="/css/fonts.css">
@@ -116,7 +127,28 @@
 						    font-family: 'TheJamsil3Regular', sans-serif;" onclick="getPlaceList()">검색</button>
 			</div>
 			
-			<div class= "searchResultContainer" style = "background-color: rgba(255, 255, 255, 0.95); border-radius: 2px; position: absolute; top: 180px; left: 75px;
+			<div id= "consonantBox1" style= "display: none; position: absolute; top: 150px; left: 105px; z-index: 80; background-color: #ffffff; padding: 5px 10px; box-shadow: 5px 5px 5px 3px rgba(0.3, 0.3, 0.3, 0.3);">
+				<button id= "korConsonant1" value= "ㄱ" class= "consonantButton">ㄱ</button>
+				<button id= "korConsonant2" value= "ㄴ" class= "consonantButton">ㄴ</button>
+				<button id= "korConsonant3" value= "ㄷ" class= "consonantButton">ㄷ</button>
+				<button id= "korConsonant4" value= "ㄹ" class= "consonantButton">ㄹ</button>
+				<button id= "korConsonant5" value= "ㅁ" class= "consonantButton">ㅁ</button>
+				<button id= "korConsonant6" value= "ㅂ" class= "consonantButton">ㅂ</button>
+				<button id= "korConsonant7" value= "ㅅ" class= "consonantButton">ㅅ</button>
+			</div>
+			<div id= "consonantBox2" style= "display: none; position: absolute; top: 180px; left: 105px; z-index: 80; background-color: #ffffff; padding: 5px 10px; box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.3);">
+				<button id= "korConsonant8" value= "ㅇ" class= "consonantButton">ㅇ</button>
+				<button id= "korConsonant9" value= "ㅈ" class= "consonantButton">ㅈ</button>
+				<button id= "korConsonant10" value= "ㅊ" class= "consonantButton">ㅊ</button>
+				<button id= "korConsonant11" value= "ㅋ" class= "consonantButton">ㅋ</button>
+				<button id= "korConsonant12" value= "ㅌ" class= "consonantButton">ㅌ</button>
+				<button id= "korConsonant13" value= "ㅍ" class= "consonantButton">ㅍ</button>
+				<button id= "korConsonant14" value= "ㅎ" class= "consonantButton">ㅎ</button>
+				<button id= "korConsonant15" value= "etc" class= "consonantButton" style= "width: 50px;">그 외</button>
+			</div>
+							
+			
+			<div class= "searchResultContainer" style = "background-color: rgba(255, 255, 255, 0.95); border-radius: 2px; position: absolute; top: 190px; left: 75px;
 														 padding: 10px; width: 280px; max-height: 500px; z-index:51; overflow-y: auto; text-align: center; display: none;
 														 box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.2);"
 				 id= "searchResultList">
@@ -326,6 +358,10 @@
 		
 		<!-- 지역명, 업종명 선택 후 검색 버튼 클릭 시 결과 출력 -->
 		function getPlaceList() {
+			<!-- 자음검색버튼 -->
+			document.getElementById("consonantBox1").style.display = 'flex';
+			document.getElementById("consonantBox2").style.display = 'flex';
+			
 			var areaSelect = document.getElementById("areaSelect").value;
 			var categorySelect = document.getElementById("categorySelect").value;
 			
@@ -454,9 +490,96 @@
 	    	}).catch(function(error) {
 	    	});	
 		}
-		<!-- 지역명, 업종명 선택 후 검색 버튼 클릭 시 결과 출력 종료-->
-	
+		<!-- 지역명, 업종명 선택 후 검색 버튼 클릭 시 결과 출력 종료-->	
+		
+		<!-- 자음검색버튼 클릭시 자음으로 검색-->
+		var consonantButtons = document.querySelectorAll('[id^="korConsonant"]');
+		
+		consonantButtons.forEach(consonantButton => {
+			consonantButton.addEventListener('click', function() {
+				var selectedArea = document.getElementById("areaSelect").value;
+				var consonant = consonantButton.value;		
+				
+				axios.get('/course/getCourseList/' + selectedArea + '/' + consonant)
+					.then(function(response) {					
+						var resultContainer = document.getElementById('searchResultList');
+						resultContainer.innerHTML = '';
+						
+						map = new naver.maps.Map(mapDiv, {
+							center: new naver.maps.LatLng(response.data[1].latitude, response.data[1].longitude),
+							zoom: 16
+					 	});
+						
+						var markers = [],
+					    infoWindows = [];
+						
+						// return받은 place정보에서 name을 리스트뷰로 표시  
+				  		response.data.forEach(function(place, index) {
+						  var div = document.createElement('div');
+						  var divId = 'placeDiv' + (index + 1);
+						  
+						  div.setAttribute('id', divId);
+						  div.style.backgroundColor = '#F6F6F6';
+						  div.style.marginTop = '2px';
+						  div.style.fontFamily = 'TheJamsil3Regular, sans-serif';
+					      div.style.fontSize = '11pt';
+					      div.style.cursor = 'pointer';
+						  
+						  div.innerHTML = '<p style="background-color: #FFD1A1; padding: 10px 10px; border-radius: 5px; ">' + place.placeName + '</p>' +
+				      		  				  '<input type="hidden" value="' + place.placeId  + '"id= "input' + divId + '">' +
+				      		  				  '<input type="hidden" id= "lat' + divId + '" value= "' + place.latitude + '">' +
+				         		  				  '<input type="hidden" id= "long' + divId + '" value= "' + place.longitude + '">' ;
+						  resultContainer.appendChild(div);	
 
+						  
+						  var marker = new naver.maps.Marker({
+							position: new naver.maps.LatLng(place.latitude, place.longitude),
+							title: place.placeId,
+							map: null
+						  });
+						  
+						  var infoWindow = new naver.maps.InfoWindow({
+					        content: '<div id= "windowContent" style="width:100px;text-align:center;padding:5px;font-family:\'TheJamsil3Regular\', sans-serif;font-size:10pt; color: #00008b;"><a href="https://map.naver.com/p/search/'+ place.placeName + " " + selectedArea +'" target="_blank"><b>'+ place.placeName +'</b> </a></div>',
+					        map: null
+					      });
+						  
+						  markers.push(marker);
+						  infoWindows.push(infoWindow);
+						  
+						  document.getElementById(divId).addEventListener('click', function(){
+							  showMarkerAndInfoWindow(index);
+							  document.getElementById('currentPlace').value = divId;
+							  
+							  var currLat = document.getElementById('lat' + divId).value;
+							  var currLong = document.getElementById('long' + divId).value; 
+								
+							  var placeLocation = new naver.maps.LatLng(currLat, currLong);
+							  
+							  map.panTo(placeLocation);
+							  
+						  }); 
+						  
+						  	<!-- 호출시 마커와 가게이름을 띄워주는 함수 start-->
+				    		function showMarkerAndInfoWindow(index) {		    			
+				    		    markers.forEach(function(marker, i) {
+				    		        if (i === index) {
+				    		            marker.setMap(map);
+				    		            infoWindows[i].open(map, marker);
+				    		        } else {
+				    		            marker.setMap(null);
+				    		            infoWindows[i].close();
+				    		        }
+				    		    });
+				    		}
+				    		<!-- 호출시 마커와 가게이름을 띄워주는 함수 end-->
+						});
+
+					}).catch(error => {
+						
+					});
+				
+			});	
+		});
 		
 		
 	<!-- 코스 제작 입력폼 클릭시 내용 비우기 -->	

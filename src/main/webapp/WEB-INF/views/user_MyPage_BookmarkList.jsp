@@ -40,6 +40,8 @@
     <link rel="stylesheet" type="text/css" href="/css/starScore.css">
 	
 <body>	
+	<input type= "hidden" id= "userId" value= "${sessionScope.user.userId}">
+	
 	<div class = "mainContent">
 		<c:forEach items= "${userCourseList}" var= "courseInformDTO" varStatus= "courseSt">
 			<div class= "courseBox">
@@ -71,6 +73,12 @@
 										</script>
 						</div>
 						
+						<c:if test= "${not empty sessionScope.user}">
+			                  <c:if test= "${courseInformDTO.isBookMarked eq 1}">
+			                  	<img src= "/images/bookmarked.png" width= "30px;" style= "position: flex; margin-left: auto; cursor: pointer;"
+			                  		 id= "bookmarkOut${courseInformDTO.courseId}">
+			                  </c:if>
+		                 </c:if>
 						
 					</div>	
 					
@@ -95,5 +103,41 @@
 			</div>
 		</c:forEach>
 	</div>
+	
+	<script>
+		var thisUserId = document.getElementById("userId").value;
+	
+		<!-- 주황색 북마크 버튼 클릭시 북마크 삭제 -->
+		document.querySelectorAll('[id^="bookmarkOut"]').forEach(function(bookmarkOut) {
+			bookmarkOut.addEventListener('click', function(event) {
+				
+				var result = confirm("이 코스의 즐겨찾기를 해제할까요?");
+				
+				if(result == true) {
+					var targetIdOut = event.target.id;
+			        var thisCourseIdOut = targetIdOut.replace("bookmarkOut", "");
+			        
+			        axios.post('/user/bookmark/delete',  null, {
+			        	params: {
+			        		courseId: thisCourseIdOut,
+				        	userId: thisUserId	
+			        	}
+			        })
+			        .then(function (response) {
+			            if(response.data) {
+			            	window.location.reload();
+			            }
+			        })
+			        .catch(function (error) {
+			            console.error("북마크 삭제 요청 실패:", error);
+			        });
+				}else {
+					
+				}
+		    });
+		});
+	
+	</script>
+	
 </body>
 </html>

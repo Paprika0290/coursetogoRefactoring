@@ -84,7 +84,19 @@ public class CtgUserService {
 	public int nicknameCheck(String userNickname) throws SQLException{
 		return mapper.nicknameCheck(userNickname);
 	}
+	
+	// 전체 유저 수 확인
+	public int getAllUserCount() throws SQLException {
+		return mapper.getAllUserCount();
+	}
 
+	// 탈퇴한 유저 수 확인
+	public int getUnsignedUserCount() throws SQLException {
+		return mapper.getUnsignedUserCount();
+	}
+	
+
+	
 	// 나의 코스 개수 가져오는 메서드--------------------------------------------------------------
 	public int getMyCourseCount(int userId) throws SQLException {
 		return mapper.getMyCourseCount(userId);
@@ -99,5 +111,5 @@ public class CtgUserService {
 	public int getMyReviewCount(int userId) throws SQLException{
 		return mapper.getMyReviewCount(userId);	
 	}
-
+	
 }

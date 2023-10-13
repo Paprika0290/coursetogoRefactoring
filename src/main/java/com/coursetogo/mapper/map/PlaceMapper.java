@@ -26,11 +26,16 @@ public interface PlaceMapper {
 													  @Param("startRow") int startRow,
 													  @Param("endRow") int endRow) throws SQLException;
 	
+	public List<PlaceDTO> searchPlacesByAreaAndConsonant(@Param("areaName") String areaName,
+														 @Param("con1") String con1, @Param("con2") String con2) throws SQLException;
+	
 	public List<PlaceDTO> searchPlacesByCategory(String categoryName) throws SQLException;
 
 	public List<PlaceDTO> searchPlacesByAreaOrCategory(String categoryName, String areaName) throws SQLException;
 
 	public List<PlaceDTO> searchPlacesByAreaOrCategory(Map<String, String> params) throws SQLException;
+
+
 
 	
 

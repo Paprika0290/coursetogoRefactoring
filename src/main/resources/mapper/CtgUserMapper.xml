@@ -67,6 +67,17 @@
      	SELECT COUNT(*) FROM ctg_user WHERE user_nickname = #{userNickname}
      </select>
      
+    <!-- 전체 유저 수 확인 -->
+    <select id="getAllUserCount" resultType = "_int">
+     	SELECT COUNT(*) FROM ctg_user
+     </select>
+	
+	<!-- 탈퇴한 유저 수 확인 -->
+	<select id="getUnsignedUserCount" resultType = "_int">
+		SELECT COUNT(*) FROM ctg_user WHERE naver_id IS NULL
+	</select>
+     
+      
      <!-- 나의 코스 개수 -->
      <select id="getMyCourseCount" resultType = "_int">
      	SELECT COUNT(*) FROM course WHERE user_id = #{userId}

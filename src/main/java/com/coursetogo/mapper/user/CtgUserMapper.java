@@ -38,6 +38,12 @@ public interface CtgUserMapper {
 	// 닉네임 중복 검증 메서드-------------------------------------------------------------------
 	public int nicknameCheck(@Param("userNickname") String userNickname);
 	
+	// 전체 유저 수 확인
+	public int getAllUserCount() throws SQLException;
+	
+	// 탈퇴한 유저 수 확인
+	public int getUnsignedUserCount() throws SQLException;
+	
 	// 나의 코스 개수 가져오는 메서드--------------------------------------------------------------
 	public int getMyCourseCount(int userId) throws SQLException;
 	

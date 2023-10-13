@@ -61,7 +61,64 @@ public class PlaceService {
 		return res;
 	}
 
+	public List<PlaceDTO> searchPlacesByAreaAndConsonant(String areaName, String consonant) throws SQLException {
+		List<PlaceDTO> res = new ArrayList<PlaceDTO>();
+		String con1 = "";
+		String con2 = "";
 
+		if(consonant.equals("etc")) {
+			con1 = "^[가-힣]";
+			con2 = "한글 외";
+		}else if(consonant.equals("ㄱ")) {
+			con1 = "가";
+			con2 = "나";
+		}else if(consonant.equals("ㄴ")) {
+			con1 = "나";
+			con2 = "다";
+		}else if(consonant.equals("ㄷ")) {
+			con1 = "다";
+			con2 = "라";
+		}else if(consonant.equals("ㄹ")) {
+			con1 = "라";
+			con2 = "마";
+		}else if(consonant.equals("ㅁ")) {
+			con1 = "마";
+			con2 = "바";
+		}else if(consonant.equals("ㅂ")) {
+			con1 = "바";
+			con2 = "사";
+		}else if(consonant.equals("ㅅ")) {
+			con1 = "사";
+			con2 = "아";
+		}else if(consonant.equals("ㅇ")) {
+			con1 = "아";
+			con2 = "자";
+		}else if(consonant.equals("ㅈ")) {
+			con1 = "자";
+			con2 = "차";
+		}else if(consonant.equals("ㅊ")) {
+			con1 = "차";
+			con2 = "카";
+		}else if(consonant.equals("ㅋ")) {
+			con1 = "카";
+			con2 = "타";
+		}else if(consonant.equals("ㅌ")) {
+			con1 = "타";
+			con2 = "파";
+		}else if(consonant.equals("ㅍ")) {
+			con1 = "파";
+			con2 = "하";
+		}else if(consonant.equals("ㅎ")) {
+			con1 = "하";
+			con2 = "힣";
+		}
+		
+		res = mapper.searchPlacesByAreaAndConsonant(areaName, con1, con2);
+		
+		return res;
+	}
+	
+	
 	public List<PlaceDTO> searchPlacesByCategory(String categoryName) throws SQLException{
 		return mapper.searchPlacesByCategory(categoryName);
 	}
@@ -73,6 +130,7 @@ public class PlaceService {
 		params.put("areaName", areaName);
 		return mapper.searchPlacesByAreaOrCategory(params);
 	}
+
 
 
 }

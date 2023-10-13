@@ -50,6 +50,31 @@
  		WHERE r BETWEEN #{startRow} AND #{endRow}
  	</select>
  	
+ 	<select id="searchPlacesByAreaAndConsonant" parameterType="String" resultType="PlaceDTO"> 
+	 		SELECT *
+			FROM (
+			        SELECT p.place_id as placeId,
+			        	   p.place_name as placeName,
+			        	   p.latitude,
+			        	   p.longitude,
+			        	   p.address,
+			        	   p.place_avg_score as placeAvgScore
+					FROM place p
+						JOIN area_place a_p ON a_p.place_id = p.place_id
+					WHERE a_p.area_id = (SELECT area_id FROM area WHERE area_name = #{areaName})
+					ORDER BY p.place_name ASC
+			    )
+	 		 WHERE 
+	 		 	   <choose>
+	 		 		 <when test="con2 == '한글 외'">
+	 		 		 	NOT REGEXP_LIKE(placeName, #{con1})
+	 		 		 </when>
+	 		 		 <otherwise>
+	 		 		 	placeName >= #{con1} AND placeName<![CDATA[ < ]]>#{con2}
+	 		 		 </otherwise>
+	 		 	   </choose>
+ 	</select>
+ 	
  	<select id="searchPlacesByCategory" parameterType="String" resultType="PlaceDTO">
  		SELECT p.place_id as placeId, p.place_name as placeName, p.latitude, p.longitude, p.address, p.place_avg_score as placeAvgScore
 		FROM place p

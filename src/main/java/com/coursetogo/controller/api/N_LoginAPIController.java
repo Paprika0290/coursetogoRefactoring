@@ -140,6 +140,7 @@ public class N_LoginAPIController {
 															.userEmail(searchUser.getUserEmail())
 															.userPhoto(searchUser.getUserPhoto())
 															.userIntroduce(searchUser.getUserIntroduce())
+															.userAdmin(searchUser.getUserAdmin())
 															.build();
 			session.setMaxInactiveInterval(3600);
 			session.setAttribute("user", userForSession);	

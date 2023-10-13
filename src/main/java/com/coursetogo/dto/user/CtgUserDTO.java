@@ -43,12 +43,13 @@ public class CtgUserDTO {
     private String userIntroduce; 
     
     @Builder // 세션 부여용 builder
-    public CtgUserDTO(int userId, String userNickname, String userEmail, String userPhoto, String userIntroduce) {
+    public CtgUserDTO(int userId, String userNickname, String userEmail, String userPhoto, int userAdmin, String userIntroduce) {
     	this.userId = userId;
     	this.userNickname = userNickname;
 		this.userEmail = userEmail;
 		this.userPhoto = userPhoto;
 		this.userIntroduce = userIntroduce;
+		this.userAdmin = userAdmin;
     }
     
 }

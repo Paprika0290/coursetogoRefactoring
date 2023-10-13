@@ -30,6 +30,7 @@ import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.map.PlaceService;
 import com.coursetogo.service.review.CourseReviewService;
 import com.coursetogo.service.review.PlaceReviewService;
+import com.coursetogo.service.user.CtgUserService;
 import com.coursetogo.service.user.UserBookmarkCourseService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,9 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 public class RestAPIController {
+	
+	@Autowired
+	private CtgUserService userService; 
 	
 	@Autowired
 	private CourseReviewService courseReviewService; 
@@ -218,5 +222,22 @@ public class RestAPIController {
 
 		return res;
 	}
+	
+	
+	@GetMapping("/course/getCourseList/{areaName}/{consonant}")
+	public List<PlaceDTO> getCourseListByConsonant(@PathVariable String areaName, @PathVariable String consonant) {
+		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
+		
+		try {
+			placeList = placeService.searchPlacesByAreaAndConsonant(areaName, consonant);
+		} catch (SQLException e) {
+			log.warn("area + 자음 장소 검색에 실패했습니다.");
+			e.printStackTrace();
+		}
+		
+		return placeList;
+	}
+
+
 	
 }

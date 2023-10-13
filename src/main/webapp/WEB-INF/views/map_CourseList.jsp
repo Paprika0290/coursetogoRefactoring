@@ -215,10 +215,6 @@
 		bookmarkIn.addEventListener('click', function(event) {
 			var targetIdIn = event.target.id;
 	        var thisCourseIdIn = targetIdIn.replace("bookmarkIn", "");
-			
-	        console.log(targetIdIn);
-	        console.log(thisCourseIdIn);
-	        console.log(thisUserId);
 	        
 	        axios.post('/user/bookmark/insert',  null, {
 	        	params: {
@@ -237,16 +233,12 @@
 	    });
 	});
 
-	<!-- 주황색 북마크 버튼 클릭시 북마크 추가 -->
+	<!-- 주황색 북마크 버튼 클릭시 북마크 삭제 -->
 	document.querySelectorAll('[id^="bookmarkOut"]').forEach(function(bookmarkOut) {
 		bookmarkOut.addEventListener('click', function(event) {
 			var targetIdOut = event.target.id;
 	        var thisCourseIdOut = targetIdOut.replace("bookmarkOut", "");
 			
-	        console.log(targetIdOut);
-	        console.log(thisCourseIdOut);
-	        console.log(thisUserId);
-	        
 	        axios.post('/user/bookmark/delete',  null, {
 	        	params: {
 	        		courseId: thisCourseIdOut,

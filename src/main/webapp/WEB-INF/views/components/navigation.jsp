@@ -120,7 +120,11 @@
 						</button>
 						  
 					  <div class="dropdown-content">
-					    <span>랄랄랄라</span>
+					  
+						<c:if test="${sessionScope.user.userAdmin == 0}">
+						  	<input type="button" class="edit-profile-btn" value="관리자 페이지" onclick= "location.href='/admin'" style= "border: 0; cursor: pointer;">
+						</c:if>
+					  
 					    <input type="button" class="edit-profile-btn" value="회원정보 수정" onclick="location.href='/user/updateUserInfo'"
 					    	   style= "border: 0px solid; padding-left: 20px; cursor: pointer;">
 					    <input type="button" class="logout-btn" value="로그아웃" onclick="location.href='/logout'"

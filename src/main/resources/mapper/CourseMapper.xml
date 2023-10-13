@@ -279,8 +279,22 @@
 		WHERE course_id = #{courseId}
 	</update>
 	
-	<select id= "recommendCourseTop5" resultType= "courseDTO">
-
+	<select id="recommendCourseTop5" resultType="CourseDTO">
+	    <![CDATA[
+	        SELECT 
+			  course_id AS courseId,
+			  user_id AS userId,
+			  course_name AS courseName,
+			  course_content AS courseContent,
+			  course_avg_score AS courseAvgScore,
+			  course_number AS courseNumber
+	        FROM (
+	            SELECT *
+	            FROM course
+	            ORDER BY course_avg_score DESC
+	        )
+	        WHERE ROWNUM <= 3
+	    ]]>
 	</select>
 	
 	
