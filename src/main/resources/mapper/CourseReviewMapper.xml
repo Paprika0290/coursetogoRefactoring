@@ -83,6 +83,12 @@
  		WHERE course_id = #{courseId}
  	</delete>
 
+     <!-- 유저의 코스리뷰 개수 -->
+     <select id="getUserCourseReviewCount" resultType = "_int">
+     	SELECT COUNT(*) FROM course_review WHERE user_id = #{userId}
+     </select>
+
+
 	<!-- 코스리뷰왕 -->
 	<select id="getReviewTop3" resultType="java.lang.Integer">
     <![CDATA[

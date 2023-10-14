@@ -37,10 +37,15 @@ public interface CourseReviewMapper {
 
 	public int deleteCourseReviewByCourseId(int courseId) throws SQLException;
 	
+	// 유저의 리뷰 개수 가져오는 메서드--------------------------------------------------------------
+	public int getUserCourseReviewCount(@Param("userId") int userId) throws SQLException;
+	
 	
 	
     // 코스리뷰왕
 	public List<Integer> getReviewTop3() throws SQLException;
+
+	
 
 
 	

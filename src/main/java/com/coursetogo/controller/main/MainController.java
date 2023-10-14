@@ -24,6 +24,7 @@ import com.coursetogo.controller.api.N_LoginAPIController;
 import com.coursetogo.controller.api.N_MapAPIController;
 import com.coursetogo.controller.map.CourseController;
 import com.coursetogo.controller.review.ReviewController;
+import com.coursetogo.controller.user.CtgUserController;
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
 import com.coursetogo.dto.map.PlaceDTO;
@@ -50,6 +51,9 @@ public class MainController {
 	
 	@Autowired
 	private CourseController courseController;
+	
+	@Autowired
+	private CtgUserController userController;
 	
 	@Autowired
 	private CourseService courseService;
@@ -139,26 +143,6 @@ public class MainController {
 		model.addAttribute("userNicknameList", userNicknameList);
 		model.addAttribute("courseDetailPageList", courseDetailPageList);
 
-		
-//		if(session.getAttribute("user") != null) {
-//			user = (CtgUserDTO) session.getAttribute("user"); 
-//			
-//			for(int i = 1; i <= kingNicknameList.size(); i++) {
-//				if( (kingNicknameList.get(i-1)).equals(user.getUserNickname())) {
-//					if(i <= 3) {
-//						session.setAttribute("Top3Num", "1"+String.valueOf(i));
-//					}else if(i > 3 && i <= 6) {
-//						session.setAttribute("Top3Num", "2"+String.valueOf(i-3));
-//					}else {
-//						session.setAttribute("Top3Num", "3"+String.valueOf(i-6));
-//					}
-//				}
-//			}
-//			
-//			
-//		}
-		
-		
 		return "home";
 	}
 	
@@ -489,37 +473,18 @@ public class MainController {
 	@GetMapping("/admin")
 	public String getAdminPage(HttpSession session, Model model) {
 		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
-		
-		int userId = -1;
-		
-		if(session.getAttribute("user") != null) {
-			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
-		}
-
 		return "admin_AdminPage";
 	}
 	
 	@GetMapping("/admin/user")
-	public String getAdminUserPage(HttpSession session, Model model) {
-		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
-		
-		int userId = -1;
-		if(session.getAttribute("user") != null) {
-			userId = ((CtgUserDTO) session.getAttribute("user")).getUserId();
-		}
-		
-		int allUserCount = 0;
-		int unsignedUserCount = 0;
-		
-		try {
-			allUserCount = userService.getAllUserCount();
-			unsignedUserCount = userService.getUnsignedUserCount();
-		} catch (SQLException e) {
-			log.warn("admin- 유저 수 조회에 실패하였습니다.");
-			e.printStackTrace();
-		}
-		
-		model.addAttribute("")
+	public String getAdminUserPage(HttpSession session, Model model,
+									@RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
+									@RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
+									@RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());		
+
+		HashMap<String, Object> adminUserInfo = userController.getUserListValues(pageNum, pageSize, groupNum);
+		model.addAttribute("adminUserInfo", adminUserInfo);
 		return "admin_AdminPage_User";
 	}
 	

@@ -19,5 +19,9 @@
 	    DELETE FROM user_bookmark_course
 	    WHERE course_id = #{courseId}
 	</delete>
-		
+
+	<!-- 유저가 찜한 코스 개수 -->
+     <select id="getUserBookmarkCount" resultType = "_int">
+     	SELECT COUNT(*) FROM user_bookmark_course WHERE user_id = #{userId}
+     </select>
  </mapper>

@@ -297,7 +297,10 @@
 	    ]]>
 	</select>
 	
-	
+     <!-- 유저의 코스 개수 -->
+     <select id="getUserCourseCount" resultType = "_int">
+     	SELECT COUNT(*) FROM course WHERE user_id = #{userId}
+     </select>
 	
 	<!-- 코스작성왕 -->
 	<select id="getCourseTop3" resultType="java.lang.Integer">

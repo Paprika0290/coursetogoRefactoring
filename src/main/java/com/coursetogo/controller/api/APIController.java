@@ -171,5 +171,39 @@ public class APIController {
 		return "redirect:/";
 	}
 	
-
+	// 유저 정보 수정 (관리자)
+	@PostMapping("/admin/user/update")
+	public String updateUserByAdmin(@ModelAttribute CtgUserDTO user
+							 		,HttpSession session) {
+		CtgUserDTO DBUser = null;
+		System.out.println(user);
+		
+		try {
+			DBUser = userService.getCtgUserByUserId(user.getUserId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		DBUser.setUserNickname(user.getUserNickname());
+		DBUser.setUserEmail(user.getUserEmail());
+		DBUser.setUserAdmin(user.getUserAdmin());
+		DBUser.setUserIntroduce(user.getUserIntroduce());
+		
+		boolean result = false;
+		
+		try {
+			result = userService.updateCtgUser(DBUser);
+		} catch (Exception e) {
+			log.warn("admin- 회원 정보 수정에 실패하였습니다.");
+			e.printStackTrace();
+		}
+		
+		if(result) {
+			session.setAttribute("user", DBUser);
+			return "redirect:/admin/user";
+		}
+		
+		return "redirect:/admin/user";
+	}
+	
 }

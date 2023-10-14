@@ -15,5 +15,8 @@ public interface UserBookmarkCourseMapper {
 
 	public int deleteBookmarkByCourseId(@Param("courseId") int courseId) throws SQLException;
 
+	// 유저가 찜한 코스 개수 가져오는 메서드--------------------------------------------------------------
+	public int getUserBookmarkCount(int userId) throws SQLException;
+
 	
 }

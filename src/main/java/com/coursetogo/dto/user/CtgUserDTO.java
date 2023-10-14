@@ -1,5 +1,8 @@
 package com.coursetogo.dto.user;
 
+import java.sql.Date;
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -41,6 +44,12 @@ public class CtgUserDTO {
     
     // 회원가입시 입력받은 값으로 insert
     private String userIntroduce; 
+
+    // 가입일자
+    private LocalDate userSignDate;
+    
+    // 탈퇴일자
+    private LocalDate userUnsignDate;
     
     @Builder // 세션 부여용 builder
     public CtgUserDTO(int userId, String userNickname, String userEmail, String userPhoto, int userAdmin, String userIntroduce) {

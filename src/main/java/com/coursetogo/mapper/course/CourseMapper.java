@@ -40,6 +40,10 @@ public interface CourseMapper {
 	public int updateCourseAvgScore(int courseId) throws SQLException;
 	
 	public List<CourseDTO> recommendCourseTop5() throws SQLException;
+
+	// 유저의 코스 개수 가져오는 메서드--------------------------------------------------------------
+	public int getUserCourseCount(int userId);
+
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3() throws SQLException;

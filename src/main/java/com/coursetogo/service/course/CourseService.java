@@ -165,7 +165,10 @@ public class CourseService {
 		return res;
 	}
 	
-	
+	// 유저의 코스 개수 가져오는 메서드--------------------------------------------------------------
+	public int getUserCourseCount(int userId) throws SQLException {
+		return mapper.getUserCourseCount(userId);
+	}
 	
 	
 	

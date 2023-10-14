@@ -133,16 +133,31 @@
 					
 					<div style= "display: flex; flex-direction: row; gap: 50px; justify-content: center; font-family: 'TheJamsil3Regular', sans-serif;">
 						<div class= "top3Container" id= "courseKing">
+							<div style= "background-color: #ffffff; padding: 5px;">
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #FF962B; border-radius: 10px;">코스를 가장 많이<br>만드신 분</span><br>
+                            	<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #00008b;"> TOP3</span>
+							</div>
+							<br>
 							<img src="/images/goldMedal.png"><br>${kingNicknameList[0]}<br><br>
 							<img src="/images/silverMedal.png"><br>${kingNicknameList[1]}<br><br>
 							<img src="/images/bronzeMedal.png"><br>${kingNicknameList[2]}	
 						</div>
 						<div class= "top3Container" id= "courseReviewKing">
+							<div style= "background-color: #ffffff; padding: 5px;">
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #FF962B; border-radius: 10px;">가장 많은 코스를<br>다녀오신 분</span><br>
+                            	<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #00008b;"> TOP3</span>
+							</div>
+							<br>
 							<img src="/images/goldMedal.png"><br>${kingNicknameList[3]}<br><br>
 							<img src="/images/silverMedal.png"><br>${kingNicknameList[4]}<br><br>
 							<img src="/images/bronzeMedal.png"><br>${kingNicknameList[5]}
 						</div>
 						<div class= "top3Container" id= "placeReviewKing">
+							<div style= "background-color: #ffffff; padding: 5px;">
+								<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #FF962B; border-radius: 10px;">가장 다양한 장소를<br>다녀오신 분</span><br>
+                            	<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #00008b;"> TOP3</span>
+							</div>
+							<br>
 							<img src="/images/goldMedal.png"><br>${kingNicknameList[6]}<br><br>
 							<img src="/images/silverMedal.png"><br>${kingNicknameList[7]}<br><br>
 							<img src="/images/bronzeMedal.png"><br>${kingNicknameList[8]}	

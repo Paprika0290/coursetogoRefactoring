@@ -94,12 +94,17 @@ public class CourseReviewService {
 		
 		return res;
 	}	
+
+	// 유저의 리뷰 개수 가져오는 메서드--------------------------------------------------------------
+	public int getUserCourseReviewCount(int userId) throws SQLException{
+		return mapper.getUserCourseReviewCount(userId);	
+	}	
 	
     // 코스리뷰왕
 	public List<Integer> getReviewTop3() throws SQLException{
 		return mapper.getReviewTop3();
 	}
 
-
+	
 	
 }

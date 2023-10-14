@@ -40,6 +40,11 @@ public class UserBookmarkCourseService {
 		return res;
 	}
 	
+	// 유저가 찜한 코스 개수 가져오는 메서드--------------------------------------------------------------
+	public int getUserBookmarkCount(int userId) throws SQLException{
+		return mapper.getUserBookmarkCount(userId);
+	}
 	
+
 	
 }
