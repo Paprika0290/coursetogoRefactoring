@@ -279,22 +279,101 @@
 		WHERE course_id = #{courseId}
 	</update>
 	
-	<select id="recommendCourseTop5" resultType="CourseDTO">
-	    <![CDATA[
-	        SELECT 
-			  course_id AS courseId,
-			  user_id AS userId,
-			  course_name AS courseName,
-			  course_content AS courseContent,
-			  course_avg_score AS courseAvgScore,
-			  course_number AS courseNumber
-	        FROM (
-	            SELECT *
-	            FROM course
-	            ORDER BY course_avg_score DESC
-	        )
-	        WHERE ROWNUM <= 3
-	    ]]>
+	<!-- 전체 코스 확인 / 페이지네이션(관리자 페이지) -->
+	<select id= "getAllCourseInformForAdminWithPage" resultType="CourseInformDTO">
+	  	SELECT *
+	    FROM (
+			SELECT 
+			    c.course_id AS courseId,
+			    u.user_nickname AS userNickName,
+			    c.course_name AS courseName,
+			    c.course_avg_score AS courseAvgScore,
+			    c.course_number AS courseNumber,
+			    c.course_content AS courseContent,
+			    count(DISTINCT u_b_c.bookmark_id) AS isBookMarked,
+			    row_number() OVER (ORDER BY c.course_id DESC) AS r
+			FROM
+			    course c
+			    JOIN ctg_user u ON c.user_id = u.user_id
+			    JOIN course_place c_p ON c.course_id = c_p.course_id
+			    LEFT JOIN user_bookmark_course u_b_c ON c.course_id = u_b_c.course_id
+			GROUP BY
+			    c.course_id,
+			    u.user_nickname,
+			    c.course_name,
+			    c.course_avg_score,
+			    c.course_number, 
+			    c.course_content
+		)
+	  	WHERE r BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 검색된 코스 확인 / 페이지네이션(관리자 페이지) -->
+	<select id= "getCourseInformListByKeywordForAdminWithPage" resultType="CourseInformDTO">
+		SELECT *
+		    FROM (
+				SELECT 
+				    c.course_id AS courseId,
+				    u.user_nickname AS userNickName,
+				    c.course_name AS courseName,
+				    c.course_avg_score AS courseAvgScore,
+				    c.course_number AS courseNumber,
+				    c.course_content AS courseContent,
+				    count(DISTINCT u_b_c.bookmark_id) AS isBookMarked,
+				    row_number() OVER (ORDER BY c.course_id DESC) AS r
+				FROM
+				    course c
+				    JOIN ctg_user u ON c.user_id = u.user_id
+				    JOIN course_place c_p ON c.course_id = c_p.course_id
+				    LEFT JOIN user_bookmark_course u_b_c ON c.course_id = u_b_c.course_id
+	 				<choose>
+			            <when test="category == 'userNickname'">
+			            	WHERE
+			                	u.user_nickname LIKE '%' || #{keyword} || '%'
+               				GROUP BY
+							    c.course_id,
+							    u.user_nickname,
+							    c.course_name,
+							    c.course_avg_score,
+							    c.course_number, 
+							    c.course_content
+			            </when>
+			            <when test="category == 'courseName'">
+			            	WHERE
+			                	c.course_name LIKE '%' || #{keyword} || '%'
+               				GROUP BY
+							    c.course_id,
+							    u.user_nickname,
+							    c.course_name,
+							    c.course_avg_score,
+							    c.course_number, 
+							    c.course_content			                
+			            </when>
+			            <when test="category == 'avgScore'">
+			            	WHERE
+			               	 	c.course_avg_score >= #{keyword}
+               				GROUP BY
+							    c.course_id,
+							    u.user_nickname,
+							    c.course_name,
+							    c.course_avg_score,
+							    c.course_number, 
+							    c.course_content
+			            </when>
+   			            <when test="category == 'bookmarkCount'">
+							GROUP BY
+							    c.course_id,
+							    u.user_nickname,
+							    c.course_name,
+							    c.course_avg_score,
+							    c.course_number, 
+							    c.course_content
+							HAVING 
+			                	count(DISTINCT u_b_c.bookmark_id) >= #{keyword}
+			            </when>
+			        </choose>   
+			)
+		  	WHERE r BETWEEN #{startRow} AND #{endRow}
 	</select>
 	
      <!-- 유저의 코스 개수 -->
@@ -316,5 +395,22 @@
 		    WHERE ROWNUM <= 3
 		 ]]>
 	</select>
-		
+	
+	<select id="recommendCourseTop5" resultType="CourseDTO">
+	    <![CDATA[
+	        SELECT 
+			  course_id AS courseId,
+			  user_id AS userId,
+			  course_name AS courseName,
+			  course_content AS courseContent,
+			  course_avg_score AS courseAvgScore,
+			  course_number AS courseNumber
+	        FROM (
+	            SELECT *
+	            FROM course
+	            ORDER BY course_avg_score DESC
+	        )
+	        WHERE ROWNUM <= 3
+	    ]]>
+	</select>	
  </mapper>

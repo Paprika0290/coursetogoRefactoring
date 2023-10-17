@@ -43,10 +43,21 @@ public interface CourseMapper {
 
 	// 유저의 코스 개수 가져오는 메서드--------------------------------------------------------------
 	public int getUserCourseCount(int userId);
+	
+	// 전체 코스 확인 / 페이지네이션(관리자 페이지)
+	public List<CourseInformDTO> getAllCourseInformForAdminWithPage(@Param("startRow") int startRow, @Param("endRow") int endRow) throws SQLException;	
 
+	// 검색된 코스 확인 / 페이지네이션(관리자 페이지)
+	public List<CourseInformDTO> getCourseInformListByKeywordForAdminWithPage
+												(@Param("category") String category, @Param("keyword") String keyword,
+												 @Param("startRow") int startRow, @Param("endRow") int endRow) throws SQLException;	
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3() throws SQLException;
+
+
+
+	
 
 	
 

@@ -1,6 +1,7 @@
 package com.coursetogo.mapper.user;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -38,19 +39,30 @@ public interface CtgUserMapper {
 	// 닉네임 중복 검증 메서드-------------------------------------------------------------------
 	public int nicknameCheck(@Param("userNickname") String userNickname);
 	
-	// 전체 유저 수 확인
+	// 전체 유저 수 확인 (관리자 페이지)
 	public int getAllUserCount() throws SQLException;
 	
-	// 탈퇴한 유저 수 확인
+	// 탈퇴한 유저 수 확인 (관리자 페이지)
 	public int getUnsignedUserCount() throws SQLException;
 	
+	// 전체 유저 정보 확인 (관리자 페이지)
+	public List<CtgUserDTO> getAllUserList() throws SQLException;	
+
+	// 전체 유저 정보 확인 / 페이지네이션(관리자 페이지)
+	public List<CtgUserDTO> getAllUserListByPage(@Param("startRow") int startRow, @Param("endRow") int endRow) throws SQLException;
+	
+	// 검색된 유저 정보 확인 / 페이지네이션(관리자 페이지)
+	public List<CtgUserDTO> getUserListByKeywordWithPage(@Param("startRow") int startRow, @Param("endRow") int endRow,
+														 @Param("category") String category, @Param("keyword") String keyword) throws SQLException;
+	
 	// 나의 코스 개수 가져오는 메서드--------------------------------------------------------------
-	public int getMyCourseCount(int userId) throws SQLException;
-	
-	// 찜한 코스 개수 가져오는 메서드--------------------------------------------------------------
-	public int getMyBookmarkCount(int userId) throws SQLException;
-	
-	// 나의 리뷰 개수 가져오는 메서드--------------------------------------------------------------
-	public int getMyReviewCount(int userId) throws SQLException;
+	public int getUserCourseCount(int userId) throws SQLException;
+
+
+
+
+
+
+
 
 }

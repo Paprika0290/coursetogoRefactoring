@@ -237,7 +237,35 @@ public class RestAPIController {
 		
 		return placeList;
 	}
-
+	
+	// 코스 삭제 (관리자)
+	@PostMapping("/admin/course/delete")
+	public String deleteCourseByAdmin(@RequestBody int[] courseIdArray) {
+		int res = 0;
+		
+		for(Integer courseId : courseIdArray) {
+			try {
+				courseReviewService.deleteCourseReviewByCourseId(courseId);
+				bookmarkService.deleteBookmarkByCourseId(courseId);
+				coursePlaceService.deleteCoursePlace(courseId);
+			} catch (SQLException e) {
+				log.warn("admin- 코스 관련 테이블 삭제에 실패하였습니다.");
+				e.printStackTrace();
+			}
+			
+			try {
+				res = courseService.deleteCourse(courseId);
+			} catch (SQLException e) {
+				log.warn("admin- 코스 삭제에 실패하였습니다.");
+				e.printStackTrace();
+			}
+		}
+		
+		if (res != 0) {
+			return "/admin/course";
+		}
+		return "/admin/error";
+	}
 
 	
 }

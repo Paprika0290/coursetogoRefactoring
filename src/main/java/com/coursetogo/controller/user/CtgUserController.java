@@ -108,7 +108,8 @@ public class CtgUserController {
 	
 	
 	// 관리자 페이지 - userList 페이지를 구성하는 데에 필요한 정보들을 담아 돌려주는 메서드.
-	public HashMap<String, Object> getUserListValues(int pageNum, int pageSize, int groupNum) {
+	public HashMap<String, Object> getUserListValues(int pageNum, int pageSize, int groupNum,
+													 String category, String keyword) {
 		int allUserCount = 0;
 		int unsignedUserCount = 0;
 		
@@ -121,12 +122,22 @@ public class CtgUserController {
 		}
 		
 		List<CtgUserDTO> userList = new ArrayList<CtgUserDTO>();
-		try {
-			userList = service.getAllUserListByPage(pageNum, pageSize);
-		} catch (SQLException e) {
-			log.warn("admin- 전체 유저리스트 조회에 실패하였습니다.");
-			e.printStackTrace();
+		if(category == null) {
+			try {
+				userList = service.getAllUserListByPage(pageNum, pageSize);
+			} catch (SQLException e) {
+				log.warn("admin- 전체 유저리스트 조회에 실패하였습니다.");
+				e.printStackTrace();
+			}
+		}else {
+			try {
+				userList = service.getUserListByKeywordWithPage(pageNum, pageSize, category, keyword);
+			} catch (SQLException e) {
+				log.warn("admin- 유저리스트 키워드 검색에 실패하였습니다.");
+				e.printStackTrace();
+			}
 		}
+		
 		
 		List<Integer> userCourseCountList = new ArrayList<Integer>();
 		List<Integer> userCourseReviewCountList = new ArrayList<Integer>();

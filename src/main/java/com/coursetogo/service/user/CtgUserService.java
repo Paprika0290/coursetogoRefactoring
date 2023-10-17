@@ -1,10 +1,13 @@
 package com.coursetogo.service.user;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.coursetogo.dto.course.CourseInformDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.mapper.user.CtgUserMapper;
 
@@ -85,31 +88,49 @@ public class CtgUserService {
 		return mapper.nicknameCheck(userNickname);
 	}
 	
-	// 전체 유저 수 확인
+	// 전체 유저 수 확인 (관리자 페이지)
 	public int getAllUserCount() throws SQLException {
 		return mapper.getAllUserCount();
 	}
-
-	// 탈퇴한 유저 수 확인
+	
+	// 탈퇴한 유저 수 확인 (관리자 페이지)
 	public int getUnsignedUserCount() throws SQLException {
 		return mapper.getUnsignedUserCount();
 	}
 	
+	// 전체 유저 정보 확인 (관리자 페이지)
+	public List<CtgUserDTO> getAllUserList() throws SQLException {
+		return mapper.getAllUserList();
+	}
+	
+	// 전체 유저 정보 확인 / 페이지네이션(관리자 페이지)
+	public List<CtgUserDTO> getAllUserListByPage(int pageNum, int pageSize) throws SQLException {
+		List<CtgUserDTO> res = new ArrayList<>();
+		
+		int startRow = ((pageNum-1) * pageSize) + 1;
+		int endRow = ((pageNum-1) * pageSize) + pageSize;
+		res= mapper.getAllUserListByPage(startRow, endRow);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("전체 유저(+페이지네이션) 검색 실패");
+		}
+		return res;
+	}
 
-	
-	// 나의 코스 개수 가져오는 메서드--------------------------------------------------------------
-	public int getMyCourseCount(int userId) throws SQLException {
-		return mapper.getMyCourseCount(userId);
+	// 검색된 유저 정보 확인 / 페이지네이션(관리자 페이지)
+	public List<CtgUserDTO> getUserListByKeywordWithPage(int pageNum, int pageSize, String category, String keyword) throws SQLException {
+		List<CtgUserDTO> res = new ArrayList<>();
+		
+		int startRow = ((pageNum-1) * pageSize) + 1;
+		int endRow = ((pageNum-1) * pageSize) + pageSize;
+		
+		res= mapper.getUserListByKeywordWithPage(startRow, endRow, category, keyword);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("전체 유저(+페이지네이션) 검색 실패");
+		}
+		return res;
 	}
-	
-	// 찜한 코스 개수 가져오는 메서드--------------------------------------------------------------
-	public int getMyBookmarkCount(int userId) throws SQLException{
-		return mapper.getMyBookmarkCount(userId);
-	}
-	
-	// 나의 리뷰 개수 가져오는 메서드--------------------------------------------------------------
-	public int getMyReviewCount(int userId) throws SQLException{
-		return mapper.getMyReviewCount(userId);	
-	}
-	
 }

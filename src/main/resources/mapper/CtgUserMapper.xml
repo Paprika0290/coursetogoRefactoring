@@ -45,6 +45,8 @@
     <update id="updateCtgUser" parameterType="CtgUserDTO">
 		UPDATE ctg_user
 		SET user_nickname = #{userNickname},
+			user_email = #{userEmail},
+			user_admin = #{userAdmin},
             user_introduce = #{userIntroduce},
             user_photo = #{userPhoto}
 		WHERE user_id = #{userId}
@@ -56,7 +58,7 @@
         SET naver_id = null,
             user_name = null,
             user_email = null,
-            user_admin = null,
+            user_admin = 5,
             user_introduce = null,
             user_unsigndate = SYSDATE
         WHERE user_id = #{userId}
@@ -67,31 +69,83 @@
      	SELECT COUNT(*) FROM ctg_user WHERE user_nickname = #{userNickname}
      </select>
      
-    <!-- 전체 유저 수 확인 -->
+    <!-- 전체 유저 수 확인 (관리자 페이지) -->
     <select id="getAllUserCount" resultType = "_int">
      	SELECT COUNT(*) FROM ctg_user
      </select>
 	
-	<!-- 탈퇴한 유저 수 확인 -->
+	<!-- 탈퇴한 유저 수 확인 (관리자 페이지) -->
 	<select id="getUnsignedUserCount" resultType = "_int">
-		SELECT COUNT(*) FROM ctg_user WHERE naver_id IS NULL
+		SELECT COUNT(*) FROM ctg_user WHERE user_unsigndate IS NOT NULL
 	</select>
-     
+    
+    <!-- 전체 유저 정보 확인 (관리자 페이지) --> 
+    <select id="getAllUserList" resultType = "CtgUserDTO">
+    	SELECT user_id AS userId,
+			   user_name AS userName,
+			   user_nickname AS userNickname,
+			   user_email AS userEmail,
+			   user_admin AS userAdmin,
+			   user_introduce AS userIntroduce,
+			   user_signdate AS userSignDate,
+			   user_unsigndate AS userUnsignDate
+    	FROM ctg_user
+    	ORDER BY userId DESC
+    </select>  
       
-     <!-- 나의 코스 개수 -->
-     <select id="getMyCourseCount" resultType = "_int">
-     	SELECT COUNT(*) FROM course WHERE user_id = #{userId}
-     </select>
-     
-     <!-- 찜한 코스 개수 -->
-     <select id="getMyBookmarkCount" resultType = "_int">
-     	SELECT COUNT(*) FROM user_bookmark_course WHERE user_id = #{userId}
-     </select>
-     
-     <!-- 나의 리뷰 개수 -->
-     <select id="getMyReviewCount" resultType = "_int">
-     	SELECT COUNT(*) FROM course_review WHERE user_id = #{userId}
-     </select>
-
-   
+    <!-- 전체 유저 정보 확인 (관리자 페이지) --> 
+    <select id="getAllUserListByPage" resultType = "CtgUserDTO">
+    	SELECT *
+    	FROM (
+    		SELECT
+    		   user_id AS userId,
+			   user_name AS userName,
+			   user_nickname AS userNickname,
+			   user_email AS userEmail,
+			   user_admin AS userAdmin,
+			   user_introduce AS userIntroduce,
+			   user_signdate AS userSignDate,
+			   user_unsigndate AS userUnsignDate,
+			   row_number() OVER (ORDER BY user_id DESC) AS r
+	    	FROM ctg_user
+	    	ORDER BY user_id DESC
+    	)
+    	WHERE r BETWEEN #{startRow} AND #{endRow}
+    </select>    
+    
+    <!-- 검색된 유저 정보 확인 (관리자 페이지) --> 
+    <select id="getUserListByKeywordWithPage" resultType = "CtgUserDTO">
+    	SELECT *
+    	FROM (
+    		SELECT
+    		   user_id AS userId,
+			   user_name AS userName,
+			   user_nickname AS userNickname,
+			   user_email AS userEmail,
+			   user_admin AS userAdmin,
+			   user_introduce AS userIntroduce,
+			   user_signdate AS userSignDate,
+			   user_unsigndate AS userUnsignDate,
+			   row_number() OVER (ORDER BY user_id DESC) AS r
+	    	FROM ctg_user
+	    	WHERE
+	    		<choose>
+		            <when test="category == 'userNickname'">
+		                user_nickname LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="category == 'userName'">
+		                user_name LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="category == 'userEmail'">
+		                user_email LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="category == 'userAdmin'">
+		                user_admin LIKE '%' || #{keyword} || '%'
+		            </when>
+		        </choose>
+	    	ORDER BY user_id DESC
+    	)
+    	WHERE r BETWEEN #{startRow} AND #{endRow}
+    </select>
+      
 </mapper>

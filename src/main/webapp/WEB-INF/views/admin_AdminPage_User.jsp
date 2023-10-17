@@ -81,7 +81,46 @@
 			제재 회원 : <span style= "color: #4242D0;"><b></b></span> 명
 		</span>
 		<br><br><br>
-		<span style= "margin-left: 3%; font-size: 10pt; color: #A7A7A7;"> - 회원 닉네임 클릭 시 정보 수정이 가능합니다.</span>
+		<span style= "margin-left: 3%; font-size: 10pt; color: #A7A7A7;"> - 회원 닉네임 클릭 시 정보 수정이 가능합니다.</span><br><br>
+		<div style= "display: flex; align-items: center;">
+			<select id= "selectedCategory" style= "text-align: center; margin-left: 3%; border: 1px solid #ADADAD; height: 24px;">
+				<option value="entireUser" selected>전체&nbsp;&nbsp;</option>
+				<option value="userNickname">닉네임&nbsp;&nbsp;</option>
+				<option value="userName">성명&nbsp;&nbsp;</option>
+				<option value="userEmail">유저 이메일&nbsp;&nbsp;</option>
+				<option value="userAdmin">유저 권한&nbsp;&nbsp;</option>
+			</select>&nbsp;
+			<input type= "text" id="searchKeyword" style= "border: 1px solid #ADADAD; width: 150px; height: 20px;">&nbsp;&nbsp;
+			<button id= "searchUserButton" type= "button" class= "userAdminButton"><b>검색</b></button>
+		</div>
+		<br>
+		
+			<script>
+				var searchButton = document.getElementById("searchUserButton");	
+				
+				searchButton.addEventListener('click', function() {
+					var keyword = document.getElementById("searchKeyword").value.trim();
+					var category = document.getElementById("selectedCategory").value;
+								// [유저 권한] 검색시 검색된 문자열의 내용에 따라 keyword의 값 변경
+								if(category === "entireUser") {
+									window.location.href= '/admin/user';
+								}
+								else {
+									if(category === "userAdmin") {
+										if(keyword === "관리자") {
+											keyword = 0;
+										}else if (keyword === "일반회원"){
+											keyword = 1;
+										}else if (keyword === "탈퇴회원"){
+											keyword = 5;
+										}
+									}
+									window.location.href= '/admin/user/' + category + '/' + keyword;
+								}
+					
+		        });	
+			</script>
+		
 		<table id= "allUserList" style= "position: absolute; width: 95%;">
 				<tr>
 					<th scope="col" style= "width: 60px;">회원ID</th>

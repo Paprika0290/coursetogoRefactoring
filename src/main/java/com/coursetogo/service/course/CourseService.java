@@ -170,7 +170,38 @@ public class CourseService {
 		return mapper.getUserCourseCount(userId);
 	}
 	
-	
+	// 전체 코스 확인 / 페이지네이션(관리자 페이지)
+	public List<CourseInformDTO> getAllCourseInformForAdminWithPage(int pageNum, int pageSize) throws SQLException {
+		List<CourseInformDTO> res = new ArrayList<>();
+		
+		int startRow = ((pageNum-1) * pageSize) + 1;
+		int endRow = ((pageNum-1) * pageSize) + pageSize;
+		res= mapper.getAllCourseInformForAdminWithPage(startRow, endRow);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("admin- 전체 코스(+페이지네이션) 검색 실패");
+		}
+		return res;
+	}
+
+	// 검색된 코스 확인 / 페이지네이션(관리자 페이지)
+	public List<CourseInformDTO> getCourseInformListByKeywordForAdminWithPage
+												(String category, String keyword, int pageNum, int pageSize) throws SQLException {
+		List<CourseInformDTO> res = new ArrayList<>();
+		
+		int startRow = ((pageNum-1) * pageSize) + 1;
+		int endRow = ((pageNum-1) * pageSize) + pageSize;
+		res= mapper.getCourseInformListByKeywordForAdminWithPage(category, keyword, startRow, endRow);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("admin- 전체 코스(+페이지네이션) 검색 실패");
+		}
+		return res;
+	}
+
+
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3() throws SQLException	{
@@ -178,7 +209,7 @@ public class CourseService {
 	}
 
 
-
+	
 
 	
 	

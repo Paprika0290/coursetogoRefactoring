@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.coursetogo.controller.api.N_LoginAPIController;
 import com.coursetogo.controller.api.N_MapAPIController;
 import com.coursetogo.controller.map.CourseController;
+import com.coursetogo.controller.map.PlaceController;
 import com.coursetogo.controller.review.ReviewController;
 import com.coursetogo.controller.user.CtgUserController;
 import com.coursetogo.dto.course.CourseDTO;
@@ -57,6 +59,9 @@ public class MainController {
 	
 	@Autowired
 	private CourseService courseService;
+	
+	@Autowired
+	private PlaceController placeController;
 	
 	@Autowired
 	private CtgUserService userService;
@@ -476,16 +481,53 @@ public class MainController {
 		return "admin_AdminPage";
 	}
 	
-	@GetMapping("/admin/user")
-	public String getAdminUserPage(HttpSession session, Model model,
-									@RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
-									@RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
-									@RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum) {
-		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());		
-
-		HashMap<String, Object> adminUserInfo = userController.getUserListValues(pageNum, pageSize, groupNum);
-		model.addAttribute("adminUserInfo", adminUserInfo);
+	// 관리자페이지 - 유저 
+	@GetMapping(value= {"/admin/user", "/admin/user/{category}/{keyword}"})
+	public String getAdminUserPage(@PathVariable(required= false) String category,
+								   @PathVariable(required= false) String keyword,
+								   @RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
+								   @RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
+								   @RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
+								   Model model, HttpSession session) {
+		if (((CtgUserDTO)session.getAttribute("user")).getUserAdmin() == 0) {
+			HashMap<String, Object> adminUserInfo = userController.getUserListValues(pageNum, pageSize, groupNum, category, keyword);
+			model.addAttribute("adminUserInfo", adminUserInfo);
+		}
+		
 		return "admin_AdminPage_User";
 	}
 	
+	// 관리자페이지 - 코스
+	@GetMapping(value= {"/admin/course", "/admin/course/{category}/{keyword}"})
+	public String getAdminCoursePage(@PathVariable(required= false) String category,
+								     @PathVariable(required= false) String keyword,
+								     @RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
+								     @RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
+								     @RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
+								     Model model, HttpSession session) {
+		
+		if (((CtgUserDTO)session.getAttribute("user")).getUserAdmin() == 0) {
+			HashMap<String, Object> adminCourseInfo = courseController.getCourseInformListValuesForAdmin(category, keyword, pageNum, pageSize, groupNum);
+			model.addAttribute("adminCourseInfo", adminCourseInfo);
+		}
+		
+		return "admin_AdminPage_Course";
+	}
+	
+	// 관리자페이지 - 장소
+	@GetMapping(value= {"/admin/place", "/admin/place/{category}/{keyword}"})
+	public String getAdminPlacePage(@PathVariable(required= false) String category,
+								    @PathVariable(required= false) String keyword,
+								    @RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
+								    @RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
+								    @RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
+								    Model model, HttpSession session) {
+		
+		if (((CtgUserDTO)session.getAttribute("user")).getUserAdmin() == 0) {
+			HashMap<String, Object> adminPlaceInfo = placeController.getPlaceListValuesForAdmin(category, keyword, pageNum, pageSize, groupNum);
+			model.addAttribute("adminPlaceInfo", adminPlaceInfo);
+		}
+		
+		return "admin_AdminPage_Place";
+	}
 }

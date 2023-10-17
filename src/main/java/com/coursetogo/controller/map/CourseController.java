@@ -19,6 +19,7 @@ import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.enumType.Area;
 import com.coursetogo.service.course.CoursePlaceService;
 import com.coursetogo.service.course.CourseService;
+import com.coursetogo.service.review.CourseReviewService;
 import com.coursetogo.service.user.CtgUserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,9 @@ public class CourseController {
 	
 	@Autowired
 	private CoursePlaceService coursePlaceService;
+	
+	@Autowired
+	private CourseReviewService courseReviewService;
 	
 	
 	public int insertCourse(CourseDTO course, String[] placeIds) {
@@ -126,12 +130,12 @@ public class CourseController {
 		
 		Arrays.sort(areaListToString);
 		
-		HashMap<String, Object> ListValues = new HashMap<String, Object>();
-		ListValues.put("courseInformList", courseInformList);
-		ListValues.put("userPhotoSrcList", userPhotoSrcList);
-		ListValues.put("courseDetailPageList", courseDetailPageList);
-		ListValues.put("areaList", areaListToString);
-		ListValues.put("totalCourseCount", totalCourseCount);
+		HashMap<String, Object> listValues = new HashMap<String, Object>();
+		listValues.put("courseInformList", courseInformList);
+		listValues.put("userPhotoSrcList", userPhotoSrcList);
+		listValues.put("courseDetailPageList", courseDetailPageList);
+		listValues.put("areaList", areaListToString);
+		listValues.put("totalCourseCount", totalCourseCount);
 
 //		System.out.println("pageNum : " + pageNum);
 //		System.out.println("pageSize : " + pageSize);
@@ -164,14 +168,108 @@ public class CourseController {
 //		System.out.println("groupnum: " + groupNum);
 //		System.out.println("totalgroups: " + totalGroups);
 		
-		ListValues.put("pageNum", pageNum);
-		ListValues.put("pageSize", pageSize);
-		ListValues.put("groupNum", groupNum);
-		ListValues.put("totalPages", totalPages);
-		ListValues.put("totalGroups", totalGroups);
+		listValues.put("pageNum", pageNum);
+		listValues.put("pageSize", pageSize);
+		listValues.put("groupNum", groupNum);
+		listValues.put("totalPages", totalPages);
+		listValues.put("totalGroups", totalGroups);
 		
-		return ListValues;
+		return listValues;
 		
+	}
+
+
+	public HashMap<String, Object> getCourseInformListValuesForAdmin(String category, String keyword, int pageNum,
+																	 int pageSize, Integer groupNum) {
+		HashMap<String, Object> listValues = new HashMap<String, Object>();
+		List<CourseInformDTO> courseInformList = new ArrayList<CourseInformDTO>();
+		
+		if(category == null) {
+			try {
+				courseInformList = courseService.getAllCourseInformForAdminWithPage(pageNum, pageSize);
+			} catch (SQLException e) {
+				log.warn("admin- 전체 코스(+페이지네이션) 검색 실패");
+				e.printStackTrace();
+			}
+		}else {
+			try {
+				courseInformList = courseService.getCourseInformListByKeywordForAdminWithPage(category, keyword, pageNum, pageSize);
+			} catch (SQLException e) {
+				log.warn("admin- 코스리스트 키워드 검색에 실패하였습니다.");
+				e.printStackTrace();
+			}
+		}
+		
+		List<String> courseDetailPageList = new ArrayList<String>();
+		List<Integer> reviewCountList = new ArrayList<Integer>();
+		int reviewCount = 0;
+		
+		for(CourseInformDTO courseInform : courseInformList) {
+			int courseId = courseInform.getCourseId();
+			String query = "";
+            query += ("courseId="+ String.valueOf(courseId));
+        
+            try {
+				reviewCount = courseReviewService.getCourseReviewCountByCourseId(courseId);
+			} catch (SQLException e) {
+				log.warn("admin- 해당 코스의 리뷰 수 조회 실패");
+				e.printStackTrace();
+			}
+            
+            courseDetailPageList.add(query);  
+            reviewCountList.add(reviewCount);
+		}
+				
+		
+		
+		listValues.put("courseInformList", courseInformList);
+		listValues.put("courseDetailPageList", courseDetailPageList);	
+		listValues.put("reviewCountList", reviewCountList);	
+		
+		
+		// pageNum : 기본-1, 페이지 번호 누를시 새로 입력됨 / pageSize: 기본-10
+		int totalPages = 0;
+		int totalCourseCount= 0;
+		try {
+			totalCourseCount = courseService.getCourseCount();
+		} catch (Exception e) {
+			log.warn("admin- 전체 코스 수 실패");
+			e.printStackTrace();
+		}
+		
+		if( (totalCourseCount / pageSize) < ((double)totalCourseCount / (double)pageSize) &&
+			((double)totalCourseCount / (double)pageSize) < (totalCourseCount / pageSize) + 1 ) {
+			totalPages = (totalCourseCount / pageSize) + 1;
+		} else {
+			totalPages = (totalCourseCount / pageSize);
+		}
+
+		int totalGroups = 0;
+		if( (totalPages / 10) < ((double)totalPages / 10) &&
+			((double)totalPages / 10) < (totalPages / 10) + 1 ) {
+			totalGroups = (totalPages / 10) + 1;
+		} else {
+			totalGroups = (totalPages / 10);
+		}
+		
+		
+		for(int i = 1; i <= totalGroups; i++) {
+			if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
+				groupNum = i;
+				break;
+			}
+		}
+		
+		listValues.put("totalCourseCount", totalCourseCount);
+		listValues.put("pageNum", pageNum);
+		listValues.put("pageSize", pageSize);
+		listValues.put("groupNum", groupNum);
+		listValues.put("totalPages", totalPages);
+		listValues.put("totalGroups", totalGroups);
+		
+		
+		
+		return listValues;
 	}
 	
 	
