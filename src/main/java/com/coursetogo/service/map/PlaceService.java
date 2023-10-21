@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.coursetogo.dto.map.PlaceDTO;
+import com.coursetogo.dto.map.PlaceInformDTO;
+import com.coursetogo.dto.review.PlaceReviewDTO;
 import com.coursetogo.mapper.map.PlaceMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -131,6 +133,72 @@ public class PlaceService {
 		return mapper.searchPlacesByAreaOrCategory(params);
 	}
 
+	// 전체 장소수 조회
+	public int getAllPlacesCount() throws SQLException{
+		return mapper.getAllPlacesCount();
+	}
 
+	// 전체 장소리스트 조회 (관리자)
+	public List<PlaceInformDTO> getAllPlaceInformListForAdminByPage(int pageNum, int pageSize) throws SQLException {
+		
+		List<PlaceInformDTO> res = new ArrayList<PlaceInformDTO>();
+				
+		int startRow = ((pageNum - 1) * pageSize) + 1;
+		int endRow = ((pageNum - 1) * pageSize) + pageSize;
+		
+		res = mapper.getAllPlaceInformListForAdminByPage(startRow, endRow);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("전체 장소(+페이지네이션) 검색 실패");
+		}
+		return res;
+	}
+
+
+	public List<PlaceInformDTO> getAllPlaceInformListByKeywordForAdminByPage(String category, String keyword,
+																			 int pageNum, int pageSize) throws SQLException {
+		List<PlaceInformDTO> res = new ArrayList<PlaceInformDTO>();
+		
+		int startRow = ((pageNum - 1) * pageSize) + 1;
+		int endRow = ((pageNum - 1) * pageSize) + pageSize;
+		
+		res = mapper.getAllPlaceInformListByKeywordForAdminByPage(category, keyword, startRow, endRow);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("전체 장소(+페이지네이션) 키워드 검색 실패");
+		}
+		return res;
+	}
+
+	// 검색된 장소 수 확인(관리자 페이지)
+	public int getSearchedPlaceCount(String category, String keyword) throws SQLException {
+		return mapper.getSearchedPlaceCount(category, keyword);
+	}
+	
+	// 장소리뷰가 새로 등록될 때, 해당 장소의 AvgScore가 update되는 메서드
+	public int updatePlaceAvgScore(int placeId) throws SQLException {
+		int res = 0;
+		res = mapper.updatePlaceAvgScore(placeId);
+		
+		return res;
+	}
+
+	// 장소 삭제 (관리자 페이지)
+	public int deletePlace(int placeId) throws SQLException {
+		int res= 0;
+		mapper.deleteAreaPlace(placeId);
+		mapper.deleteCategoryPlace(placeId);
+		
+		res = mapper.deletePlace(placeId);
+		
+		return res;
+	}
+
+	// 장소ID로 장소이름 조회
+	public String getPlaceNameByPlaceId(int placeId) throws SQLException {
+		return mapper.getPlaceNameByPlaceId(placeId);
+	}
 
 }

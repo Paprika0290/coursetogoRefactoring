@@ -14,4 +14,14 @@
 	    WHERE course_id = #{courseId}
 	</delete>	
  	
+ 	<!-- 코스아이디를 통해 해당 코스에 수록되어있는 장소의 아이디 리스트 반환 -->
+ 	<select id= "getIncludedPlaceListByCourseId" parameterType= "_int">
+ 		SELECT 
+		     c.course_id,
+		     c_p.place_id
+		FROM course c
+		    JOIN course_place c_p ON c_p.course_id = c.course_id
+		WHERE c.course_id = #{courseId}
+ 	</select>
+ 	
  </mapper>

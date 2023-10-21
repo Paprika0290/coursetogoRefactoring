@@ -133,4 +133,15 @@ public class CtgUserService {
 		}
 		return res;
 	}
+
+	// 검색된 유저 수 확인(관리자 페이지)
+	public int getSearchedUserCount(String category, String keyword) throws SQLException {
+		return mapper.getSearchedUserCount(category, keyword);
+	}
+	
+	// 유저 ID로 유저 닉네임 검색
+	public String getUserNicknameByUserId(int userId) throws SQLException {
+		return mapper.getUserNicknameByUserId(userId);
+	}
+	
 }

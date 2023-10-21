@@ -6,7 +6,13 @@
  <mapper namespace="com.coursetogo.mapper.map.PlaceMapper">
  	 	
  	<select id="getAllPlaces" resultType="PlaceDTO">
- 		SELECT * FROM PLACE
+ 		SELECT p.place_id as placeId,
+ 			   p.place_name as placeName,
+ 			   p.latitude,
+ 			   p.longitude,
+ 			   p.address,
+ 			   p.place_avg_score as placeAvgScore
+ 		FROM place p
  	</select>
  
  	<select id="getPlaceByPlaceId" parameterType="PlaceDTO">
@@ -95,6 +101,227 @@
 		ORDER BY p.place_avg_score DESC
 	</select>
  	
+ 	<!-- 전체 장소수 조회 -->
+ 	<select id= "getAllPlacesCount" resultType="_int">
+ 		SELECT count(*)
+ 		FROM place
+ 	</select>
+ 	
+ 	<!-- 전체 장소 정보 조회 (관리자) -->
+ 	<select id="getAllPlaceInformListForAdminByPage" resultType="PlaceInformDTO">
+	 	SELECT *
+	 	FROM (
+	 		SELECT  p.place_id AS placeId,
+	 				p.place_name AS placeName,
+	 				p.latitude,
+	 				p.longitude,
+	 				p.address,
+	 				p.place_avg_score AS placeAvgScore,
+	 				count(DISTINCT c_p.course_id) AS includedCourseCount,
+	 				a.area_name AS areaName,
+			     	row_number() OVER (ORDER BY p.place_id) AS r
+	 		FROM place p
+		 		LEFT JOIN course_place c_p ON c_p.place_id = p.place_id
+		 		JOIN area_place a_p ON a_p.place_id = p.place_id
+		 		JOIN area a ON a.area_id = a_p.area_id
+	 	  	GROUP BY p.place_id,
+	                 p.place_name,
+	                 p.latitude,
+	                 p.longitude,
+	                 p.address, 
+	                 p.place_avg_score,
+	                 a.area_name
+	        ORDER BY p.place_id
+		)
+		WHERE r BETWEEN #{startRow} AND #{endRow}
+ 	</select>
+ 	
+ 	<!-- 키워드로 검색된 장소 정보 조회 (관리자) -->
+ 	<select id="getAllPlaceInformListByKeywordForAdminByPage" resultType="PlaceInformDTO">
+	 	SELECT *
+	 	FROM (
+	 		SELECT 
+ 				p.place_id AS placeId,
+ 				p.place_name AS placeName,
+ 				p.latitude,
+ 				p.longitude,
+ 				p.address,
+ 				p.place_avg_score AS placeAvgScore,
+ 				count(DISTINCT c_p.course_id) AS includedCourseCount,
+ 				a.area_name AS areaName,
+		     	row_number() OVER (ORDER BY p.place_id) AS r
+	 		FROM
+	 			place p
+		 		LEFT JOIN course_place c_p ON c_p.place_id = p.place_id
+		 		JOIN area_place a_p ON a_p.place_id = p.place_id
+		 		JOIN area a ON a.area_id = a_p.area_id 
+		 		<choose>
+		 			<when test= "category == 'areaName'">
+		 				WHERE
+				 				a.area_name LIKE '%' || #{keyword} || '%'
+		 				GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        ORDER BY p.place_id
+		 			</when>
+		 			<when test= "category == 'placeName'">
+						WHERE
+		 						p.place_name LIKE '%' || #{keyword} || '%'
+			 			GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        ORDER BY p.place_id
+		 			</when>
+		 			<when test= "category == 'address'">
+		 				WHERE
+		 						p.address LIKE '%' || #{keyword} || '%'
+			 			GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        ORDER BY p.place_id		 				
+		 			</when>
+		 			<when test= "category == 'placeAvgScore'">
+		 				WHERE
+		 						p.place_avg_score >= #{keyword}
+			 			GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        ORDER BY p.place_id		 						
+		 			</when>
+		 			<when test= "category == 'includedCourseCount'">
+			 			GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        HAVING count(DISTINCT c_p.course_id) >= #{keyword}
+				        ORDER BY p.place_id
+		 			</when>		 			
+		 		</choose>
+		)
+		WHERE r BETWEEN #{startRow} AND #{endRow}
+ 	</select>
+ 	
+ 	<!-- 검색된 장소 수 확인(관리자 페이지) -->
+ 	<select id="getSearchedPlaceCount" resultType="_int">
+	 	SELECT count(*)
+	 	FROM (
+	 		SELECT 
+ 				p.place_id
+	 		FROM
+	 			place p
+		 		LEFT JOIN course_place c_p ON c_p.place_id = p.place_id
+		 		JOIN area_place a_p ON a_p.place_id = p.place_id
+		 		JOIN area a ON a.area_id = a_p.area_id 
+		 		<choose>
+		 			<when test= "category == 'areaName'">
+		 				WHERE
+				 				a.area_name LIKE '%' || #{keyword} || '%'
+		 				GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        ORDER BY p.place_id
+		 			</when>
+		 			<when test= "category == 'placeName'">
+						WHERE
+		 						p.place_name LIKE '%' || #{keyword} || '%'
+			 			GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        ORDER BY p.place_id
+		 			</when>
+		 			<when test= "category == 'address'">
+		 				WHERE
+		 						p.address LIKE '%' || #{keyword} || '%'
+			 			GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        ORDER BY p.place_id		 				
+		 			</when>
+		 			<when test= "category == 'placeAvgScore'">
+		 				WHERE
+		 						p.place_avg_score >= #{keyword}
+			 			GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        ORDER BY p.place_id		 						
+		 			</when>
+		 			<when test= "category == 'includedCourseCount'">
+			 			GROUP BY p.place_id,
+				                 p.place_name,
+				                 p.latitude,
+				                 p.longitude,
+				                 p.address, 
+				                 p.place_avg_score,
+				                 a.area_name
+				        HAVING count(DISTINCT c_p.course_id) >= #{keyword}
+				        ORDER BY p.place_id
+		 			</when>		 			
+		 		</choose>
+		)
+ 	</select>
+ 	
+ 	<!-- 장소리뷰가 새로 등록될 때, 해당 장소의 AvgScore가 update되는 메서드 -->
+ 	<update id= "updatePlaceAvgScore" parameterType="_int">
+ 		UPDATE place
+		SET place_avg_score = (SELECT AVG(place_score) FROM place_review WHERE place_id = #{placeId})
+		WHERE place_id = #{placeId}
+ 	</update>
+ 	
+	 <!-- 장소 삭제(관리자) -->
+ 	<delete id= "deletePlace" parameterType= "_int">
+ 		DELETE FROM place
+ 		WHERE place_id = #{placeId}
+ 	</delete>
+ 	<delete id= "deleteAreaPlace" parameterType= "_int">
+ 		DELETE FROM area_place
+ 		WHERE place_id = #{placeId}
+ 	</delete>
+ 	<delete id= "deleteCategoryPlace" parameterType= "_int">
+ 		DELETE FROM category_place
+ 		WHERE place_id = #{placeId}
+ 	</delete>
+ 	
+ 	<!-- 장소ID로 장소이름 조회 -->
+ 	<select id= "getPlaceNameByPlaceId" parameterType= "_int">
+ 		SELECT place_name
+ 		FROM place
+ 		WHERE place_id = #{placeId}
+ 	</select>
  	
  	
  </mapper>

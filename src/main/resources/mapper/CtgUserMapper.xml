@@ -147,5 +147,33 @@
     	)
     	WHERE r BETWEEN #{startRow} AND #{endRow}
     </select>
-      
+    
+    <!-- 검색된 유저 수 확인(관리자 페이지) -->
+    <select id= "getSearchedUserCount" resultType= "_int">
+   		SELECT
+   		   count(user_id)
+    	FROM ctg_user
+    	WHERE
+    		<choose>
+	            <when test="category == 'userNickname'">
+	                user_nickname LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="category == 'userName'">
+	                user_name LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="category == 'userEmail'">
+	                user_email LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="category == 'userAdmin'">
+	                user_admin LIKE '%' || #{keyword} || '%'
+	            </when>
+	        </choose>
+    </select>
+     
+    <!-- 유저 ID로 유저 닉네임 검색 --> 
+    <select id= "getUserNicknameByUserId" resultType= "String">
+    	SELECT user_nickname
+    	FROM ctg_user
+    	WHERE user_id = #{userId}
+    </select>
 </mapper>

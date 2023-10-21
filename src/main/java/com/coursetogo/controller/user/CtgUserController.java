@@ -112,16 +112,20 @@ public class CtgUserController {
 													 String category, String keyword) {
 		int allUserCount = 0;
 		int unsignedUserCount = 0;
-		
+		int searchedUserCount = 0;
 		try {
 			allUserCount = service.getAllUserCount();
 			unsignedUserCount = service.getUnsignedUserCount();
+			if(category != null) {
+				searchedUserCount = service.getSearchedUserCount(category, keyword);
+			}
 		} catch (SQLException e) {
 			log.warn("admin- 유저 수 조회에 실패하였습니다.");
 			e.printStackTrace();
 		}
 		
 		List<CtgUserDTO> userList = new ArrayList<CtgUserDTO>();
+		
 		if(category == null) {
 			try {
 				userList = service.getAllUserListByPage(pageNum, pageSize);
@@ -163,34 +167,70 @@ public class CtgUserController {
 		ListValues.put("userCourseReviewCountList", userCourseReviewCountList);
 		
 		int totalPages = 0;
-		if( (allUserCount / pageSize) < ((double)allUserCount / (double)pageSize) &&
-			((double)allUserCount / (double)pageSize) < (allUserCount / pageSize) + 1 ) {
-			totalPages = (allUserCount / pageSize) + 1;
-		} else {
-			totalPages = (allUserCount / pageSize);
-		}
-
-		int totalGroups = 0;
-		if( (totalPages / 10) < ((double)totalPages / 10) &&
-			((double)totalPages / 10) < (totalPages / 10) + 1 ) {
-			totalGroups = (totalPages / 10) + 1;
-		} else {
-			totalGroups = (totalPages / 10);
-		}
-		
-		
-		for(int i = 1; i <= totalGroups; i++) {
-			if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
-				groupNum = i;
-				break;
+		if(category == null) {
+			
+			if( (allUserCount / pageSize) < ((double)allUserCount / (double)pageSize) &&
+				((double)allUserCount / (double)pageSize) < (allUserCount / pageSize) + 1 ) {
+				totalPages = (allUserCount / pageSize) + 1;
+			} else {
+				totalPages = (allUserCount / pageSize);
 			}
-		}
+	
+			int totalGroups = 0;
+			if( (totalPages / 10) < ((double)totalPages / 10) &&
+				((double)totalPages / 10) < (totalPages / 10) + 1 ) {
+				totalGroups = (totalPages / 10) + 1;
+			} else {
+				totalGroups = (totalPages / 10);
+			}
+			
+			
+			for(int i = 1; i <= totalGroups; i++) {
+				if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
+					groupNum = i;
+					break;
+				}
+			}
+			
+			ListValues.put("pageNum", pageNum);
+			ListValues.put("pageSize", pageSize);
+			ListValues.put("groupNum", groupNum);
+			ListValues.put("totalPages", totalPages);
+			ListValues.put("totalGroups", totalGroups);
+			
+		}else {
+			
+			if( (searchedUserCount / pageSize) < ((double)searchedUserCount / (double)pageSize) &&
+					((double)searchedUserCount / (double)pageSize) < (searchedUserCount / pageSize) + 1 ) {
+					totalPages = (searchedUserCount / pageSize) + 1;
+				} else {
+					totalPages = (searchedUserCount / pageSize);
+				}
 		
-		ListValues.put("pageNum", pageNum);
-		ListValues.put("pageSize", pageSize);
-		ListValues.put("groupNum", groupNum);
-		ListValues.put("totalPages", totalPages);
-		ListValues.put("totalGroups", totalGroups);
+				int totalGroups = 0;
+				if( (totalPages / 10) < ((double)totalPages / 10) &&
+					((double)totalPages / 10) < (totalPages / 10) + 1 ) {
+					totalGroups = (totalPages / 10) + 1;
+				} else {
+					totalGroups = (totalPages / 10);
+				}
+				
+				
+				for(int i = 1; i <= totalGroups; i++) {
+					if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
+						groupNum = i;
+						break;
+					}
+				}
+				
+				ListValues.put("pageNum", pageNum);
+				ListValues.put("pageSize", pageSize);
+				ListValues.put("groupNum", groupNum);
+				ListValues.put("totalPages", totalPages);
+				ListValues.put("totalGroups", totalGroups);
+				ListValues.put("category", category);
+				ListValues.put("keyword", keyword);
+		}
 		
 		return ListValues;
 	}

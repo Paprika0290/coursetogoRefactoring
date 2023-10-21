@@ -51,9 +51,18 @@ public interface CourseMapper {
 	public List<CourseInformDTO> getCourseInformListByKeywordForAdminWithPage
 												(@Param("category") String category, @Param("keyword") String keyword,
 												 @Param("startRow") int startRow, @Param("endRow") int endRow) throws SQLException;	
+
+	// 검색된 코스 수 확인(관리자 페이지)
+	public int getSearchedCourseCount(@Param("category") String category, @Param("keyword") String keyword) throws SQLException;
+
+	// 코스 ID로 코스 이름 검색
+	public String getCourseNameByCourseId(int courseId) throws SQLException;
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3() throws SQLException;
+	
+	// 코스리뷰 삭제 후 평균별점 업데이트
+	public void updateEntireAvgScore() throws SQLException;
 
 
 

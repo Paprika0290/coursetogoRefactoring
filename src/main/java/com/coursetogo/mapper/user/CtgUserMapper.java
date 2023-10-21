@@ -54,9 +54,20 @@ public interface CtgUserMapper {
 	// 검색된 유저 정보 확인 / 페이지네이션(관리자 페이지)
 	public List<CtgUserDTO> getUserListByKeywordWithPage(@Param("startRow") int startRow, @Param("endRow") int endRow,
 														 @Param("category") String category, @Param("keyword") String keyword) throws SQLException;
+
+	// 검색된 유저 수 확인(관리자 페이지)
+	public int getSearchedUserCount(@Param("category") String category, @Param("keyword") String keyword) throws SQLException;
+	
+	// 유저 ID로 유저 닉네임 검색
+	public String getUserNicknameByUserId(int userId) throws SQLException;
 	
 	// 나의 코스 개수 가져오는 메서드--------------------------------------------------------------
 	public int getUserCourseCount(int userId) throws SQLException;
+
+
+	
+
+	
 
 
 

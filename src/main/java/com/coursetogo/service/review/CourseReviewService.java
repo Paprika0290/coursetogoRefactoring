@@ -1,12 +1,14 @@
 package com.coursetogo.service.review;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.coursetogo.dto.review.CourseReviewDTO;
+import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.mapper.review.CourseReviewMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +105,48 @@ public class CourseReviewService {
     // 코스리뷰왕
 	public List<Integer> getReviewTop3() throws SQLException{
 		return mapper.getReviewTop3();
+	}
+	
+	// 전체 코스리뷰 개수 조회
+	public int getAllCourseReviewCount() throws SQLException {
+		return mapper.getAllCourseReviewCount();
+	}
+	
+	// 검색된 코스리뷰 개수 조회
+	public int getSearchedCourseReviewCount(String category, String keyword) throws SQLException {
+		return mapper.getSearchedCourseReviewCount(category, keyword);
+	}
+	
+	// 전체 코스리뷰리스트 조회 (관리자)
+	public List<CourseReviewDTO> getAllCourseReviewByPage(int pageNum, int pageSize) throws SQLException {
+		List<CourseReviewDTO> res = new ArrayList<>();
+		
+		int startRow = ((pageNum-1) * pageSize) + 1;
+		int endRow = ((pageNum-1) * pageSize) + pageSize;
+		res= mapper.getAllCourseReviewByPage(startRow, endRow);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("전체 코스리뷰(+페이지네이션) 검색 실패");
+		}
+		return res;
+	}
+	
+	// 검색된 코스리뷰리스트 조회 (관리자)
+	public List<CourseReviewDTO> getAllCourseReviewByKeywordWithPage(String category, String keyword,
+																	 int pageNum, int pageSize) throws SQLException {
+		List<CourseReviewDTO> res = new ArrayList<>();
+		
+		int startRow = ((pageNum-1) * pageSize) + 1;
+		int endRow = ((pageNum-1) * pageSize) + pageSize;
+		
+		res= mapper.getAllCourseReviewByKeywordWithPage(startRow, endRow, category, keyword);
+		
+		if(!res.isEmpty()) {
+		} else {
+			log.warn("검색된 코스리뷰(+페이지네이션) 검색 실패");
+		}
+		return res;
 	}
 
 	

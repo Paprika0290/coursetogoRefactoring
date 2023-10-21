@@ -388,6 +388,7 @@ public class MainController {
 		if(placeIds.length < 1) {
 			return "redirect:/course/courseMake";
 		}else {
+			newCourse.setCourseAvgScore(0);
 			courseController.insertCourse(newCourse, placeIds);
 
 			List<CourseInformDTO> courseList = new ArrayList<CourseInformDTO>();
@@ -444,7 +445,7 @@ public class MainController {
 				log.warn("코스 상세 페이지 return 실패");
 				e.printStackTrace();
 			}
-			System.out.println(courseInform);
+
 			model.addAttribute("courseInform", courseInform);
 			model.addAttribute("userPhoto", userPhoto);
 			model.addAttribute("isMod", isMod);
@@ -490,6 +491,13 @@ public class MainController {
 								   @RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
 								   Model model, HttpSession session) {
 		if (((CtgUserDTO)session.getAttribute("user")).getUserAdmin() == 0) {
+			
+			if(keyword != null) {
+				if(keyword.equals("none")) {
+					category = null;
+				}
+			}
+			
 			HashMap<String, Object> adminUserInfo = userController.getUserListValues(pageNum, pageSize, groupNum, category, keyword);
 			model.addAttribute("adminUserInfo", adminUserInfo);
 		}
@@ -505,8 +513,14 @@ public class MainController {
 								     @RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
 								     @RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
 								     Model model, HttpSession session) {
-		
 		if (((CtgUserDTO)session.getAttribute("user")).getUserAdmin() == 0) {
+			
+			if(keyword != null) {
+				if(keyword.equals("none")) {
+					category = null;
+				}
+			}
+			
 			HashMap<String, Object> adminCourseInfo = courseController.getCourseInformListValuesForAdmin(category, keyword, pageNum, pageSize, groupNum);
 			model.addAttribute("adminCourseInfo", adminCourseInfo);
 		}
@@ -522,12 +536,64 @@ public class MainController {
 								    @RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
 								    @RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
 								    Model model, HttpSession session) {
-		
 		if (((CtgUserDTO)session.getAttribute("user")).getUserAdmin() == 0) {
-			HashMap<String, Object> adminPlaceInfo = placeController.getPlaceListValuesForAdmin(category, keyword, pageNum, pageSize, groupNum);
+			
+			if(keyword != null) {
+				if(keyword.equals("none")) {
+					category = null;
+				}
+			}
+			
+			HashMap<String, Object> adminPlaceInfo = placeController.getPlaceInformListValuesForAdmin(category, keyword, pageNum, pageSize, groupNum);
 			model.addAttribute("adminPlaceInfo", adminPlaceInfo);
 		}
 		
 		return "admin_AdminPage_Place";
+	}
+	
+	// 관리자페이지 - 코스리뷰
+	@GetMapping(value= {"/admin/courseReview", "/admin/courseReview/{category}/{keyword}"})
+	public String getAdminCourseReviewPage(@PathVariable(required= false) String category,
+										   @PathVariable(required= false) String keyword,
+										   @RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
+										   @RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
+										   @RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
+										   Model model, HttpSession session) {
+		if (((CtgUserDTO)session.getAttribute("user")).getUserAdmin() == 0) {
+			
+				if(keyword != null) {
+					if(keyword.equals("none")) {
+						category = null;
+					}
+				}
+				
+				HashMap<String, Object> adminCourseReviewInfo = reviewController.getCourseReviewListValuesForAdmin(pageNum, pageSize, groupNum, category, keyword);
+				model.addAttribute("adminCourseReviewInfo", adminCourseReviewInfo);
+		}
+
+		return "admin_AdminPage_CourseReview";
+	}
+	
+	// 관리자페이지 - 장소리뷰
+	@GetMapping(value= {"/admin/placeReview", "/admin/placeReview/{category}/{keyword}"})
+	public String getAdminPlaceReviewPage(@PathVariable(required= false) String category,
+										   @PathVariable(required= false) String keyword,
+										   @RequestParam(name= "pageNum", defaultValue= "1") int pageNum,
+										   @RequestParam(name= "pageSize", defaultValue= "15") int pageSize,
+										   @RequestParam(name= "groupNum", required= false, defaultValue = "1") Integer groupNum,
+										   Model model, HttpSession session) {
+		if (((CtgUserDTO)session.getAttribute("user")).getUserAdmin() == 0) {
+			
+				if(keyword != null) {
+					if(keyword.equals("none")) {
+						category = null;
+					}
+				}
+				
+				HashMap<String, Object> adminPlaceReviewInfo = reviewController.getPlaceReviewListValuesForAdmin(pageNum, pageSize, groupNum, category, keyword);
+				model.addAttribute("adminPlaceReviewInfo", adminPlaceReviewInfo);
+		}
+
+		return "admin_AdminPage_PlaceReview";
 	}
 }

@@ -267,5 +267,40 @@ public class RestAPIController {
 		return "/admin/error";
 	}
 
+	// 장소 삭제 (관리자)
+	@PostMapping("/admin/place/delete")
+	public void deletePlaceByAdmin(@RequestBody int[] placeIdArray) {	
+		for(Integer placeId : placeIdArray) {
+			try {
+				placeService.deletePlace(placeId);
+			} catch (SQLException e) {
+				log.warn("admin- 장소 삭제에 실패하였습니다.");
+				e.printStackTrace();
+			}
+		}
+	}
 	
+	// 코스리뷰 삭제 (관리자)
+	@PostMapping("/admin/courseReview/delete")
+	public void deleteCourseReviewByAdmin(@RequestBody int[] reviewIdArray) {
+		
+		for(int i = 1; i <= reviewIdArray.length; i++) {
+			if(i%2 == 1) {
+				try {
+					courseReviewService.deleteCourseReviewByReviewId(reviewIdArray[i-1]);
+				} catch (Exception e) {
+					log.warn("admin- 코스리뷰 삭제에 실패하였습니다.");
+					e.printStackTrace();
+				}
+			}else if(i%2 == 0){
+				try {
+					courseService.updateCourseAvgScore(reviewIdArray[i-1]);
+					courseService.updateEntireAvgScore();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}	
+	}
+
 }

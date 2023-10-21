@@ -178,7 +178,7 @@ public class CourseController {
 		
 	}
 
-
+	// 관리자 페이지 - courseList 페이지를 구성하는 데에 필요한 정보들을 담아 돌려주는 메서드.
 	public HashMap<String, Object> getCourseInformListValuesForAdmin(String category, String keyword, int pageNum,
 																	 int pageSize, Integer groupNum) {
 		HashMap<String, Object> listValues = new HashMap<String, Object>();
@@ -200,73 +200,113 @@ public class CourseController {
 			}
 		}
 		
-		List<String> courseDetailPageList = new ArrayList<String>();
 		List<Integer> reviewCountList = new ArrayList<Integer>();
 		int reviewCount = 0;
 		
 		for(CourseInformDTO courseInform : courseInformList) {
 			int courseId = courseInform.getCourseId();
-			String query = "";
-            query += ("courseId="+ String.valueOf(courseId));
-        
             try {
 				reviewCount = courseReviewService.getCourseReviewCountByCourseId(courseId);
 			} catch (SQLException e) {
 				log.warn("admin- 해당 코스의 리뷰 수 조회 실패");
 				e.printStackTrace();
 			}
-            
-            courseDetailPageList.add(query);  
             reviewCountList.add(reviewCount);
 		}
 				
 		
 		
 		listValues.put("courseInformList", courseInformList);
-		listValues.put("courseDetailPageList", courseDetailPageList);	
 		listValues.put("reviewCountList", reviewCountList);	
 		
 		
 		// pageNum : 기본-1, 페이지 번호 누를시 새로 입력됨 / pageSize: 기본-10
 		int totalPages = 0;
 		int totalCourseCount= 0;
+		int searchedCourseCount = 0;
+		
 		try {
 			totalCourseCount = courseService.getCourseCount();
+			if(category != null) {
+				searchedCourseCount = courseService.getSearchedCourseCount(category, keyword);
+			}
 		} catch (Exception e) {
 			log.warn("admin- 전체 코스 수 실패");
 			e.printStackTrace();
 		}
 		
-		if( (totalCourseCount / pageSize) < ((double)totalCourseCount / (double)pageSize) &&
-			((double)totalCourseCount / (double)pageSize) < (totalCourseCount / pageSize) + 1 ) {
-			totalPages = (totalCourseCount / pageSize) + 1;
-		} else {
-			totalPages = (totalCourseCount / pageSize);
-		}
+		if(category == null) {
+			if( (totalCourseCount / pageSize) < ((double)totalCourseCount / (double)pageSize) &&
+					((double)totalCourseCount / (double)pageSize) < (totalCourseCount / pageSize) + 1 ) {
+					totalPages = (totalCourseCount / pageSize) + 1;
+				} else {
+					totalPages = (totalCourseCount / pageSize);
+				}
 
-		int totalGroups = 0;
-		if( (totalPages / 10) < ((double)totalPages / 10) &&
-			((double)totalPages / 10) < (totalPages / 10) + 1 ) {
-			totalGroups = (totalPages / 10) + 1;
-		} else {
-			totalGroups = (totalPages / 10);
-		}
-		
-		
-		for(int i = 1; i <= totalGroups; i++) {
-			if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
-				groupNum = i;
-				break;
-			}
+				int totalGroups = 0;
+				if( (totalPages / 10) < ((double)totalPages / 10) &&
+					((double)totalPages / 10) < (totalPages / 10) + 1 ) {
+					totalGroups = (totalPages / 10) + 1;
+				} else {
+					totalGroups = (totalPages / 10);
+				}
+				
+				
+				for(int i = 1; i <= totalGroups; i++) {
+					if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
+						groupNum = i;
+						break;
+					}
+				}
+
+				listValues.put("pageNum", pageNum);
+				listValues.put("pageSize", pageSize);
+				listValues.put("groupNum", groupNum);
+				listValues.put("totalPages", totalPages);
+				listValues.put("totalGroups", totalGroups);
+		}else {
+			if( (searchedCourseCount / pageSize) < ((double)searchedCourseCount / (double)pageSize) &&
+					((double)searchedCourseCount / (double)pageSize) < (searchedCourseCount / pageSize) + 1 ) {
+					totalPages = (searchedCourseCount / pageSize) + 1;
+				} else {
+					totalPages = (searchedCourseCount / pageSize);
+				}
+
+				int totalGroups = 0;
+				if( (totalPages / 10) < ((double)totalPages / 10) &&
+					((double)totalPages / 10) < (totalPages / 10) + 1 ) {
+					totalGroups = (totalPages / 10) + 1;
+				} else {
+					totalGroups = (totalPages / 10);
+				}
+				
+				
+				for(int i = 1; i <= totalGroups; i++) {
+					if( (i-1) < ((double)pageNum / 10) && ((double)pageNum / 10) < i) {
+						groupNum = i;
+						break;
+					}
+				}
+
+				listValues.put("pageNum", pageNum);
+				listValues.put("pageSize", pageSize);
+				listValues.put("groupNum", groupNum);
+				listValues.put("totalPages", totalPages);
+				listValues.put("totalGroups", totalGroups);
+				listValues.put("category", category);
+				listValues.put("keyword", keyword);
+
+				System.out.println(searchedCourseCount);
+				System.out.println(pageNum);
+				System.out.println(pageSize);
+				System.out.println(groupNum);
+				System.out.println(totalPages);
+				System.out.println(totalGroups);
+				System.out.println(category);
+				System.out.println(keyword);
 		}
 		
 		listValues.put("totalCourseCount", totalCourseCount);
-		listValues.put("pageNum", pageNum);
-		listValues.put("pageSize", pageSize);
-		listValues.put("groupNum", groupNum);
-		listValues.put("totalPages", totalPages);
-		listValues.put("totalGroups", totalGroups);
-		
 		
 		
 		return listValues;

@@ -43,11 +43,107 @@
  		WHERE place_id = #{placeId}
  	</update>
  	
- 	<!-- 장소리뷰 삭제 -->
+ 	<!-- 장소리뷰 삭제 / 리뷰아이디를 통해 -->
  	<delete id="deletePlaceReviewByReviewId" parameterType="_int">
  		DELETE FROM place_review
  		WHERE place_review_id = #{placeReviewId}
  	</delete>
+ 	
+ 	<!-- 장소리뷰 삭제 / 장소아이디 + 유저아이디를 통해 -->
+ 	<delete id="deletePlaceReviewByPlaceIdAndUserId" parameterType="_int">
+ 		DELETE FROM place_review
+ 		WHERE place_id = #{placeId} AND user_id = #{userId}
+ 	</delete>
+ 	
+	<!-- 전체 장소리뷰 개수 조회 -->
+	<select id= "getAllPlaceReviewCount" resultType= "_int">
+		SELECT count(place_review_id)
+		FROM place_review
+	</select>
+
+	<!-- 검색된 장소리뷰 개수 조회 -->
+	<select id= "getSearchedPlaceReviewCount" parameterType="String" resultType= "_int">
+		SELECT count(place_review_id)
+		FROM
+			place_review p_r       
+		<choose>
+			<when test="category == 'userNickname'">
+			JOIN ctg_user u ON u.user_id = p_r.user_id
+		WHERE
+			u.user_nickname LIKE '%' || #{keyword} || '%' 
+			</when>
+			
+			<when test="category == 'placeName'">
+			JOIN place p ON p.place_id = p_r.place_id
+		WHERE
+			p.place_name LIKE '%' || #{keyword} || '%'
+			</when>
+			
+			<when test="category == 'score'">
+		WHERE
+			p_r.place_score >= #{keyword}	
+			</when>
+
+			<when test="category == 'reviewDate'">
+		WHERE
+			p_r.review_date >= #{keyword}					
+			</when>
+		</choose>
+	</select>
+ 	
+	<!-- 전체 코스리뷰리스트 조회 (관리자) -->
+	<select id= "getAllPlaceReviewByPage" resultType="PlaceReviewDTO">
+		SELECT *
+		FROM (
+			SELECT place_review_id AS placeReviewId,
+	               user_id AS userId,
+	               place_id AS placeId,
+	               place_score AS placeScore,
+	               review_date AS reviewDate,
+	               row_number() OVER (ORDER BY place_review_id DESC) AS r
+			FROM place_review
+		)
+		WHERE r BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+	<!-- 검색된 코스리뷰리스트 조회 (관리자) -->
+	<select id= "getAllPlaceReviewByKeywordWithPage" resultType="PlaceReviewDTO">
+		SELECT *
+		FROM (
+			SELECT p_r.place_review_id AS placeReviewId,
+	               p_r.user_id AS userId,
+	               p_r.place_id AS placeId,
+	               p_r.place_score AS placeScore,
+	               p_r.review_date AS reviewDate,
+	               row_number() OVER (ORDER BY place_review_id DESC) AS r
+   			FROM
+				place_review p_r       
+			<choose>
+				<when test="category == 'userNickname'">
+				JOIN ctg_user u ON u.user_id = p_r.user_id
+			WHERE
+				u.user_nickname LIKE '%' || #{keyword} || '%' 
+				</when>
+				
+				<when test="category == 'placeName'">
+				JOIN place p ON p.place_id = p_r.place_id
+			WHERE
+				p.place_name LIKE '%' || #{keyword} || '%'
+				</when>
+				
+				<when test="category == 'score'">
+			WHERE
+				p_r.place_score >= #{keyword}	
+				</when>
+
+				<when test="category == 'reviewDate'">
+			WHERE
+				p_r.review_date >= #{keyword}					
+				</when>
+			</choose>	
+		)		
+		WHERE r BETWEEN #{startRow} AND #{endRow}			
+	</select> 	
  	
  	<!-- 장소리뷰왕 -->
 	<select id="getReviewTop3" resultType="java.lang.Integer">
@@ -58,7 +154,7 @@
 	          FROM place_review
 	          GROUP BY user_id
 	          HAVING COUNT(user_id) > 1
-	          ORDER BY COUNT(user_id) DESC
+	          ORDER BY COUNT(user_id) DESC NULLS LAST
 	    	  ) countList
 	    WHERE ROWNUM <= 3
 	 ]]>

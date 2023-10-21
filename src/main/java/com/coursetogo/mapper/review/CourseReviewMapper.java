@@ -40,10 +40,29 @@ public interface CourseReviewMapper {
 	// 유저의 리뷰 개수 가져오는 메서드--------------------------------------------------------------
 	public int getUserCourseReviewCount(@Param("userId") int userId) throws SQLException;
 	
-	
+	// 전체 코스리뷰 개수 조회
+	public int getAllCourseReviewCount() throws SQLException;
+
+	// 검색된 코스리뷰 개수 조회	
+	public int getSearchedCourseReviewCount(@Param("category") String category, @Param("keyword") String keyword) throws SQLException;	
+
+	// 전체 코스리뷰리스트 조회 (관리자)
+	public List<CourseReviewDTO> getAllCourseReviewByPage(@Param("startRow") int startRow, @Param("endRow") int endRow) throws SQLException;	
+
+	// 검색된 코스리뷰리스트 조회 (관리자)	
+	public List<CourseReviewDTO> getAllCourseReviewByKeywordWithPage(@Param("startRow") int startRow, @Param("endRow") int endRow,
+																	 @Param("category") String category, @Param("keyword") String keyword) throws SQLException;
 	
     // 코스리뷰왕
 	public List<Integer> getReviewTop3() throws SQLException;
+
+
+
+
+
+
+	
+
 
 	
 

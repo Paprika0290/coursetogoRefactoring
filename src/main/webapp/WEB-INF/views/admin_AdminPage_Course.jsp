@@ -66,7 +66,6 @@
 	
 <body>	
 	<c:set var = "courseInformList" value= "${adminCourseInfo['courseInformList']}" />
-	<c:set var = "courseDetailPageList" value= "${adminCourseInfo['courseDetailPageList']}" />
 	<c:set var = "totalCourseCount" value= "${adminCourseInfo['totalCourseCount']}" />
 	<c:set var = "reviewCountList" value= "${adminCourseInfo['reviewCountList']}" />
 	
@@ -84,7 +83,7 @@
 			&nbsp;&nbsp;&nbsp; 전체 코스 수 : <span style= "color: #4242D0;"><b>${totalCourseCount}</b></span> 개
 		</span>
 		<br><br>
-		<span style= "margin-left: 3%; font-size: 10pt; color: #A7A7A7;"> - 코스 이름 클릭 시 코스 삭제가 가능합니다.</span><br>
+		<span style= "margin-left: 3%; font-size: 10pt; color: #A7A7A7;"> - 코스 이름 클릭 시 코스 조회가 가능합니다.</span><br>
 		<span style= "margin-left: 3%; font-size: 10pt; color: #A7A7A7;"> - 평균 별점, 북마크 수 검색은 [검색값 이상의 값을 가진 코스]를 검색합니다.</span><br><br>
 		<div style= "display: flex; align-items: center;">
 			<select id= "selectedCategory" style= "text-align: center; margin-left: 3%; border: 1px solid #ADADAD; height: 24px;">
@@ -125,6 +124,9 @@
 							if(category === "entireCourse") {
 								window.location.href= '/admin/course';
 							}else {
+								if(keyword === "") {
+									keyword = "none";
+								}
 								window.location.href= '/admin/course/' + category + '/' + keyword;
 							}
 		        });	
@@ -219,7 +221,11 @@
 					
 					<td>${courseInform.courseId}</td>	
 					<td id= "userNickname${courseInform.courseId}">${courseInform.userNickname}</td>	
-					<td id= "courseName${courseInform.courseId}" style= "color: #4242D0; cursor: pointer;">${courseInform.courseName}</td>	
+					<td id= "courseName${courseInform.courseId}" style= "color: #4242D0; cursor: pointer;">
+						<a href="/course/courseDetail?courseId=${courseInform.courseId}" style= "text-decoration: none;" target= "_blank">
+							${courseInform.courseName}
+						</a>
+					</td>	
 					<td id= "courseNumber${courseInform.courseId}">${courseInform.courseNumber}</td>	
 					<td id= "courseAvgScore${courseInform.courseId}">${courseInform.courseAvgScore}</td>	
 					<td id= "courseContent${courseInform.courseId}">${courseInform.courseContent}</td>	
@@ -229,7 +235,7 @@
 			</c:forEach>
 		</table>
 		
-		<div id= "pageNumbersContainer" style= "font-family: 'TheJamsil3Regular', sans-serif; position: absolute; bottom: 5%; left: 50%;">
+		<div id= "pageNumbersContainer" style= "font-family: 'TheJamsil3Regular', sans-serif; position: absolute; bottom: 3%; left: 40%;">
 			<br>
 			<c:if test= "${(groupNum * 10) <= totalPages}">
 				<c:set var= "endPage" value= "${groupNum * 10}" />
@@ -238,8 +244,26 @@
 				<c:set var= "endPage" value= "${totalPages}" />
 			</c:if>
 			
-			
-			<c:if test= "${totalPages > 1}">
+			<c:if test="${not empty adminCourseInfo['category']}">
+
+				<c:if test= "${totalPages > 1}">
+					<c:if test= "${groupNum != 1}">
+						<a href= "/admin/course/${adminCourseInfo['category']}/${adminCourseInfo['keyword']}?pageNum=${(groupNum-1)*10}&pageSize=${pageSize}&groupNum=${groupNum-1}" style= "color: #00008b; text-decoration: none;">◀</a>&nbsp;
+					</c:if>
+								
+					<c:forEach var= "i" begin= "${(groupNum - 1) * 10 + 1}" end= "${endPage}">
+						<a href= "/admin/course/${adminCourseInfo['category']}/${adminCourseInfo['keyword']}?pageNum=${i}&pageSize=${pageSize}" style= "color: #00008b; text-decoration: none;"><b>${i}</b></a>&nbsp;
+					</c:forEach>
+					
+					<c:if test= "${groupNum != totalGroups}">
+						<a href= "/admin/course/${adminCourseInfo['category']}/${adminCourseInfo['keyword']}?pageNum=${(groupNum*10)+1}&pageSize=${pageSize}&groupNum=${groupNum+1}" style= "color: #00008b; text-decoration: none;">▶</a>&nbsp;
+					</c:if>
+				</c:if>
+
+			</c:if>
+			<c:if test="${empty adminCourseInfo['category']}">
+
+				<c:if test= "${totalPages > 1}">
 					<c:if test= "${groupNum != 1}">
 						<a href= "/admin/course?pageNum=${(groupNum-1)*10}&pageSize=${pageSize}&groupNum=${groupNum-1}" style= "color: #00008b; text-decoration: none;">◀</a>&nbsp;
 					</c:if>
@@ -251,7 +275,11 @@
 					<c:if test= "${groupNum != totalGroups}">
 						<a href= "/admin/course?pageNum=${(groupNum*10)+1}&pageSize=${pageSize}&groupNum=${groupNum+1}" style= "color: #00008b; text-decoration: none;">▶</a>&nbsp;
 					</c:if>
+				</c:if>
+
 			</c:if>
+			
+			
 			
 		</div>
 		

@@ -71,6 +71,7 @@
 	<c:set var = "totalPages" value= "${adminUserInfo['totalPages']}" />
 	<c:set var = "totalGroups" value= "${adminUserInfo['totalGroups']}" />
 
+
 	<div class = "mainContent">
 		<div id= subject style= "background-color: #F7F7F7; padding: 2%; margin-bottom: 10px;">
 			<span style= "font-size: 15pt; margin-left: 20px;"><b>회원 관리 페이지</b></span>
@@ -94,7 +95,6 @@
 			<button id= "searchUserButton" type= "button" class= "userAdminButton"><b>검색</b></button>
 		</div>
 		<br>
-		
 			<script>
 				var searchButton = document.getElementById("searchUserButton");	
 				
@@ -114,6 +114,10 @@
 										}else if (keyword === "탈퇴회원"){
 											keyword = 5;
 										}
+									}
+									
+									if(keyword === "") {
+										keyword = "none";
 									}
 									window.location.href= '/admin/user/' + category + '/' + keyword;
 								}
@@ -157,7 +161,7 @@
 			</c:forEach>
 		</table>
 		
-		<div id= "pageNumbersContainer" style= "font-family: 'TheJamsil3Regular', sans-serif; position: absolute; bottom: 5%; left: 50%;">
+		<div id= "pageNumbersContainer" style= "font-family: 'TheJamsil3Regular', sans-serif; position: absolute; bottom: 3%; left: 40%;">
 			<br>
 			<c:if test= "${(groupNum * 10) <= totalPages}">
 				<c:set var= "endPage" value= "${groupNum * 10}" />
@@ -166,8 +170,26 @@
 				<c:set var= "endPage" value= "${totalPages}" />
 			</c:if>
 			
+			<c:if test="${not empty adminUserInfo['category']}">
 			
-			<c:if test= "${totalPages > 1}">
+				<c:if test= "${totalPages > 1}">
+					<c:if test= "${groupNum != 1}">
+						<a href= "/admin/user/${adminUserInfo['category']}/${adminUserInfo['keyword']}?pageNum=${(groupNum-1)*10}&pageSize=${pageSize}&groupNum=${groupNum-1}" style= "color: #00008b; text-decoration: none;">◀</a>&nbsp;
+					</c:if>
+								
+					<c:forEach var= "i" begin= "${(groupNum - 1) * 10 + 1}" end= "${endPage}">
+						<a href= "/admin/user/${adminUserInfo['category']}/${adminUserInfo['keyword']}?pageNum=${i}&pageSize=${pageSize}" style= "color: #00008b; text-decoration: none;"><b>${i}</b></a>&nbsp;
+					</c:forEach>
+					
+					<c:if test= "${groupNum != totalGroups}">
+						<a href= "/admin/user/${adminUserInfo['category']}/${adminUserInfo['keyword']}?pageNum=${(groupNum*10)+1}&pageSize=${pageSize}&groupNum=${groupNum+1}" style= "color: #00008b; text-decoration: none;">▶</a>&nbsp;
+					</c:if>
+				</c:if>
+				
+			</c:if>
+			<c:if test="${empty adminUserInfo['category']}">
+			
+				<c:if test= "${totalPages > 1}">
 					<c:if test= "${groupNum != 1}">
 						<a href= "/admin/user?pageNum=${(groupNum-1)*10}&pageSize=${pageSize}&groupNum=${groupNum-1}" style= "color: #00008b; text-decoration: none;">◀</a>&nbsp;
 					</c:if>
@@ -179,7 +201,12 @@
 					<c:if test= "${groupNum != totalGroups}">
 						<a href= "/admin/user?pageNum=${(groupNum*10)+1}&pageSize=${pageSize}&groupNum=${groupNum+1}" style= "color: #00008b; text-decoration: none;">▶</a>&nbsp;
 					</c:if>
+				</c:if>
+				
 			</c:if>
+			
+			
+			
 			
 		</div>
 		

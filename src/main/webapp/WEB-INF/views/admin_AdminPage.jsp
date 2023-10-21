@@ -46,7 +46,7 @@
 			<button id= "courseAdminButton" type= "button" class= "adminPageButton" onclick= "switchContent('/admin/course')">코스 관리</button>
 			<button id= "placeAdminButton" type= "button" class= "adminPageButton" onclick= "switchContent('/admin/place')">장소 관리</button>
 			<button id= "courseReviewAdminButton" type= "button" class= "adminPageButton" onclick= "switchContent('/admin/courseReview')">코스리뷰 관리</button>
-			<button id= "placeReviewAdminButton" type= "button" class= "adminPageButton" onclick= "switchContent('/user/placeReview')">장소리뷰 관리</button>
+			<button id= "placeReviewAdminButton" type= "button" class= "adminPageButton" onclick= "switchContent('/admin/placeReview')">장소리뷰 관리</button>
 		</div>
 		
 		<iframe id= "contentsContainer" style= "border: 1px solid #D3D3D3; width: 90%; height: 95%; background-color: #ffffff;

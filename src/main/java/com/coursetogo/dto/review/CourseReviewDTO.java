@@ -14,7 +14,7 @@ public class CourseReviewDTO {
 	
 	private int courseReviewId; //리뷰 아이디
 	private int courseId; // 코스아이디
-	private int userId;   // 사용자
+	private int userId;   // 작성자아이디
 	private String content; // 리뷰내용 
 	private int courseScore; // 리뷰 평점 
 	private Date reviewDate; // 리뷰 날짜 

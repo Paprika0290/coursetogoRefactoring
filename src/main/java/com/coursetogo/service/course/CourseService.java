@@ -157,6 +157,9 @@ public class CourseService {
 		return res;
 	}
 	
+	public void updateEntireAvgScore() throws SQLException {
+		mapper.updateEntireAvgScore();
+	}
 	
 	public List<CourseDTO> recommendCourseTop5() throws SQLException {
 		List<CourseDTO> res = new ArrayList<CourseDTO>();
@@ -201,7 +204,15 @@ public class CourseService {
 		return res;
 	}
 
-
+	// 검색된 코스 수 확인(관리자 페이지)
+	public int getSearchedCourseCount(String category, String keyword) throws SQLException {
+		return mapper.getSearchedCourseCount(category, keyword);
+	}
+	
+	// 코스 ID로 코스 이름 검색
+	public String getCourseNameByCourseId(int courseId) throws SQLException {
+		return mapper.getCourseNameByCourseId(courseId);
+	}
 	
 	// 코스작성왕
 	public List<Integer> getCourseTop3() throws SQLException	{

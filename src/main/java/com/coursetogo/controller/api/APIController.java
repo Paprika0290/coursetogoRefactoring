@@ -2,14 +2,18 @@ package com.coursetogo.controller.api;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,8 +22,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.coursetogo.controller.user.CtgUserController;
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
+import com.coursetogo.service.course.CoursePlaceService;
 import com.coursetogo.service.course.CourseService;
+import com.coursetogo.service.review.CourseReviewService;
 import com.coursetogo.service.user.CtgUserService;
+import com.coursetogo.service.user.UserBookmarkCourseService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +43,14 @@ public class APIController {
 	@Autowired
 	private CourseService courseService;
 	
+	@Autowired
+	private CourseReviewService courseReviewService;
+	
+	@Autowired
+	private UserBookmarkCourseService bookmarkService;
+	
+	@Autowired
+	private CoursePlaceService coursePlaceService;
 	
 	// 닉네임 중복 확인 (userInfoUpdate.jsp / userSignup.jsp)
 	@GetMapping("/user/userNicknameCheck")
@@ -205,5 +220,13 @@ public class APIController {
 		
 		return "redirect:/admin/user";
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }
