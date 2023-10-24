@@ -135,45 +135,69 @@ public class RestAPIController {
 		return placeScores;
 	}
 	
-	// course/courseMake 페이지에서 area or area + category 검색시 장소리스트 반환
-	@GetMapping("/place/getPlaceList")
-	public List<PlaceDTO> getPlaceList(@RequestParam("areaName") String areaName,
-									   @RequestParam(name= "categoryName", defaultValue = "none") String categoryName) {
+	// course/courseMake 페이지에서 area or area + consonant 검색시 장소리스트 반환
+	@GetMapping(value= {"/place/getPlaceList/{areaSelect}", "/place/getPlaceList/{areaSelect}/{consonant}"})
+	public List<PlaceDTO> getPlaceList(@PathVariable("areaSelect") String areaName,
+									   @PathVariable(required= false) String consonant) {
 		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
-		
-		if(categoryName.equals("none")) {
+		if(consonant == null) {
 			try {
 				placeList = placeService.searchPlacesByArea(areaName);
 			} catch (SQLException e) {
 				log.warn("지역별 장소 조회 불가");
 				e.printStackTrace();
 			}
-		}else {
+		}else if(consonant != null) {
 			try {
-				placeList = placeService.searchPlacesByAreaOrCategory(areaName, categoryName);
+				placeList = placeService.searchPlacesByAreaAndConsonant(areaName, consonant);
 			} catch (SQLException e) {
-				log.warn("category + 지역별 장소 조회 불가");
+				log.warn("area + 자음 장소 검색에 실패했습니다.");
 				e.printStackTrace();
 			}
 		}
 		
 		return placeList;
-	}
+	}	
 	
-	// course/courseMake 페이지에서 자음 검색시 장소리스트 반환
-	@GetMapping("/place/getPlaceList/{areaName}/{consonant}")
-	public List<PlaceDTO> getCourseListByConsonant(@PathVariable String areaName, @PathVariable String consonant) {
-		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
-		
-		try {
-			placeList = placeService.searchPlacesByAreaAndConsonant(areaName, consonant);
-		} catch (SQLException e) {
-			log.warn("area + 자음 장소 검색에 실패했습니다.");
-			e.printStackTrace();
-		}
-		
-		return placeList;
-	}
+//	// course/courseMake 페이지에서 area or area + category 검색시 장소리스트 반환
+//	@GetMapping("/place/getPlaceList")
+//	public List<PlaceDTO> getPlaceList(@RequestParam("areaName") String areaName,
+//									   @RequestParam(name= "categoryName", defaultValue = "none") String categoryName) {
+//		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
+//		
+//		if(categoryName.equals("none")) {
+//			try {
+//				placeList = placeService.searchPlacesByArea(areaName);
+//			} catch (SQLException e) {
+//				log.warn("지역별 장소 조회 불가");
+//				e.printStackTrace();
+//			}
+//		}else {
+//			try {
+//				placeList = placeService.searchPlacesByAreaOrCategory(areaName, categoryName);
+//			} catch (SQLException e) {
+//				log.warn("category + 지역별 장소 조회 불가");
+//				e.printStackTrace();
+//			}
+//		}
+//		
+//		return placeList;
+//	}
+//	
+//	// course/courseMake 페이지에서 자음 검색시 장소리스트 반환
+//	@GetMapping("/place/getPlaceList/{areaName}/{consonant}")
+//	public List<PlaceDTO> getCourseListByConsonant(@PathVariable String areaName, @PathVariable String consonant) {
+//		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
+//		
+//		try {
+//			placeList = placeService.searchPlacesByAreaAndConsonant(areaName, consonant);
+//		} catch (SQLException e) {
+//			log.warn("area + 자음 장소 검색에 실패했습니다.");
+//			e.printStackTrace();
+//		}
+//		
+//		return placeList;
+//	}
 	
 	
 	// course/courseList 페이지에서 회색 북마크 버튼 클릭시 북마크 추가 처리

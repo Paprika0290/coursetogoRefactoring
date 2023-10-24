@@ -369,16 +369,10 @@
 		        alert("지역명을 선택해주세요.");
 		        return;
 		      }
-		    
+		    console.log(areaSelect);
 		    // area값과 category 값으로 placeList 조회 (category값은 필수 x)
-		    axios.get('/place/getPlaceList', {
-				  params: {
-					    areaName: areaSelect,
-					    categoryName: categorySelect
-					  }
-					}
-	    			
-	    	).then(function(response) {
+		    axios.get('/place/getPlaceList/' + areaSelect)
+	    	.then(function(response) {
 	    		
 	    		var resultContainer = document.getElementById('searchResultList');
 	    		resultContainer.style.display = 'block';
@@ -497,10 +491,10 @@
 		
 		consonantButtons.forEach(consonantButton => {
 			consonantButton.addEventListener('click', function() {
-				var selectedArea = document.getElementById("areaSelect").value;
+				var areaSelect = document.getElementById("areaSelect").value;
 				var consonant = consonantButton.value;		
 				
-				axios.get('/place/getPlaceList/' + selectedArea + '/' + consonant)
+				axios.get('/place/getPlaceList/' + areaSelect + '/' + consonant)
 					.then(function(response) {					
 						var resultContainer = document.getElementById('searchResultList');
 						resultContainer.innerHTML = '';
@@ -539,7 +533,7 @@
 						  });
 						  
 						  var infoWindow = new naver.maps.InfoWindow({
-					        content: '<div id= "windowContent" style="width:100px;text-align:center;padding:5px;font-family:\'TheJamsil3Regular\', sans-serif;font-size:10pt; color: #00008b;"><a href="https://map.naver.com/p/search/'+ place.placeName + " " + selectedArea +'" target="_blank"><b>'+ place.placeName +'</b> </a></div>',
+					        content: '<div id= "windowContent" style="width:100px;text-align:center;padding:5px;font-family:\'TheJamsil3Regular\', sans-serif;font-size:10pt; color: #00008b;"><a href="https://map.naver.com/p/search/'+ place.placeName + " " + areaSelect +'" target="_blank"><b>'+ place.placeName +'</b> </a></div>',
 					        map: null
 					      });
 						  
