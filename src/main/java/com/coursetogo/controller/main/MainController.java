@@ -2,12 +2,8 @@ package com.coursetogo.controller.main;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -22,20 +18,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.coursetogo.controller.api.N_LoginAPIController;
-import com.coursetogo.controller.api.N_MapAPIController;
 import com.coursetogo.controller.map.CourseController;
 import com.coursetogo.controller.map.PlaceController;
 import com.coursetogo.controller.review.ReviewController;
 import com.coursetogo.controller.user.CtgUserController;
 import com.coursetogo.dto.course.CourseDTO;
 import com.coursetogo.dto.course.CourseInformDTO;
-import com.coursetogo.dto.map.PlaceDTO;
 import com.coursetogo.dto.review.CourseReviewDTO;
 import com.coursetogo.dto.review.PlaceReviewDTO;
 import com.coursetogo.dto.user.CtgUserDTO;
 import com.coursetogo.enumType.Area;
 import com.coursetogo.enumType.Category;
-import com.coursetogo.service.course.CoursePlaceService;
 import com.coursetogo.service.course.CourseService;
 import com.coursetogo.service.map.PlaceService;
 import com.coursetogo.service.review.CourseReviewService;
@@ -48,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @Slf4j
 public class MainController {
+	
 	@Autowired
 	private N_LoginAPIController loginApiController;
 	
@@ -96,10 +90,9 @@ public class MainController {
 		
 		CtgUserDTO user;
 		
-		for(int a : kingIdList) {
-			
+		for(int kingId : kingIdList) {
 			try {
-				user = userService.getCtgUserByUserId(a);
+				user = userService.getCtgUserByUserId(kingId);
 				
 				if(user != null) {
 					kingNicknameList.add(user.getUserNickname());
@@ -122,10 +115,9 @@ public class MainController {
 		}
 		
 		List<String> userPhotoSrcList = new ArrayList<String>();
-		List<String> courseDetailPageList = new ArrayList<String>();
+		List<String> courseIdList = new ArrayList<String>();
 		List<String> userNicknameList = new ArrayList<String>();
 		user = null;
-		String query = "";
 		
 		for(CourseDTO course : recommendCourseList) {
 			try {
@@ -135,18 +127,15 @@ public class MainController {
 			}
 			userPhotoSrcList.add(user.getUserPhoto());
 			userNicknameList.add(user.getUserNickname());
-			
-            query = "";
-            query += ("courseId="+ String.valueOf(course.getCourseId()));
-            
-			courseDetailPageList.add(query);
+			courseIdList.add(String.valueOf(course.getCourseId()));
 		}
 		
+		model.addAttribute("kingIdList", kingIdList);
 		model.addAttribute("kingNicknameList", kingNicknameList);
 		model.addAttribute("recommendCourseList", recommendCourseList);
 		model.addAttribute("userPhotoSrcList", userPhotoSrcList);
 		model.addAttribute("userNicknameList", userNicknameList);
-		model.addAttribute("courseDetailPageList", courseDetailPageList);
+		model.addAttribute("courseIdList", courseIdList);
 
 		return "home";
 	}
@@ -155,7 +144,7 @@ public class MainController {
 	@GetMapping("/user/sign_up")
 	public String getSignUpPage(HttpSession session) {
 		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
-		return "userSignup";
+		return "user_SignupPage";
 	}
 	
 	// 로그아웃
@@ -171,7 +160,7 @@ public class MainController {
 	@GetMapping("/user/updateUserInfo") 
 	public String getUpdateUserInfoPage(HttpSession session) {
 		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
-		return "userInfoUpdate";
+		return "user_InfoPage";
 	}
 	
 	// 유저 마이페이지
@@ -596,4 +585,65 @@ public class MainController {
 
 		return "admin_AdminPage_PlaceReview";
 	}
+	
+	// 유저 개인 페이지
+	@GetMapping("user/userPage")
+	public String getUserPage(@RequestParam("userId") String userId,
+									  Model model, HttpSession session) {
+		session.setAttribute("loginApiURL", loginApiController.getloginAPIUrl());	
+		
+		CtgUserDTO userDetail = null;
+		List<CourseInformDTO> courseInformList = new ArrayList<CourseInformDTO>();
+		List<CourseReviewDTO> courseReviewList = new ArrayList<CourseReviewDTO>(); 
+		List<PlaceReviewDTO> placeReviewList = new ArrayList<PlaceReviewDTO>();
+		List<String> placeNameList = new ArrayList<String>();
+		List<String> courseNameList = new ArrayList<String>();
+		
+		try {
+			userDetail = userService.getCtgUserByUserId(Integer.parseInt(userId));
+			userDetail = CtgUserDTO.builder().userId(userDetail.getUserId())
+										.userNickname(userDetail.getUserNickname())
+										.userEmail(userDetail.getUserEmail())
+										.userPhoto(userDetail.getUserPhoto())
+										.userIntroduce(userDetail.getUserIntroduce())
+										.userAdmin(100).build();
+			
+			courseInformList = courseService.getCourseInformByUserId(Integer.parseInt(userId));
+			courseReviewList = courseReviewService.getCourseReviewByUserId(Integer.parseInt(userId));
+			placeReviewList = placeReviewService.getPlaceReviewByUserId(Integer.parseInt(userId));
+		} catch (Exception e) {
+			log.warn("유저 개인 페이지 - 유저 게시글 조회에 실패하였습니다.");
+			e.printStackTrace();
+		}
+
+		for(CourseReviewDTO courseReview : courseReviewList) {
+			try {
+				courseNameList.add(courseService.getCourseNameByCourseId(courseReview.getCourseId()));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		for(PlaceReviewDTO placeReview : placeReviewList) {
+			try {
+				placeNameList.add(placeService.getPlaceNameByPlaceId(placeReview.getPlaceId()));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		model.addAttribute("userDetail", userDetail);
+		model.addAttribute("courseInformList", courseInformList);
+		model.addAttribute("courseReviewList", courseReviewList);
+		model.addAttribute("courseNameList", courseNameList);
+		model.addAttribute("placeReviewList", placeReviewList);
+		model.addAttribute("placeNameList", placeNameList);
+
+		
+		return "user_UserPage";
+	}
+	
+	
+	
 }

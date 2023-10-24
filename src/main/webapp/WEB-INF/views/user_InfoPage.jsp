@@ -153,7 +153,7 @@
 								   style= "background-color: #F1F1F1; border: 1px solid #F1F1F1; width: 180px; height: 15px;
 								   		   padding: 3px; margin-left: 10px; margin-top: 5px; margin-bottom: 5px;">
 						</div>
-					 	<span id= "userNicknameCheck" style= "display:block; font-size: 2px; width:150px; height:15px;
+					 	<span id= "userNicknameCheck" style= "display:block; font-size: 12px; width:150px; height:15px;
 					 										  margin-left: 100px;"> </span>
 					</div>
 
@@ -258,8 +258,6 @@
 							  event.preventDefault();
 							});
 				    }
-				  
-			    console.log(response.data);
 			  })
 			  .catch(function (error) {
 				  console.log("닉네임 검증 불가");

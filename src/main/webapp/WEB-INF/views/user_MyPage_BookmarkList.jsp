@@ -129,7 +129,7 @@
 			            }
 			        })
 			        .catch(function (error) {
-			            console.error("북마크 삭제 요청 실패:", error);
+			            console.error("북마크 삭제 요청 실패");
 			        });
 				}else {
 					

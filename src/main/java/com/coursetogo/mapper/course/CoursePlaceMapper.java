@@ -12,5 +12,4 @@ public interface CoursePlaceMapper {
 	public int insertCoursePlace(CoursePlaceDTO coursePlace) throws SQLException;
 
 	public int deleteCoursePlace(int courseId) throws SQLException;
-	
 }

@@ -14,6 +14,9 @@ public interface PlaceReviewMapper {
 	// 장소리뷰 Id로 장소리뷰 검색
     public PlaceReviewDTO getPlaceReviewByReviewId (int placeReviewId) throws SQLException;
 
+    // UserId로 장소리뷰 검색하기
+	public List<PlaceReviewDTO> getPlaceReviewByUserId(int userId) throws SQLException;
+    
     // UserId + PlaceId로 장소리뷰 검색하기
     public PlaceReviewDTO getPlaceReviewByUserIdAndPlaceId(@Param("userId") int userId, @Param("placeId") int placeId) throws SQLException;
 
@@ -44,5 +47,7 @@ public interface PlaceReviewMapper {
 	// 검색된 장소리뷰리스트 조회 (관리자)
 	public List<PlaceReviewDTO> getAllPlaceReviewByKeywordWithPage(@Param("startRow") int startRow, @Param("endRow") int endRow,
 																   @Param("category") String category, @Param("keyword") String keyword);
+
+
 	
 }

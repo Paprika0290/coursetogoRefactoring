@@ -16,6 +16,17 @@
  		WHERE place_review_id = #{placeReviewId}
  	</select>
  	
+     <!-- UserId로 장소리뷰 검색하기 -->
+     <select id="getPlaceReviewByUserId" parameterType="_int" resultType="PlaceReviewDTO">
+         SELECT place_review_id AS placeReviewId,
+                user_id AS userId,
+                place_id AS placeId,
+                place_score AS placeScore,
+                review_date AS reviewDate
+         FROM place_review
+         WHERE user_id = #{userId} 
+     </select>
+ 	
      <!-- UserId + PlaceId로 장소리뷰 검색하기 -->
      <select id="getPlaceReviewByUserIdAndPlaceId" parameterType="_int" resultType="PlaceReviewDTO">
          SELECT place_review_id AS placeReviewId,

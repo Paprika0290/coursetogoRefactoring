@@ -124,7 +124,7 @@
 					</div>		
 					
 					<button class= "searchInput" style= "left: 290px; border-radius: 5px; padding: 4px 12px; background-color: #FF9F3D; border: 2px solid #FF9F3D;
-						    font-family: 'TheJamsil3Regular', sans-serif;" onclick="getPlaceList()">검색</button>
+						    font-family: 'TheJamsil3Regular', sans-serif; cursor: pointer;" onclick="getPlaceList()">검색</button>
 			</div>
 			
 			<div id= "consonantBox1" style= "display: none; position: absolute; top: 150px; left: 105px; z-index: 80; background-color: #ffffff; padding: 5px 10px; box-shadow: 5px 5px 5px 3px rgba(0.3, 0.3, 0.3, 0.3);">
@@ -500,7 +500,7 @@
 				var selectedArea = document.getElementById("areaSelect").value;
 				var consonant = consonantButton.value;		
 				
-				axios.get('/course/getCourseList/' + selectedArea + '/' + consonant)
+				axios.get('/place/getPlaceList/' + selectedArea + '/' + consonant)
 					.then(function(response) {					
 						var resultContainer = document.getElementById('searchResultList');
 						resultContainer.innerHTML = '';

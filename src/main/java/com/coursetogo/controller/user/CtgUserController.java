@@ -9,6 +9,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,24 +36,6 @@ public class CtgUserController {
 	@Autowired
 	private CourseReviewService courseReviewService;
 	
-	// 네이버 회원 정보가 맵핑된 CtgUser객체를 받아와 회원 가입 진행하는 메서드---------------------------------------------------------------
-	// 성공:true 실패:false	
-	public boolean insertCtgUser(CtgUserDTO user) {
-		user.setUserPhoto("/images/profile(0).png");
-		user.setUserAdmin(1);
-		boolean result = false;
-		
-		try {
-			result = service.insertCtgUser(user);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		
-		return result;
-	}
-	
-	
 	// 네이버 회원 정보가 맵핑된 CtgUser객체에서 받아온 naverId, userName 이용하여 기존에 존재하는 회원인지 확인하는 메서드----------------------------
 	// 존재하면 : 해당 CtgUser 객체 / 존재하지 않으면 : null
 	public CtgUserDTO getCtgUserByNaverIdAndName(String naverIdFront, String naverIdRear, String userName) {
@@ -65,6 +50,134 @@ public class CtgUserController {
 		return user;
 	}
 	
+	// 회원탈퇴 진행
+	@PutMapping("/user/unsign")
+	public String unsignUserByUserId(@RequestParam int userId, HttpSession session) {
+		String view = "error";
+		boolean result = false;
+		
+		try {
+			result = service.unsignCtgUserByUserId(userId);
+			
+			if(result) {
+				session.invalidate();
+				view = "redirect:/";
+				return view;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return view;
+		}
+		return view;
+	}
+	
+	// 회원가입 성공 후 세션에 값 부여
+	@PostMapping("/user/sign_up_done")
+	public String signUpDone(@ModelAttribute CtgUserDTO user,
+							 HttpSession session) {	
+		
+		user.setUserPhoto("/images/profile(0).png");
+		user.setUserAdmin(1);
+		boolean result = false;
+		
+		try {
+			result = service.insertCtgUser(user);
+		}catch(Exception e){
+			return "error";
+		}
+		
+		if(result) {
+			
+			CtgUserDTO userForSession = null;
+			
+			try {
+				// 데이터베이스에 insert될때에 생성되는 userId를 가져오기 위해 DB에 접촉, user객체를 가져옴
+				userForSession = service.getCtgUserByNaverIdAndName(user.getNaverId().substring(0, 10),
+											   		   user.getNaverId().substring(user.getNaverId().length() -10),
+													   user.getUserName());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			// 꼭 필요한 값만을 가진 user객체를 세션에 부여
+			userForSession = CtgUserDTO.builder().userId(userForSession.getUserId())
+												 .userNickname(userForSession.getUserNickname())
+												 .userEmail(userForSession.getUserEmail())
+												 .userPhoto(userForSession.getUserPhoto())
+												 .userIntroduce(userForSession.getUserIntroduce())
+												 .build();
+			
+			session.setAttribute("user", userForSession);
+		}
+		return "user_SignupDonePage";
+	}
+	
+	// 유저 정보 수정
+	@PostMapping("/user/update")
+	public String updateUser(@ModelAttribute CtgUserDTO user
+							 ,HttpSession session) {
+		CtgUserDTO DBUser = null;
+		
+		try {
+			DBUser = service.getCtgUserByUserId(user.getUserId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		DBUser.setUserNickname(user.getUserNickname());
+		DBUser.setUserPhoto(user.getUserPhoto());
+		DBUser.setUserIntroduce(user.getUserIntroduce());
+		
+		boolean result = false;
+		
+		try {
+			result = service.updateCtgUser(DBUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if(result) {
+			session.setAttribute("user", DBUser);
+			return "user_InfoPage";
+		}
+		
+		return "redirect:/";
+	}
+	
+	// 유저 정보 수정 (관리자)
+	@PostMapping("/admin/user/update")
+	public String updateUserByAdmin(@ModelAttribute CtgUserDTO user
+							 		,HttpSession session) {
+		CtgUserDTO DBUser = null;
+		System.out.println(user);
+		
+		try {
+			DBUser = service.getCtgUserByUserId(user.getUserId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		DBUser.setUserNickname(user.getUserNickname());
+		DBUser.setUserEmail(user.getUserEmail());
+		DBUser.setUserAdmin(user.getUserAdmin());
+		DBUser.setUserIntroduce(user.getUserIntroduce());
+		
+		boolean result = false;
+		
+		try {
+			result = service.updateCtgUser(DBUser);
+		} catch (Exception e) {
+			log.warn("admin- 회원 정보 수정에 실패하였습니다.");
+			e.printStackTrace();
+		}
+		
+		if(result) {
+			session.setAttribute("user", DBUser);
+			return "redirect:/admin/user";
+		}
+		
+		return "redirect:/admin/user";
+	}
 	
 	// userId를 받아 회원DTO를 가져오는 메서드---------------------------------------------------------------------------------------
 	// 존재하면 : 해당 CtgUser 객체 / 존재하지 않으면 : null

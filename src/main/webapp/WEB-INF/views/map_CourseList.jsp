@@ -87,7 +87,6 @@
 			
 			areaSelected.addEventListener('change', function() {
 				  var selectedValue = areaSelected.value;
-				  console.log(selectedValue);
 				  window.location.href= '/course/courseList?areaName=' + selectedValue;
 			})
 		</script>
@@ -228,7 +227,7 @@
 	            }
 	        })
 	        .catch(function (error) {
-	            console.error("북마크 추가 요청 실패:", error);
+	            console.error("북마크 추가 요청 실패");
 	        });
 	    });
 	});
@@ -251,7 +250,7 @@
 	            }
 	        })
 	        .catch(function (error) {
-	            console.error("북마크 삭제 요청 실패:", error);
+	            console.error("북마크 삭제 요청 실패");
 	        });
 	    });
 	});

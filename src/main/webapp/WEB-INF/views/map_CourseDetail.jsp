@@ -558,7 +558,6 @@
 				
 				document.getElementById('showReviewUpdate').addEventListener('click', showReviewUpdate);
 			}else if(isAlready === "false") {
-				console.log("사용자가 리뷰하지 않은 코스");
 				document.getElementById('showReviewWrite').addEventListener('click', function() {
 			    	if(reviewArea.style.display ==='block' ) {
 			    		reviewArea.style.display = 'none';	
@@ -624,7 +623,6 @@
 		reviewDelete.addEventListener('click', function() {
 			  axios.get('/review/reviewDelete', {params: {userId: userIdInput, courseId: courseIdForAPI}})
 			    .then(response => {
-			      console.log('리뷰 삭제 성공');
 			    })
 			    .catch(error => {
 			      console.log('리뷰 삭제 실패');

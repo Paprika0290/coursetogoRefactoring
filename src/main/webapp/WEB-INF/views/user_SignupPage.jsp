@@ -60,7 +60,7 @@
 					<input type= "text" id= "userNickname" name= "userNickname" value="${sessionScope.newUser.userNickname}" maxlength="8"
 						   style= "background-color: #F1F1F1; border: 1px solid #F1F1F1;
 						   		   padding: 3px; width: 180px; height: 15px;">&nbsp;&nbsp;&nbsp;
-				 	<span id= "userNicknameCheck" style="display:block; font-size: 2px; width:150px; height:15px; margin-left: 50px; margin-top: 5px;"></span>
+				 	<span id= "userNicknameCheck" style="display:block; font-size: 12px; width:150px; height:15px; margin-left: 50px; margin-top: 5px;"></span>
 					<br>
 					자기소개 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<br><br>
@@ -106,8 +106,6 @@
 					  userNicknameCheckSpan.innerHTML = '닉네임은 비어있을 수 없습니다.';
 					  userNicknameCheckSpan.style.color = '#E74C3C';
 				    }
-				  
-			    console.log(response.data);
 			  })
 			  .catch(function (error) {
 				  console.log("닉네임 검증 불가");

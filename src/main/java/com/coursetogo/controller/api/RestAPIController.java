@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -60,6 +61,28 @@ public class RestAPIController {
 	@Autowired
 	private UserBookmarkCourseService bookmarkService;
 
+	// User 관련 페이지 ------------------------------------------------------------------------------------------------------------------------------------------------
+	// 닉네임 중복 확인 (user_InfoPage.jsp / user_SignupPage.jsp)
+	@GetMapping("/user/userNicknameCheck")
+	public int userNicknameCheck(@RequestParam("userNickname") String userNickname) {
+		int res = 0;
+		
+		if(userNickname == null || userNickname == "") {
+			res = -1;
+			return res;
+		}else {
+			try {
+				res = userService.nicknameCheck(userNickname);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return res;
+		}		
+	}
+	// User ------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	
+	// Course 관련 페이지------------------------------------------------------------------------------------------------------------------------------------------------
 	// course/courseDetail 페이지에서 코스 리뷰 리스트 조회
 	@GetMapping("/course/courseDetail/reviewList")
 	public List<CourseReviewDTO> getCourseReviewList(String courseId) {
@@ -137,6 +160,21 @@ public class RestAPIController {
 		return placeList;
 	}
 	
+	// course/courseMake 페이지에서 자음 검색시 장소리스트 반환
+	@GetMapping("/place/getPlaceList/{areaName}/{consonant}")
+	public List<PlaceDTO> getCourseListByConsonant(@PathVariable String areaName, @PathVariable String consonant) {
+		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
+		
+		try {
+			placeList = placeService.searchPlacesByAreaAndConsonant(areaName, consonant);
+		} catch (SQLException e) {
+			log.warn("area + 자음 장소 검색에 실패했습니다.");
+			e.printStackTrace();
+		}
+		
+		return placeList;
+	}
+	
 	
 	// course/courseList 페이지에서 회색 북마크 버튼 클릭시 북마크 추가 처리
 	@PostMapping("/user/bookmark/insert")
@@ -175,7 +213,9 @@ public class RestAPIController {
 		}
 		return false;
 	}
-	
+	// Course 관련 페이지------------------------------------------------------------------------------------------------------------------------------------------------
+
+	// user_MyPage 관련 페이지------------------------------------------------------------------------------------------------------------------------------------------------
 	@GetMapping("/user/course/check/{courseId}")
 	public int getCourseReviewCount(@PathVariable int courseId) {
 		int reviewCount = 0;
@@ -222,22 +262,10 @@ public class RestAPIController {
 
 		return res;
 	}
+	// user_MyPage 관련 페이지------------------------------------------------------------------------------------------------------------------------------------------------	
 	
-	
-	@GetMapping("/course/getCourseList/{areaName}/{consonant}")
-	public List<PlaceDTO> getCourseListByConsonant(@PathVariable String areaName, @PathVariable String consonant) {
-		List<PlaceDTO> placeList = new ArrayList<PlaceDTO>();
-		
-		try {
-			placeList = placeService.searchPlacesByAreaAndConsonant(areaName, consonant);
-		} catch (SQLException e) {
-			log.warn("area + 자음 장소 검색에 실패했습니다.");
-			e.printStackTrace();
-		}
-		
-		return placeList;
-	}
-	
+
+	// admin_AdminPage 관련 페이지------------------------------------------------------------------------------------------------------------------------------------------------		
 	// 코스 삭제 (관리자)
 	@PostMapping("/admin/course/delete")
 	public String deleteCourseByAdmin(@RequestBody int[] courseIdArray) {
@@ -302,5 +330,6 @@ public class RestAPIController {
 			}
 		}	
 	}
+	// admin_AdminPage 관련 페이지------------------------------------------------------------------------------------------------------------------------------------------------		
 
 }

@@ -25,6 +25,11 @@ public class PlaceReviewService {
         return mapper.getPlaceReviewByReviewId(placeReviewId);
 	}
 
+    // UserId로 장소리뷰 검색하기
+    public List<PlaceReviewDTO> getPlaceReviewByUserId(int userId) throws SQLException {
+        return mapper.getPlaceReviewByUserId(userId);
+    }
+    
     // UserId + PlaceId로 장소리뷰 검색하기
     public PlaceReviewDTO getPlaceReviewByUserIdAndPlaceId(int userId, int placeId) throws SQLException {
         return mapper.getPlaceReviewByUserIdAndPlaceId(userId, placeId);

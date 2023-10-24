@@ -7,7 +7,6 @@
 <html>
 <head>
     <title>CourseToGo</title>
-    <link rel="stylesheet" type="text/css" href="/css/starScore.css">
          
 	<c:if test="${not empty sessionScope.newUser}">
 	    <script>
@@ -57,9 +56,15 @@
 			padding: 10px;
 			width: 150px;
 		}
+		
+		a {
+		    text-decoration: none; 
+		    color: inherit; 
+		}
     </style>
     
 	<link rel="stylesheet" type="text/css" href="/css/fonts.css">
+    <link rel="stylesheet" type="text/css" href="/css/starScore.css">
 
 </head>
 <body>
@@ -91,9 +96,9 @@
 				                           <c:set var="photoSrc" value="${userPhotoSrc}" scope= "request" />
 				                        </c:if>
 				                     </c:forEach>         
-                                     <c:forEach items="${courseDetailPageList}" var="coursePage" varStatus="pageSt">
-				                        <c:if test="${courseSt.index eq pageSt.index}">
-				                           <c:set var="query" value="${coursePage}" scope="request" />
+                                     <c:forEach items="${courseIdList}" var="courseId" varStatus="courseIdSt">
+				                        <c:if test="${courseSt.index eq courseIdSt.index}">
+				                           <c:set var="courseId" value="${courseId}" scope="request" />
 				                        </c:if>
 				                     </c:forEach>
                                      <c:forEach items="${userNicknameList}" var="userNickname" varStatus="userNicknameSt">
@@ -106,7 +111,7 @@
 				                  <img class="userPhotoOfCourse" src="${photoSrc}" style= "width: 30px; margin-left: 20px; margin-top: 5px;">&nbsp;&nbsp;&nbsp;&nbsp;   
 									<div class= "userNickname"> ${nickName} 님의</div> &nbsp;&nbsp;&nbsp;
 									<div class= "courseName">
-										< <a href="/course/courseDetail?${query}" style= "text-decoration: none; color: #FF962B;">${course.courseName}</a> >
+										< <a href="/course/courseDetail?courseId=${courseId}" style= "text-decoration: none; color: #FF962B;">${course.courseName}</a> >
 									</div>
 									<div class="stars small" id= "courseAvgScore${courseSt.index}" style= "margin-left: 10px; font-size: 20px; display: flex;" data-score="${course.courseAvgScore}"></div>
 		                              <script>
@@ -138,9 +143,9 @@
                             	<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #00008b;"> TOP3</span>
 							</div>
 							<br>
-							<img src="/images/goldMedal.png"><br>${kingNicknameList[0]}<br><br>
-							<img src="/images/silverMedal.png"><br>${kingNicknameList[1]}<br><br>
-							<img src="/images/bronzeMedal.png"><br>${kingNicknameList[2]}	
+							<img src="/images/goldMedal.png"><br><a href="user/userPage?userId=${kingIdList[0]}">${kingNicknameList[0]}</a><br><br>
+							<img src="/images/silverMedal.png"><br><a href="user/userPage?userId=${kingIdList[1]}">${kingNicknameList[1]}</a><br><br>
+							<img src="/images/bronzeMedal.png"><br><a href="user/userPage?userId=${kingIdList[2]}">${kingNicknameList[2]}</a>	
 						</div>
 						<div class= "top3Container" id= "courseReviewKing">
 							<div style= "background-color: #ffffff; padding: 5px;">
@@ -148,9 +153,9 @@
                             	<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #00008b;"> TOP3</span>
 							</div>
 							<br>
-							<img src="/images/goldMedal.png"><br>${kingNicknameList[3]}<br><br>
-							<img src="/images/silverMedal.png"><br>${kingNicknameList[4]}<br><br>
-							<img src="/images/bronzeMedal.png"><br>${kingNicknameList[5]}
+							<img src="/images/goldMedal.png"><br><a href="user/userPage?userId=${kingIdList[3]}">${kingNicknameList[3]}</a><br><br>
+							<img src="/images/silverMedal.png"><br><a href="user/userPage?userId=${kingIdList[4]}">${kingNicknameList[4]}</a><br><br>
+							<img src="/images/bronzeMedal.png"><br><a href="user/userPage?userId=${kingIdList[5]}">${kingNicknameList[5]}</a>
 						</div>
 						<div class= "top3Container" id= "placeReviewKing">
 							<div style= "background-color: #ffffff; padding: 5px;">
@@ -158,9 +163,9 @@
                             	<span style= "font-family: 'TheJamsil5Bold', sans-serif; color: #00008b;"> TOP3</span>
 							</div>
 							<br>
-							<img src="/images/goldMedal.png"><br>${kingNicknameList[6]}<br><br>
-							<img src="/images/silverMedal.png"><br>${kingNicknameList[7]}<br><br>
-							<img src="/images/bronzeMedal.png"><br>${kingNicknameList[8]}	
+							<img src="/images/goldMedal.png"><br><a href="user/userPage?userId=${kingIdList[6]}">${kingNicknameList[6]}</a><br><br>
+							<img src="/images/silverMedal.png"><br><a href="user/userPage?userId=${kingIdList[7]}">${kingNicknameList[7]}</a><br><br>
+							<img src="/images/bronzeMedal.png"><br><a href="user/userPage?userId=${kingIdList[8]}">${kingNicknameList[8]}</a>	
 						</div>						
 					</div>
 				</div>					
